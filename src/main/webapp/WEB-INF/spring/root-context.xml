@@ -10,6 +10,7 @@
 	<context:property-placeholder location="classpath:application.properties"/>
 
 	<!-- DB CONFIGURATION -->
+	
 	<bean id="testDataSource"
 		class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
 		<property name="driverClass" value="${spring.datasource.driver-class-name}"></property>
@@ -17,6 +18,7 @@
 		<property name="username" value="${spring.datasource.username}"></property>
 		<property name="password" value="${spring.datasource.password}"></property>
 	</bean>
+
 
 	<!-- SqlSessionFactory Bean -->
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
