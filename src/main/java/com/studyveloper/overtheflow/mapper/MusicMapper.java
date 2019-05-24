@@ -6,5 +6,5 @@ import java.util.Map;
 import com.studyveloper.overtheflow.vo.MusicVO;
 
 public interface MusicMapper {
-	public MusicVO addMusic(MusicVO musicVO);
+	public int addMusic(MusicVO musicVO);
 }
