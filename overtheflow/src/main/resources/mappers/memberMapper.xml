@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.studyveloper.overtheflow.mapper.MemberMapper">
+<sql id="member">
+	member_id as 'id', member_email as 'email', member_password as 'password',
+	member_nickname as 'nickname', member_introduction as 'introduction', member_register_date as 'registerDate',
+	member_type_id as ' typeId'
+</sql>
+
 	<insert id="registerMember" parameterType="MemberVO">
 		INSERT INTO
 			member
@@ -23,4 +29,13 @@
 		WHERE
 			member_id = #{id}  
 	</update>
+	
+	<select id="getMember" parameterType="string" resultType="MemberVO">
+		SELECT
+			<include refid="member"/>
+		FROM 
+			member
+		WHERE
+			member_id = #{memberId}	
+	</select>
 </mapper>
