@@ -6,4 +6,21 @@
 			member
 		VALUES(#{id}, #{email}, #{password}, #{nickname}, #{introduction}, #{registerDate}, #{typeId})
 	</insert>
+	<delete id="unregisterMember" parameterType="MemberVO" >
+		DELETE FROM member
+		WHERE
+			member_id = #{id} AND 
+			member_email = #{email} AND 
+			member_password = #{password}
+	</delete>
+	
+	<update id="modifyMember" parameterType="MemberVO" >
+		UPDATE member
+		SET 
+			member_nickname = #{nickname},
+			member_password = #{password}, 
+			member_introduction = #{introduction}
+		WHERE
+			member_id = #{id}  
+	</update>
 </mapper>
