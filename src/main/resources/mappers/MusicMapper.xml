@@ -54,4 +54,11 @@
 	<select id="getAllMusicList" resultMap="musicVO">
 		SELECT * FROM music;
 	</select>
+	
+	<select id="searchMusicByMusicId" parameterType="java.lang.String" resultMap="musicVO">
+		SELECT * FROM 
+			music
+		WHERE
+			music_id = #{id}
+	</select>
 </mapper>

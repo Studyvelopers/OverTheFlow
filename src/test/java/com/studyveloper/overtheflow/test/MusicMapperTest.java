@@ -112,4 +112,12 @@ public class MusicMapperTest {
 			assertThat(musicList.get(i).getId(), is(Integer.toString(i+1)));
 		}
 	}
+	
+	@Test
+	public void searchMusicByMusicIdTest(){
+		MusicVO musicVO = this.musicMapper.searchMusicByMusicId("1");
+		
+		assertThat(musicVO.getId(), is("1"));
+		assertThat(musicVO.getTitle(), is("테스트용 타이틀1"));
+	}
 }
