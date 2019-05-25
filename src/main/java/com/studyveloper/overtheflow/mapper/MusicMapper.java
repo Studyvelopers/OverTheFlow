@@ -15,5 +15,7 @@ public interface MusicMapper {
 	public int maxSearchMusicByMusicTitle(String title);
 	public List<MusicVO> searchMusicByMusicTitle(Map<String, Object> searchCondition);
 	public int maxSearchMusicByMemberNickname(String memberNickname);
-	public List<MusicVO> searchMusicByMemberNickname(Map<String, Object> searchCondition); 
+	public List<MusicVO> searchMusicByMemberNickname(Map<String, Object> searchCondition);
+	public int maxSearchMusicByMemberId(String memberId);
+	public List<MusicVO> searchMusicByMemberId(Map<String, Object> searchCondition);
 }

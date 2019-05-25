@@ -101,4 +101,20 @@
 		LIMIT
 			#{pageNumber}, #{perPageCount} 
 	</select>
+	
+	<select id="maxSearchMusicByMemberId" parameterType="java.lang.String" resultType="java.lang.Integer">
+		SELECT COUNT(*) FROM
+			music
+		WHERE
+			member_id = #{memberId}
+	</select>
+	
+	<select id="searchMusicByMemberId" parameterType="java.util.Map" resultMap="musicVO">
+		SELECT * FROM
+			music
+		WHERE
+			member_id = #{memberId}
+		LIMIT
+			#{pageNumber}, #{perPageCount} 
+	</select>
 </mapper>
