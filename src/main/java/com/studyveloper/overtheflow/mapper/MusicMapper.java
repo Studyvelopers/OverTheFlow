@@ -7,4 +7,6 @@ import com.studyveloper.overtheflow.vo.MusicVO;
 
 public interface MusicMapper {
 	public int addMusic(MusicVO musicVO);
+	public int deleteAllMusic();
+	public int modifyMusic(MusicVO musicVO);
 }

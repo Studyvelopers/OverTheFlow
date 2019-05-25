@@ -15,8 +15,6 @@
 		<result property="memberId" column="member_id"/>
 	</resultMap>
 	
-	
-	
 	<insert id="addMusic" parameterType="musicVO">
 		INSERT INTO
 			music(music_id, music_title, music_play_time, music_description, 
@@ -25,4 +23,24 @@
 			(#{id}, #{title}, #{playTime}, #{description}, #{playCount},
 			 #{categoryId}, #{memberId});
 	</insert>
+	
+	<delete id="deleteAllMusic">
+		DELETE FROM music;
+	</delete>
+	
+	<update id="modifyMusic" parameterType="musicVO">
+		UPDATE 
+			music
+		SET
+			music_title = #{title},
+			music_playTime = #{playTime},
+			music_description = #{description},
+			music_download_flag = #{downloadFlag},
+			music_visibility_flag = #{visibilityFlag},
+			music_play_count = #{playCount},
+			categroy_id = #{categoryId},
+			member_id = #{memberId}
+		WHERE
+			music_id = #{id}
+	</update>
 </mapper>
