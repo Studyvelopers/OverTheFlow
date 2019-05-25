@@ -70,4 +70,13 @@ public class MusicTageMapperTest {
 		
 		assertThat(result, is(true));
 	}
+	
+	@Test
+	public void deleteMusicTagByMusicIdTest(){
+		String musicId = "1";
+		
+		boolean result = this.musicTagMapper.deleteMusicTagByMusicId(musicId);
+		
+		assertThat(result, is(true));
+	}
 }

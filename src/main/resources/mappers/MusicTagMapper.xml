@@ -26,4 +26,11 @@
 		AND
 			music_tag_contents = #{contents}
 	</delete>
+	
+	<delete id="deleteMusicTagByMusicId" parameterType="java.lang.String">
+		DELETE FROM
+			music_tag
+		WHERE
+			music_id = #{musicId}
+	</delete>
 </mapper>
