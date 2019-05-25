@@ -4,7 +4,6 @@
 <configuration>
 	<!-- Aliasing -->
 	<typeAliases>
-		<typeAlias alias="categoryVO" type="com.studyveloper.overtheflow.vo.CategoryVO"></typeAlias>
 	</typeAliases>
 
 	<typeHandlers>
