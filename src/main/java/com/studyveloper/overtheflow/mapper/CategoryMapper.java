@@ -7,4 +7,5 @@ public interface CategoryMapper {
 	public int modifyCategory(CategoryVO categoryVO);
 	public void deleteAllCategory();
 	public boolean deleteCategory(String id);
+	public CategoryVO searchCategoryByCategoryId(String id);
 }

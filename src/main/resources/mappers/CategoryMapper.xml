@@ -38,4 +38,11 @@
 		WHERE
 			category_id = #{id}
 	</delete>
+	
+	<select id="searchCategoryByCategoryId" parameterType="java.lang.String" resultMap="categoryVO">
+		SELECT * FROM
+			category
+		WHERE
+			category_id = #{id}
+	</select>
 </mapper>

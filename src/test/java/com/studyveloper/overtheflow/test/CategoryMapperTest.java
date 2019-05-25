@@ -107,4 +107,13 @@ public class CategoryMapperTest {
 		
 		assertThat(result, is(true));
 	}
+	
+	@Test
+	public void searchCategoryByCategoryIdTest() {
+		String categoryId = "1";
+		
+		CategoryVO categoryVO = this.categoryMapper.searchCategoryByCategoryId(categoryId);
+		
+		assertThat(categoryVO.getName(), is("멤버1 카테고리1"));
+	}
 }
