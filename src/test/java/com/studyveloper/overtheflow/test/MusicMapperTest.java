@@ -138,4 +138,20 @@ public class MusicMapperTest {
 		
 		assertThat(result.size(), is(5));
 	}
+	
+	@Test
+	public void searchMusicByMemberNicknameTest(){
+		int size = this.musicMapper.maxSearchMusicByMemberNickname("nickname0");
+		
+		assertThat(size, is(5));
+		
+		Map<String, Object> searchCondition = new HashMap<String, Object>();
+		searchCondition.put("pageNumber", 0);
+		searchCondition.put("perPageCount", 10);
+		searchCondition.put("nickname", "nickname0");
+		
+		List<MusicVO> result = this.musicMapper.searchMusicByMemberNickname(searchCondition);
+		
+		assertThat(result.size(), is(5));
+	}
 }

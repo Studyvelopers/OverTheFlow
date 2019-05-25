@@ -77,4 +77,28 @@
 		LIMIT
 			#{pageNumber}, #{perPageCount} 
 	</select>
+	
+	<select id="maxSearchMusicByMemberNickname" parameterType="java.lang.String" resultType="java.lang.Integer">
+		SELECT COUNT(*) FROM
+			music
+		INNER JOIN
+			member
+		ON
+			music.member_id = member.member_id
+		WHERE
+			member_nickname = #{nickname}
+	</select>
+	
+	<select id="searchMusicByMemberNickname" parameterType="java.util.Map" resultMap="musicVO">
+		SELECT music.*, member_nickname FROM
+			music
+		INNER JOIN
+			member
+		ON
+			music.member_id = member.member_id
+		WHERE
+			member_nickname = #{nickname}
+		LIMIT
+			#{pageNumber}, #{perPageCount} 
+	</select>
 </mapper>
