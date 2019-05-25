@@ -2,5 +2,15 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.studyveloper.overtheflow.mapper.MusicTagMapper">
-
+	<resultMap id="musicTagVO" type="musicTagVO">
+		<result property="contents" column="music_tag_contents"/>
+		<result property="musicId" column="music_id"/>
+	</resultMap>
+	
+	<insert id="addMusicTag" parameterType="musicTagVO">
+		INSERT INTO
+			music_tag
+		VALUES
+			(#{contents}, #{musicId})
+	</insert>
 </mapper>
