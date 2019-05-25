@@ -3,9 +3,9 @@
 
 <mapper namespace="com.studyveloper.overtheflow.mapper.MusicMapper">
 	<resultMap type="musicVO" id="musicVO">
-		<result property="id" column="msuic_id"/>
+		<result property="id" column="music_id"/>
 		<result property="title" column="music_title"/>
-		<result property="playtime" column="music_play_time"/>
+		<result property="playTime" column="music_play_time"/>
 		<result property="registerDate" column="music_register_date"/>
 		<result property="description" column="music_description"/>
 		<result property="visibilityFlag" column="music_visibility_flag"/>
@@ -50,4 +50,8 @@
 		WHERE
 			music_id = #{id}
 	</delete>
+	
+	<select id="getAllMusicList" resultMap="musicVO">
+		SELECT * FROM music;
+	</select>
 </mapper>

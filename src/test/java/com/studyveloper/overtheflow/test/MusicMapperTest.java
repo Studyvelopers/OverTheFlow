@@ -3,7 +3,8 @@ package com.studyveloper.overtheflow.test;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-import org.junit.After;
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -99,5 +100,16 @@ public class MusicMapperTest {
 		boolean result = this.musicMapper.deleteMusic(musicId);
 		
 		assertThat(result, is(true));
+	}
+	
+	@Test
+	public void getAllMusicListTest(){
+		List<MusicVO> musicList = this.musicMapper.getAllMusicList();
+		
+		assertThat(musicList.size(), is(5));
+		
+		for(int i = 0; i < 5; ++i){
+			assertThat(musicList.get(i).getId(), is(Integer.toString(i+1)));
+		}
 	}
 }

@@ -10,4 +10,5 @@ public interface MusicMapper {
 	public int deleteAllMusic();
 	public int modifyMusic(MusicVO musicVO);
 	public boolean deleteMusic(String musicId);
+	public List<MusicVO> getAllMusicList();
 }
