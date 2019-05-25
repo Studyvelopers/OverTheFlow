@@ -38,7 +38,7 @@
 			music_download_flag = #{downloadFlag},
 			music_visibility_flag = #{visibilityFlag},
 			music_play_count = #{playCount},
-			categroy_id = #{categoryId},
+			category_id = #{categoryId},
 			member_id = #{memberId}
 		WHERE
 			music_id = #{id}
