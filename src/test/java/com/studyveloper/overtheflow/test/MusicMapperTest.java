@@ -3,7 +3,9 @@ package com.studyveloper.overtheflow.test;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -119,5 +121,21 @@ public class MusicMapperTest {
 		
 		assertThat(musicVO.getId(), is("1"));
 		assertThat(musicVO.getTitle(), is("테스트용 타이틀1"));
+	}
+	
+	@Test
+	public void searchMusicByMusicTitleTest(){
+		int size = this.musicMapper.maxSearchMusicByMusicTitle("테스트용");
+		
+		assertThat(size, is(5));
+		
+		Map<String, Object> searchCondition = new HashMap<String, Object>();
+		searchCondition.put("pageNumber", 0);
+		searchCondition.put("perPageCount", 10);
+		searchCondition.put("title", "테스트용");
+		
+		List<MusicVO> result = this.musicMapper.searchMusicByMusicTitle(searchCondition);
+		
+		assertThat(result.size(), is(5));
 	}
 }

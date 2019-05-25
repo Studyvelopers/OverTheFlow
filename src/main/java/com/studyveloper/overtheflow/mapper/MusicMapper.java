@@ -12,4 +12,6 @@ public interface MusicMapper {
 	public boolean deleteMusic(String musicId);
 	public List<MusicVO> getAllMusicList();
 	public MusicVO searchMusicByMusicId(String musicId);
+	public int maxSearchMusicByMusicTitle(String title);
+	public List<MusicVO> searchMusicByMusicTitle(Map<String, Object> searchCondition);
 }

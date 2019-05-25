@@ -61,4 +61,20 @@
 		WHERE
 			music_id = #{id}
 	</select>
+	
+	<select id="maxSearchMusicByMusicTitle" parameterType="java.lang.String" resultType="java.lang.Integer">
+		SELECT COUNT(*) FROM
+			music
+		WHERE
+			music_title LIKE CONCAT('%',#{title},'%')
+	</select>
+	
+	<select id="searchMusicByMusicTitle" parameterType="java.util.Map" resultMap="musicVO">
+		SELECT * FROM
+			music
+		WHERE
+			music_title LIKE CONCAT('%', #{title}, '%')
+		LIMIT
+			#{pageNumber}, #{perPageCount} 
+	</select>
 </mapper>
