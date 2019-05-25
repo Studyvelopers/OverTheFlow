@@ -22,29 +22,52 @@ public class MusicTageMapperTest {
 	
 	@Before
 	public void setUp() throws Exception {
-	}
-
-	@After
-	public void tearDown() throws Exception {
+		this.musicTagMapper.deleteAllMusicTag();
+		
+		MusicTagVO musicTagVO = new MusicTagVO();
+		
+		musicTagVO.setContents("음악1 태그1");
+		musicTagVO.setMusicId("1");
+		
+		this.musicTagMapper.addMusicTag(musicTagVO);
+		
+		musicTagVO.setContents("음악1 태그2");
+		
+		this.musicTagMapper.addMusicTag(musicTagVO);
+		
+		musicTagVO.setContents("음악1 태그3");
+		
+		this.musicTagMapper.addMusicTag(musicTagVO);
 	}
 
 	@Test
 	public void addMusicTagTest() {
 		MusicTagVO musicTagVO = new MusicTagVO();
 		
-		musicTagVO.setContents("음악1 태그1");
+		musicTagVO.setContents("음악1 태그4");
 		musicTagVO.setMusicId("1");
 		
 		int result = this.musicTagMapper.addMusicTag(musicTagVO);
 		
 		assertThat(result, is(1));
 		
-		musicTagVO.setContents("음악1 태그2");
+		musicTagVO.setContents("음악1 태그5");
 		musicTagVO.setMusicId("1");
 		
 		result = this.musicTagMapper.addMusicTag(musicTagVO);
 		
 		assertThat(result, is(1));
 	}
-
+	
+	@Test
+	public void deleteMusicTagTest(){
+		MusicTagVO musicTagVO = new MusicTagVO();
+		
+		musicTagVO.setContents("음악1 태그1");
+		musicTagVO.setMusicId("1");
+		
+		boolean result = this.musicTagMapper.deleteMusicTag(musicTagVO);
+		
+		assertThat(result, is(true));
+	}
 }

@@ -13,4 +13,17 @@
 		VALUES
 			(#{contents}, #{musicId})
 	</insert>
+	
+	<delete id="deleteAllMusicTag">
+		DELETE FROM music_tag
+	</delete>
+	
+	<delete id="deleteMusicTag" parameterType="musicTagVO">
+		DELETE FROM
+			music_tag
+		WHERE
+			music_id = #{musicId}
+		AND
+			music_tag_contents = #{contents}
+	</delete>
 </mapper>
