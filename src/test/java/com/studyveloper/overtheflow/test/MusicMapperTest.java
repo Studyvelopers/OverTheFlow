@@ -1,5 +1,8 @@
 package com.studyveloper.overtheflow.test;
 
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,17 +22,50 @@ public class MusicMapperTest {
 	
 	@Before
 	public void setUp() throws Exception {
+		MusicVO musicVO = new MusicVO();
+		musicVO.setId("1");
+		musicVO.setTitle("테스트용 타이틀1");
+		musicVO.setPlayTime(0);
+		musicVO.setDescription("테스트용 타이틀1 내용");
+		musicVO.setCategoryId("0");
+		musicVO.setMemberId("0");
+		
+		this.musicMapper.addMusic(musicVO);
+		
+		musicVO.setId("2");
+		musicVO.setTitle("테스트용 타이틀2");
+		musicVO.setDescription("테스트용 타이틀2 내용");
+		
+		this.musicMapper.addMusic(musicVO);
+		
+		musicVO.setId("3");
+		musicVO.setTitle("테스트용 타이틀3");
+		musicVO.setDescription("테스트용 타이틀3 내용");
+		
+		this.musicMapper.addMusic(musicVO);
+		
+		musicVO.setId("4");
+		musicVO.setTitle("테스트용 타이틀4");
+		musicVO.setDescription("테스트용 타이틀4 내용");
+		
+		this.musicMapper.addMusic(musicVO);
+		
+		musicVO.setId("5");
+		musicVO.setTitle("테스트용 타이틀5");
+		musicVO.setDescription("테스트용 타이틀5 내용");
+		
+		this.musicMapper.addMusic(musicVO);
 	}
 
 	@After
 	public void tearDown() throws Exception {
+		this.musicMapper.deleteAllMusic();
 	}
 
 	@Test
 	public void addMusicTest() {
 		MusicVO musicVO = new MusicVO();
-		String id = Integer.toString(musicVO.hashCode());
-		musicVO.setId(id);
+		musicVO.setId("6");
 		musicVO.setTitle("테스트용 타이틀1");
 		musicVO.setPlayTime(0);
 		musicVO.setVisibilityFlag(true);
@@ -37,7 +73,10 @@ public class MusicMapperTest {
 		musicVO.setDescription("");
 		musicVO.setCategoryId("0");
 		musicVO.setMemberId("0");
-		this.musicMapper.addMusic(musicVO);
+		
+		int result = this.musicMapper.addMusic(musicVO);
+		
+		assertThat(result, is(1));
 	}
 
 }
