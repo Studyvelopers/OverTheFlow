@@ -28,18 +28,46 @@ public class MemberLikesMusicMapperTest {
 	
 	@Before
 	public void setUp() throws Exception {
+		this.memberLikesMusicMapper.deleteAllMemberLikesMusic();
+		
+		MemberLikesMusicVO memberLikesMusicVO = new MemberLikesMusicVO();
+		
+		memberLikesMusicVO.setMemberId("1");
+		memberLikesMusicVO.setMusicId("1");
+		
+		this.memberLikesMusicMapper.addMemberLikesMusic(memberLikesMusicVO);
+		
+		memberLikesMusicVO.setMemberId("2");
+		
+		this.memberLikesMusicMapper.addMemberLikesMusic(memberLikesMusicVO);
+		
+		memberLikesMusicVO.setMemberId("3");
+		
+		this.memberLikesMusicMapper.addMemberLikesMusic(memberLikesMusicVO);
 	}
 
+	
 	@Test
 	public void addMemberLikesMusicTest() {
 		MemberLikesMusicVO memberLikesMusicVO = new MemberLikesMusicVO();
 		
-		memberLikesMusicVO.setMemberId("1");
+		memberLikesMusicVO.setMemberId("4");
 		memberLikesMusicVO.setMusicId("1");
 		
 		int result = this.memberLikesMusicMapper.addMemberLikesMusic(memberLikesMusicVO);
 		
 		assertThat(result, is(1));
 	}
-
+	
+	@Test
+	public void deleteMemberLikesMusicTest() {
+		MemberLikesMusicVO memberLikesMusicVO = new MemberLikesMusicVO();
+		
+		memberLikesMusicVO.setMemberId("1");
+		memberLikesMusicVO.setMusicId("1");
+		
+		boolean result = this.memberLikesMusicMapper.deleteMemberLikesMusic(memberLikesMusicVO);
+		
+		assertThat(result, is(true));
+	}
 }

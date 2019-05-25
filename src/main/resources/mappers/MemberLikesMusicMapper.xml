@@ -11,4 +11,17 @@
 			member_likes_music
 		VALUES(#{memberId}, #{musicId})
 	</insert>
+	
+	<delete id="deleteAllMemberLikesMusic">
+		DELETE FROM member_likes_music
+	</delete>
+	
+	<delete id="deleteMemberLikesMusic" parameterType="memberLikesMusicVO">
+		DELETE FROM
+			member_likes_music
+		WHERE
+			member_id = #{memberId}
+		AND
+			music_id = #{musicId}
+	</delete>
 </mapper>
