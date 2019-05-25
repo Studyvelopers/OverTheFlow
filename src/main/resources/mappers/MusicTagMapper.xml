@@ -33,4 +33,11 @@
 		WHERE
 			music_id = #{musicId}
 	</delete>
+	
+	<select id="searchMusicTagByMusicId" parameterType="java.lang.String" resultMap="musicTagVO">
+		SELECT * FROM
+			music_tag
+		WHERE
+			music_id = #{musicId}
+	</select>
 </mapper>
