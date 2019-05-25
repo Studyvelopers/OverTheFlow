@@ -98,4 +98,13 @@ public class CategoryMapperTest {
 		
 		assertThat(result , is(1));
 	}
+	
+	@Test
+	public void deleteCategoryTest() {
+		String categoryId = "1";
+		
+		boolean result = this.categoryMapper.deleteCategory(categoryId);
+		
+		assertThat(result, is(true));
+	}
 }

@@ -31,4 +31,11 @@
 		DELETE FROM
 			category
 	</delete>
+	
+	<delete id="deleteCategory" parameterType="java.lang.String">
+		DELETE FROM
+			category
+		WHERE
+			category_id = #{id}
+	</delete>
 </mapper>
