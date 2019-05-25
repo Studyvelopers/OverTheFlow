@@ -70,4 +70,20 @@ public class MemberLikesMusicMapperTest {
 		
 		assertThat(result, is(true));
 	}
+	
+	@Test
+	public void searchMemberLikesMusicTest(){
+		List<MemberLikesMusicVO> result;
+		
+		String memberId = "1";
+		String musicId = "1";
+		
+		result = this.memberLikesMusicMapper.searchMemberLikesMusicByMemberId(memberId);
+		
+		assertThat(result.size(), is(1));
+		
+		result = this.memberLikesMusicMapper.searchMemberLikesMusicByMusicId(musicId);
+		
+		assertThat(result.size(), is(3));
+	}
 }

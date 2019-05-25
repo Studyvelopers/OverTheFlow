@@ -24,4 +24,18 @@
 		AND
 			music_id = #{musicId}
 	</delete>
+	
+	<select id="searchMemberLikesMusicByMusicId" parameterType="java.lang.String" resultMap="memberLikesMusicVO">
+		SELECT * FROM
+			member_likes_music
+		WHERE
+			music_id = #{musicId}
+	</select>
+	
+		<select id="searchMemberLikesMusicByMemberId" parameterType="java.lang.String" resultMap="memberLikesMusicVO">
+		SELECT * FROM
+			member_likes_music
+		WHERE
+			member_id = #{memberId}
+	</select>
 </mapper>
