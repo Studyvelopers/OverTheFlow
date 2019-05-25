@@ -8,4 +8,27 @@
 		<result property="superId" column="category_super_id"/>
 		<result property="memberId" column="member_id"/>
 	</resultMap>
+	
+	<insert id="addCategory" parameterType="categoryVO">
+		INSERT INTO 
+			category
+		VALUES
+			(#{id}, #{name}, #{superId}, #{memberId})
+	</insert>
+	
+	<update id="modifyCategory" parameterType="categoryVO">
+		UPDATE
+			category
+		SET
+			category_name = #{name},
+			category_super_id = #{superId},
+			member_id = #{memberId}
+		WHERE
+			category_id = #{id}
+	</update>
+	
+	<delete id="deleteAllCategory">
+		DELETE FROM
+			category
+	</delete>
 </mapper>
