@@ -4,6 +4,7 @@
 <configuration>
 	<!-- Aliasing -->
 	<typeAliases>
+		<typeAlias alias="musicTagVO" type="com.studyveloper.overtheflow.vo.MusicTagVO"/>
 	</typeAliases>
 
 	<typeHandlers>
