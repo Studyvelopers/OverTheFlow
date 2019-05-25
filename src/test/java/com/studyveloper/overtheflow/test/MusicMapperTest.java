@@ -22,6 +22,7 @@ public class MusicMapperTest {
 	
 	@Before
 	public void setUp() throws Exception {
+		this.musicMapper.deleteAllMusic();
 		MusicVO musicVO = new MusicVO();
 		musicVO.setId("1");
 		musicVO.setTitle("테스트용 타이틀1");
@@ -57,20 +58,15 @@ public class MusicMapperTest {
 		this.musicMapper.addMusic(musicVO);
 	}
 
-	@After
-	public void tearDown() throws Exception {
-		this.musicMapper.deleteAllMusic();
-	}
-
 	@Test
 	public void addMusicTest() {
 		MusicVO musicVO = new MusicVO();
 		musicVO.setId("6");
-		musicVO.setTitle("테스트용 타이틀1");
+		musicVO.setTitle("테스트용 타이틀6");
 		musicVO.setPlayTime(0);
 		musicVO.setVisibilityFlag(true);
 		musicVO.setDownloadFlag(false);
-		musicVO.setDescription("");
+		musicVO.setDescription("테스트용 타이틀6 내용");
 		musicVO.setCategoryId("0");
 		musicVO.setMemberId("0");
 		
@@ -78,5 +74,30 @@ public class MusicMapperTest {
 		
 		assertThat(result, is(1));
 	}
-
+	
+	@Test
+	public void updateMusicTest() {
+		MusicVO musicVO = new MusicVO();
+		musicVO.setId("1");
+		musicVO.setTitle("테스트용 타이틀1 수정");
+		musicVO.setPlayTime(100);
+		musicVO.setVisibilityFlag(true);
+		musicVO.setDownloadFlag(true);
+		musicVO.setDescription("테스트용 타이틀1 내용 수정");
+		musicVO.setCategoryId("0");
+		musicVO.setMemberId("0");
+		
+		int result = this.musicMapper.modifyMusic(musicVO);
+		
+		assertThat(result, is(1));
+	}
+	
+	@Test
+	public void deleteMusicTest(){
+		String musicId = "1";
+		
+		boolean result = this.musicMapper.deleteMusic(musicId);
+		
+		assertThat(result, is(true));
+	}
 }
