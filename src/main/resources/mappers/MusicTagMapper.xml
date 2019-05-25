@@ -14,6 +14,17 @@
 			(#{contents}, #{musicId})
 	</insert>
 	
+	<update id="modifyMusicTag" parameterType="java.util.Map">
+		UPDATE
+			music_tag
+		SET
+			music_tag_contents = #{newContents}
+		WHERE
+			music_id = #{musicId}
+		AND
+			music_tag_contents = #{contents}
+	</update>
+	
 	<delete id="deleteAllMusicTag">
 		DELETE FROM music_tag
 	</delete>

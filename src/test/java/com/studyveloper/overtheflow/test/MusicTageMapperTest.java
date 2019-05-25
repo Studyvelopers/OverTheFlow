@@ -3,7 +3,9 @@ package com.studyveloper.overtheflow.test;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -58,6 +60,19 @@ public class MusicTageMapperTest {
 		result = this.musicTagMapper.addMusicTag(musicTagVO);
 		
 		assertThat(result, is(1));
+	}
+	
+	@Test
+	public void modifyMusicTagTest(){
+		Map<String, Object> map = new HashMap<String, Object>();
+		
+		map.put("musicId", "1");
+		map.put("newContents", "음악1 태그1 수정");
+		map.put("contents", "음악1 태그1");
+		
+		boolean result = this.musicTagMapper.modifyMusicTag(map);
+		
+		assertThat(result, is(true));
 	}
 	
 	@Test
