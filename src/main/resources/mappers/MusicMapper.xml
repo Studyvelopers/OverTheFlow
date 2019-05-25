@@ -33,7 +33,7 @@
 			music
 		SET
 			music_title = #{title},
-			music_playTime = #{playTime},
+			music_play_time = #{playTime},
 			music_description = #{description},
 			music_download_flag = #{downloadFlag},
 			music_visibility_flag = #{visibilityFlag},
