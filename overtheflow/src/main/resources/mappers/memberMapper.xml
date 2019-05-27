@@ -1,11 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.studyveloper.overtheflow.mapper.MemberMapper">
-<sql id="member">
-	member_id as 'id', member_email as 'email', member_password as 'password',
-	member_nickname as 'nickname', member_introduction as 'introduction', member_register_date as 'registerDate',
-	member_type_id as ' typeId'
-</sql>
+	
+	<resultMap type="com.studyveloper.overtheflow.vo.MemberVO" id="memberVO">
+		<id property="id" column="member_id"/>
+		<id property="email" column="member_email"/>
+		<id property="password" column="member_password"/>
+		<id property="nickname" column="member_nickname"/>
+		<id property="introduction" column="member_introduction"/>
+		<id property="registerDate" column="member_register_date"/>
+		<id property="typeId" column="member_type_id"/>
+	</resultMap>
+
+	<sql id="member">
+		member_id as 'id', member_email as 'email', member_password as 'password',
+		member_nickname as 'nickname', member_introduction as 'introduction', member_register_date as 'registerDate',
+		member_type_id as ' typeId'
+	</sql>
 
 	<insert id="registerMember" parameterType="MemberVO">
 		INSERT INTO
@@ -30,7 +41,7 @@
 			member_id = #{id}  
 	</update>
 	
-	<select id="getMember" parameterType="string" resultType="MemberVO">
+	<select id="getMember"  parameterType="string" resultType="MemberVO">
 		SELECT
 			<include refid="member"/>
 		FROM 
@@ -38,4 +49,23 @@
 		WHERE
 			member_id = #{memberId}	
 	</select>
+	
+	<select id="getMembersByNickName" parameterType="string" resultMap="memberVO">
+		SELECT
+			member_id, member_email, member_password, member_nickname, member_introduction, member_register_date, member_type_id
+		FROM
+			member
+		WHERE
+			member_nickname LIKE CONCAT('%',#{nickname},'%')
+	</select>
+	
+	<select id="getMembersByEmail" parameterType="string" resultMap="memberVO">
+		SELECT
+			member_id, member_email, member_password, member_nickname, member_introduction, member_register_date, member_type_id
+		FROM
+			member
+		WHERE
+			member_email LIKE CONCAT('%',#{email},'%')
+	</select>
+	
 </mapper>
