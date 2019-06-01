@@ -75,4 +75,11 @@
 		VALUES( #{loginId}, #{memberId})
 	</insert>
 	
+	<delete id="unFollow" parameterType="map">
+		DELETE FROM 
+			follow
+		WHERE
+			member_id = #{loginId} AND follow_id = #{memberId}
+	</delete>
+	
 </mapper>
