@@ -48,6 +48,27 @@ public class MemberDAO {
 		return result;
 	}
 	
+	public boolean modifyMember(MemberVO memberVO){
+		logger.info("회원정보 수정 요청");
+		if(memberVO == null){
+			logger.error("수정하려는 회원의 정보가 NULL입니다.");
+		}else{
+			logger.info("수정하려는 회원의 정보 : " + memberVO.toString());
+		}
+		boolean result = false;
+		
+		int res = memberMapper.modifyMember(memberVO);
+		if(res == 1){
+			logger.info("회원정보 수정 성공");
+			result = true;
+		}else{
+			logger.error("회원정보 수정 실패");
+		}
+		
+		logger.info("회원정보 수정 요청에 대한 응답");
+		return result;
+	}
+	
 	
 	public MemberVO getMember(String memberId){
 		logger.info("회원정보 조회 요청");

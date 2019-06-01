@@ -54,6 +54,36 @@ public class MemberServiceImpl implements MemberService {
 		return result;
 	}
 	
+	public MemberBean modifyMember(String targetMemberId, String requestMemberId, String password, MemberBean memberBean){
+		logger.info("회원정보 수정 요청");
+		if(targetMemberId == null || targetMemberId.trim().equals("")){
+			logger.error("회원정보를 수정하기 위한 대상 회원ID가 NULL 또는 빈문자입니다.");
+			return null;
+		}else if(requestMemberId == null || requestMemberId.trim().equals("")){
+			logger.error("회원정보  수정을 요청한 회원ID가 NULL 또는 빈문자입니다.");
+			return null;
+		}else if(password == null || password.trim().equals("")){
+			logger.error("회원정보를 수정하기 위해 필요한 식별정보 패스워드가 NULL 또는 빈문자입니다.");
+			return null;
+		}else if(memberBean == null){
+			logger.error("회원정보  수정하기 위한 정보가 NULL 또는 빈문자입니다.");
+		}
+		
+		logger.trace("회원정보 수정을 요청한 회원ID : " + requestMemberId);
+		logger.trace("회원정보를 수정하려는 대상 회원ID : " + targetMemberId);
+		logger.trace("회원정보 수정을 요청한 회원의 패스워드 : " + password);
+		logger.trace("회원정보 수정을 요청한 정보 : " + memberBean.toString());
+		boolean res = memberDAO.modifyMember(new MemberVO(memberBean));
+		if(res){
+			logger.info("회원정보 수정 성공");
+		}else{
+			logger.error("회원정보 수정 실패");
+		}
+		
+		logger.info("회원정보 수정 요청에 대한 응답");
+		return memberBean;
+	}
+	
 	public MemberBean getMember(String memberId){
 		logger.info("회원정보 조회 요청");
 		logger.trace("회원정보 조회를 요청한 회원의ID : " + memberId);
