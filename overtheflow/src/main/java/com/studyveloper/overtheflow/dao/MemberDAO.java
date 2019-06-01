@@ -95,4 +95,11 @@ public class MemberDAO {
 		return memberList;
 	}
 	
+	public List<MemberVO> getMembersByEmail(String email){
+		logger.info("이메일로 회원정보 검색 요청");
+		List<MemberVO> memberVOList = memberMapper.getMembersByEmail(email);
+		logger.info("이메일로 회원정보 검색 응답");
+		return memberVOList;
+	}
+	
 }

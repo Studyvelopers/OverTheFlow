@@ -143,6 +143,28 @@ public class MemberServiceImpl implements MemberService {
 		return res;
 	}
 	
+	public List<MemberBean> getMembersByEmail(String email){
+		logger.info("이메일로 회원정보 검색 요청");
+		List<MemberVO> memberVOList = null;
+		MemberVO memberVO = null;
+		List<MemberBean> memberBeanList = new ArrayList<>();
+		memberVOList = memberDAO.getMembersByEmail(email);
+		
+		if(memberVOList == null || memberVOList.size() == 0){
+			logger.warn("이메일로 검색된 회원이 없습니다.");
+		}else{
+			logger.trace("이메일로 검색된 회원의 수 : " + memberVOList.size() + "\n 이메일로 검색된 회원의 정보\n");
+			for(int i=0; i<memberVOList.size(); i++){
+				memberVO = memberVOList.get(i);
+				logger.trace(memberVO.toString() );
+				memberBeanList.add(new MemberBean(memberVO));
+			}
+		}
+		
+		logger.info("이메일로 회원정보 검색 응답");
+		return memberBeanList;
+	}
+	
 	
 	
 }

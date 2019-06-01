@@ -13,4 +13,5 @@ public interface MemberService {
 	public MemberBean modifyMember(String targetMemberId, String requestMemberId, String password, MemberBean memberBean);
 	public MemberBean getMember(String memberId);
 	public List<MemberBean> getMembersByNickName(String nickname);
+	public List<MemberBean> getMembersByEmail(String email);
 }
