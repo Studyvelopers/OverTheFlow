@@ -17,4 +17,5 @@ public interface MemberMapper {
 	public void follow(Map<String, String> map);
 	public int unFollow(Map<String, String> map);
 	public List<String> getFollows(String loginId);
+	public List<String> getFollowers(String loginId);
 }

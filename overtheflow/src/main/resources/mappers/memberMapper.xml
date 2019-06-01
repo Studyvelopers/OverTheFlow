@@ -91,4 +91,14 @@
 		WHERE
 			member_id = #{loginId}
 	</select>
+	
+	<select id="getFollowers" parameterType="string" resultType="string">
+		SELECT
+			member_id
+		FROM 
+			follow
+		WHERE
+			follow_id = #{loginId}
+		
+	</select>
 </mapper>
