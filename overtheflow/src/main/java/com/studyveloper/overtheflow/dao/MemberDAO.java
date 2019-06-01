@@ -20,7 +20,7 @@ public class MemberDAO {
 	
 	public MemberVO register(MemberVO memberVO){
 		logger.info("회원가입 요청");
-		logger.trace("요청받은 회원가입 정보 : \n"+memberVO.toString());
+		logger.trace("요청받은 회원가입 정보 : "+memberVO.toString());
 		memberVO.setId(""+memberVO.hashCode());
 		try{
 			memberMapper.registerMember(memberVO);
@@ -29,6 +29,23 @@ public class MemberDAO {
 		}
 		logger.info("회원가입 요청에 대한 응답");
 		return memberVO;
+	}
+	
+	public boolean unregister(MemberVO memberVO){
+		logger.info("회원탈퇴 요청");
+		logger.trace("회원탈퇴를 요청한 회원정보 : " + memberVO.toString());
+		boolean result = false;
+		
+		int res = memberMapper.unregisterMember(memberVO);
+		if(res == 1){
+			result = true;
+			logger.info("탈퇴 성공에 성공하였습니다.");
+		}else{
+			logger.error("탈퇴를 요청한 회원과 일치하는 정보가 없습니다.");
+		}
+		
+		logger.info("회원 탈퇴요청에 대한 응답");
+		return result;
 	}
 	
 }
