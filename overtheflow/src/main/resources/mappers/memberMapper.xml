@@ -69,6 +69,7 @@
 	</select>
 	
 	<!-- follow -->
+	
 	<insert id="follow" parameterType="map" >
 		INSERT INTO 
 			follow (member_id, follow_id)
@@ -82,4 +83,12 @@
 			member_id = #{loginId} AND follow_id = #{memberId}
 	</delete>
 	
+	<select id="getFollows" parameterType="string" resultType="string">
+		SELECT 
+			follow_id 
+		FROM
+			follow
+		WHERE
+			member_id = #{loginId}
+	</select>
 </mapper>

@@ -12,6 +12,9 @@ public interface MemberMapper {
 	public MemberVO getMember(String memberId);
 	public List<MemberVO> getMembersByNickName(String nickName);
 	public List<MemberVO> getMembersByEmail(String email);
+	
+//	follow
 	public void follow(Map<String, String> map);
 	public int unFollow(Map<String, String> map);
+	public List<String> getFollows(String loginId);
 }
