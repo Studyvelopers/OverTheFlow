@@ -8,4 +8,5 @@ import com.studyveloper.overtheflow.bean.MemberBean;
 public interface MemberService {
 	public MemberBean register(MemberBean memberBean);
 	public boolean unRegister(MemberBean memberBean);
+	public MemberBean getMember(String memberId);
 }

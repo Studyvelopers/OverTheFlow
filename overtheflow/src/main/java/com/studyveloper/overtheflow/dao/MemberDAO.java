@@ -48,4 +48,23 @@ public class MemberDAO {
 		return result;
 	}
 	
+	
+	public MemberVO getMember(String memberId){
+		logger.info("회원정보 조회 요청");
+		
+		MemberVO memberVO = null;
+		
+		memberVO = memberMapper.getMember(memberId);
+		
+		if(memberVO == null){
+			logger.error("검색된 회원이 없습니다.");
+		}else{
+			logger.info("검색된 회원의 정보 : " + memberVO.toString());
+		}
+		
+		logger.info("회원정보 조회 요청에 대한 응답");
+		
+		return memberVO;
+	}
+	
 }

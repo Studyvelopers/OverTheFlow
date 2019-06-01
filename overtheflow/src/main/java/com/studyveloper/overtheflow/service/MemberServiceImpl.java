@@ -54,6 +54,23 @@ public class MemberServiceImpl implements MemberService {
 		return result;
 	}
 	
+	public MemberBean getMember(String memberId){
+		logger.info("회원정보 조회 요청");
+		logger.trace("회원정보 조회를 요청한 회원의ID : " + memberId);
+		MemberVO memberVO = memberDAO.getMember(memberId);
+		MemberBean memberBean = null;
+		if(memberVO == null){
+			logger.error("검색된 회원이 없습니다.");
+		}else{
+			logger.trace("검색된 회원의 정보 : "+ memberVO.toString());
+			memberBean = new MemberBean(memberVO);
+		}
+		
+		logger.info("회원정보 조회 요청에 대한 응답");
+		
+		return memberBean;
+	}
+	
 	private boolean nullChk(MemberBean memberBean){
 		boolean res = false;
 		if(memberBean.getEmail() == null || memberBean.getEmail().trim().equals("")){
@@ -73,5 +90,7 @@ public class MemberServiceImpl implements MemberService {
 		
 		return res;
 	}
+	
+	
 	
 }
