@@ -1,6 +1,7 @@
 package com.studyveloper.overtheflow.mapper;
 
 import java.util.List;
+import java.util.Map;
 
 import com.studyveloper.overtheflow.vo.MemberVO;
 
@@ -11,4 +12,5 @@ public interface MemberMapper {
 	public MemberVO getMember(String memberId);
 	public List<MemberVO> getMembersByNickName(String nickName);
 	public List<MemberVO> getMembersByEmail(String email);
+	public void follow(Map<String, String> map);
 }

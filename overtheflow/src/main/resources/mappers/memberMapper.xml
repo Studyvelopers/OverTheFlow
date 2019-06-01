@@ -68,4 +68,11 @@
 			member_email LIKE CONCAT('%',#{email},'%')
 	</select>
 	
+	<!-- follow -->
+	<insert id="follow" parameterType="map" >
+		INSERT INTO 
+			follow (member_id, follow_id)
+		VALUES( #{loginId}, #{memberId})
+	</insert>
+	
 </mapper>
