@@ -88,4 +88,11 @@ public class MemberDAO {
 		return memberVO;
 	}
 	
+	public List<MemberVO> getMemebersByNickName(String nickname){
+		logger.info("닉네임으로 회원정보 검색 요청");
+		List<MemberVO> memberList = memberMapper.getMembersByNickName(nickname);
+		logger.info("닉네임으로 회원정보 검색 결과 응답");
+		return memberList;
+	}
+	
 }

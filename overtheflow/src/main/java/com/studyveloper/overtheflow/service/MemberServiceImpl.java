@@ -101,6 +101,28 @@ public class MemberServiceImpl implements MemberService {
 		return memberBean;
 	}
 	
+	public List<MemberBean> getMembersByNickName(String memberId){
+		logger.info("닉네임으로 회원검색 요청");
+		logger.trace("검색을 요청한 닉네임 키워드 : " + memberId);
+		List<MemberBean> memberBeanList = new ArrayList<>();
+		List<MemberVO> memberVOList = memberDAO.getMemebersByNickName(memberId);
+		MemberVO memberVO = null;
+		if(memberVOList == null || memberVOList.size() == 0){
+			logger.error("검색된 회원이 없습니다.");
+		}else{
+			logger.trace("검색된 회원의 수 : "+ memberVOList.size());
+			for(int i=0; i<memberVOList.size(); i++){
+				memberVO = memberVOList.get(i);
+				logger.trace("검색된 회원의 정보 : " + memberVO.toString());
+				memberBeanList.add(new MemberBean(memberVO));
+			}
+		}
+		
+		logger.info("회원정보 조회 요청에 대한 응답");
+		
+		return memberBeanList;
+	}
+	
 	private boolean nullChk(MemberBean memberBean){
 		boolean res = false;
 		if(memberBean.getEmail() == null || memberBean.getEmail().trim().equals("")){
