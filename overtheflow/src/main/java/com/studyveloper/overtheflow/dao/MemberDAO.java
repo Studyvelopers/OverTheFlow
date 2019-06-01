@@ -19,55 +19,16 @@ public class MemberDAO {
 	private static final Logger logger = LoggerFactory.getLogger(MemberDAO.class);
 	
 	public MemberVO register(MemberVO memberVO){
+		logger.info("회원가입 요청");
+		logger.trace("요청받은 회원가입 정보 : \n"+memberVO.toString());
 		memberVO.setId(""+memberVO.hashCode());
 		try{
 			memberMapper.registerMember(memberVO);
 		}catch(DuplicateKeyException e){
 			e.printStackTrace();
 		}
+		logger.info("회원가입 요청에 대한 응답");
 		return memberVO;
-	}
-	
-	public boolean unregister(MemberVO memberVO){
-		boolean result = false;
-		
-		int res = memberMapper.unregisterMember(memberVO);
-		if(res == 1){
-			result = true;
-		}
-		return result;
-	}
-	
-	public boolean modifyMember(MemberVO memberVO){
-		boolean result = false;
-		
-		int res = memberMapper.modifyMember(memberVO);
-		if(res == 1){
-			result = true;
-		}
-		return result;
-	}
-	
-	public MemberVO getMember(String memberId){
-		MemberVO memberVO = null;
-		
-		memberVO = memberMapper.getMember(memberId);
-		
-		return memberVO;
-	}
-	
-	public List<MemberVO> getMemebersByNickName(String nickname){
-		logger.info("닉네임으로 회원정보 검색 요청");
-		List<MemberVO> memberList = memberMapper.getMembersByNickName(nickname);
-		logger.info("닉네임으로 회원정보 검색 결과 응답");
-		return memberList;
-	}
-	
-	public List<MemberVO> getMembersByEmail(String email){
-		logger.info("이메일로 회원정보 검색 요청");
-		List<MemberVO> memberVOList = memberMapper.getMembersByEmail(email);
-		logger.info("이메일로 회원정보 검색 응답");
-		return memberVOList;
 	}
 	
 }
