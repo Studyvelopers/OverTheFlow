@@ -1,13 +1,15 @@
 package com.studyveloper.overtheflow.dao;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
 
-import com.studyveloper.overtheflow.controller.MemberController;
 import com.studyveloper.overtheflow.mapper.MemberMapper;
 import com.studyveloper.overtheflow.vo.MemberVO;
 
@@ -69,7 +71,6 @@ public class MemberDAO {
 		return result;
 	}
 	
-	
 	public MemberVO getMember(String memberId){
 		logger.info("회원정보 조회 요청");
 		
@@ -100,6 +101,63 @@ public class MemberDAO {
 		List<MemberVO> memberVOList = memberMapper.getMembersByEmail(email);
 		logger.info("이메일로 회원정보 검색 응답");
 		return memberVOList;
+	}
+	
+	public boolean follow(String loginId, String memberId){
+		logger.info(loginId + "가 " + memberId + " 회원을 팔로우 요청했습니다. ");
+		boolean res = true;
+		Map<String, String> map = new HashMap<>();
+		try{
+			map.put("loginId", loginId);
+			map.put("memberId", memberId);
+			memberMapper.follow(map);
+		}catch(DuplicateKeyException e){
+			e.printStackTrace();
+			res= false;
+		}
+		catch(DataIntegrityViolationException ex){
+			ex.printStackTrace();
+			logger.info(memberId + "가 존재하지 않는 회원입니다.");
+			res = false;
+		}
+		
+		if(res){
+			logger.info("팔로우 성공했습니다.");
+		}else{
+			logger.error("팔로우 실패했습니다.");
+		}
+		logger.info(loginId + "가 " + memberId + " 회원을 팔로우 요청에 대한 응답. ");
+		
+		return res;
+	}
+	
+	public boolean unFollow(String loginId, String memberId){
+		logger.info(loginId + "가 " + memberId + " 회원을 언팔로우 요청했습니다.");
+		
+		boolean res = true;
+		Map<String, String> map = new HashMap<>();
+		try{
+			map.put("loginId", loginId);
+			map.put("memberId", memberId);
+			memberMapper.unFollow(map);
+		}catch(DuplicateKeyException e){
+			e.printStackTrace();
+			res= false;
+		}
+		catch(DataIntegrityViolationException ex){
+			ex.printStackTrace();
+			logger.info(memberId + "가 존재하지 않는 회원입니다.");
+			res = false;
+		}
+		
+		if(res){
+			logger.info("언팔로우 성공했습니다.");
+		}else{
+			logger.error("언팔로우 실패했습니다.");
+		}
+		
+		logger.info(loginId + "가 " + memberId + " 회원 언팔로우 요청에 대한 응답.");
+		return res;
 	}
 	
 }

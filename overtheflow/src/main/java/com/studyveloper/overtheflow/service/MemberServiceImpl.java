@@ -165,6 +165,38 @@ public class MemberServiceImpl implements MemberService {
 		return memberBeanList;
 	}
 	
+	public boolean follow(String loginId, String memberId){
+		logger.info(loginId + "가 " + memberId + " 회원을 팔로우 요청했습니다. ");
+		boolean res = false;
+		
+		if(loginId == null || loginId.trim().equals("")){
+			logger.error("loginId가 NULL 또는 빈문자입니다.");
+		}else if(memberId == null || memberId.trim().equals("")){
+			logger.error("memberId가 NULL 또는 빈문자입니다.");
+		}else{
+			res = memberDAO.follow(loginId, memberId);
+		}
+		
+		logger.info(loginId + "가 " + memberId + " 회원을 팔로우 요청에 대한 응답. ");
+		return res;
+	}
+	
+	public boolean unFollow(String loginId, String memberId){
+		logger.info(loginId + "가 " + memberId + " 회원을 언팔로우 요청했습니다.");
+		boolean res = false;
+		
+		if(loginId == null || loginId.trim().equals("")){
+			logger.error("loginId가 NULL 또는 빈문자입니다.");
+		}else if(memberId == null || memberId.trim().equals("")){
+			logger.error("memberId가 NULL 또는 빈문자입니다.");
+		}else{
+			res = memberDAO.unFollow(loginId, memberId);
+		}
+		
+		logger.info(loginId + "가 " + memberId + " 회원 언팔로우 요청에 대한 응답.");
+		return res;
+		
+	}
 	
 	
 }
