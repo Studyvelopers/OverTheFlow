@@ -17,4 +17,5 @@ public interface MemberService {
 	public boolean follow(String loginId, String memberId);
 	public boolean unFollow(String loginId, String memberId);
 	public List<MemberBean> getFollows(String memberId);
+	public List<MemberBean> getFollowers(String memberId);
 }

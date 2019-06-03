@@ -177,5 +177,23 @@ public class MemberDAO {
 		logger.info(memberId + " 회원이 팔로우한 회원 목록 조회 요청에 대한 응답");
 		return memberList;
 	}
+
+	public List<MemberVO> getFollowers(String memberId){
+		logger.info(memberId + " 회원을 팔로우한 회원 목록 조회 요청");
+		List<String> followerList = memberMapper.getFollowers(memberId);
+		logger.trace(memberId+"를 팔로우한 회원 수 : " + followerList.size());
+		List<MemberVO> memberList = new ArrayList<>();
+		MemberVO memberVO = null;
+		logger.trace(memberId + "를 팔로우한 회원 정보");
+		for(int i=0; i<followerList.size(); i++){
+			memberVO = getMember(followerList.get(i));
+			memberList.add(memberVO);
+			logger.trace(memberVO.toString());
+		}
+		
+		logger.info(memberId + " 회원을 팔로우한 회원 목록 조회 요청에 대한 응답");
+		return memberList;
+	}
+
 	
 }
