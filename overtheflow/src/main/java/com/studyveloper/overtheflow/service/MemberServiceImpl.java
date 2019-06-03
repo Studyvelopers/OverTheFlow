@@ -198,5 +198,28 @@ public class MemberServiceImpl implements MemberService {
 		
 	}
 	
+	public List<MemberBean> getFollows(String memberId){
+		logger.info(memberId + " 가 팔로우한 회원 목록 조회 요청");
+		List<MemberBean> memberBeanList = new ArrayList<>();
+		
+		if(memberId == null || memberId.trim().equals("")){
+			logger.error("memberId가 NULL 또는 빈문자입니다.");
+		}else{
+			List<MemberVO> memberVOList = memberDAO.getFollows(memberId);
+			MemberVO memberVO = null;
+			logger.trace(memberId + "가 팔로우한 회원의 수 : "+ memberVOList.size());
+			
+			for(int i=0; i< memberVOList.size(); i++){
+				memberVO = memberVOList.get(i);
+				if(memberVO != null){
+					memberBeanList.add(new MemberBean(memberVO));
+				}
+			}
+		}
+		
+		logger.info(memberId + " 가 팔로우한 회원 목록 조회 요청에 대한 응답");
+		return memberBeanList;	
+	}
+	
 	
 }

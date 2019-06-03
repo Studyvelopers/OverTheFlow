@@ -38,7 +38,7 @@
 			member_password = #{password}, 
 			member_introduction = #{introduction}
 		WHERE
-			member_id = #{id}  
+			member_id = #{id} AND member_email = #{email}
 	</update>
 	
 	<select id="getMember"  parameterType="string" resultType="MemberVO">
@@ -89,7 +89,7 @@
 		FROM
 			follow
 		WHERE
-			member_id = #{loginId}
+			member_id = #{memberId}
 	</select>
 	
 	<select id="getFollowers" parameterType="string" resultType="string">
@@ -98,7 +98,7 @@
 		FROM 
 			follow
 		WHERE
-			follow_id = #{loginId}
+			follow_id = #{memberId}
 		
 	</select>
 </mapper>

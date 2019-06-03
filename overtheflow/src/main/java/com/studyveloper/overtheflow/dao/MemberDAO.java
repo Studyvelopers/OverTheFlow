@@ -1,5 +1,6 @@
 package com.studyveloper.overtheflow.dao;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -136,7 +137,7 @@ public class MemberDAO {
 		
 		boolean res = true;
 		Map<String, String> map = new HashMap<>();
-		try{
+		try{	
 			map.put("loginId", loginId);
 			map.put("memberId", memberId);
 			memberMapper.unFollow(map);
@@ -158,6 +159,23 @@ public class MemberDAO {
 		
 		logger.info(loginId + "가 " + memberId + " 회원 언팔로우 요청에 대한 응답.");
 		return res;
+	}
+	
+	public List<MemberVO> getFollows(String memberId){
+		logger.info(memberId + " 회원이 팔로우한 회원 목록 조회 요청");
+		List<String> followList = memberMapper.getFollows(memberId);
+		logger.trace(memberId+"가 팔로우한 회원 수 : " + followList.size());
+		List<MemberVO> memberList = new ArrayList<>();
+		MemberVO memberVO = null;
+		logger.trace(memberId + "가 팔로우한 회원 정보");
+		for(int i=0; i<followList.size(); i++){
+			memberVO = getMember(followList.get(i));
+			memberList.add(memberVO);
+			logger.trace(memberVO.toString());
+		}
+		
+		logger.info(memberId + " 회원이 팔로우한 회원 목록 조회 요청에 대한 응답");
+		return memberList;
 	}
 	
 }

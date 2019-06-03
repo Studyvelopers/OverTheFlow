@@ -16,4 +16,5 @@ public interface MemberService {
 	public List<MemberBean> getMembersByEmail(String email);
 	public boolean follow(String loginId, String memberId);
 	public boolean unFollow(String loginId, String memberId);
+	public List<MemberBean> getFollows(String memberId);
 }
