@@ -19,8 +19,13 @@
 		SELECT * FROM playlist WHERE playlist_id = #{id}
 	</select>
 	
-	<select id="searchPlaylistsByMemberId" parameterType="String" resultMap="result">
+	<select id="searchPlaylistsByMemberId" parameterType="map" resultMap="result">
 		SELECT * FROM playlist WHERE member_id = #{memberId}
+		<if test="pageNumber != null">
+			<if test="perPageCount != null">	
+				LIMIT #{pageNumber}, #{perPageCount}
+			</if>
+		</if>
 	</select>
 	
 	<delete id="clean">
