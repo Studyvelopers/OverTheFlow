@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.studyveloper.overtheflow.mapper.PlaylistMapper">
+	<insert id="addPlaylist" parameterType="com.studyveloper.overtheflow.vo.PlaylistVO">
+		INSERT INTO playlist (playlist_id, playlist_title, playlist_description, playlist_register_date, playlist_visibility_flag, member_id)
+		VALUES (#{id}, #{title}, #{description}, #{registerDate}, #{visibility}, #{memberId})
+	</insert>
+</mapper>
