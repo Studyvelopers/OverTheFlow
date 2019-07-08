@@ -15,4 +15,9 @@
 		DELETE FROM playlist_tag
 		WHERE playlist_id = #{playlistId} AND playlist_tag_contents = #{tag}
 	</delete>
+	
+	<select id="searchPlaylistsByTag" parameterType="String" resultType="String">
+		SELECT playlist_id FROM playlist_tag
+		WHERE playlist_tag_contents = #{tag} 
+	</select>
 </mapper>
