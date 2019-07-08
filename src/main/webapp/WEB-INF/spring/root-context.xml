@@ -39,6 +39,12 @@
 		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
 	</bean>
 	
+	<bean id="memberLikesPlaylistMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+		<property name="mapperInterface"
+			value="com.studyveloper.overtheflow.mapper.MemberLikesPlaylistMapper" />
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
 	<context:component-scan base-package="com.studyveloper.overtheflow.mapper"></context:component-scan>
 	<!-- Mapper Beans <bean id="folderMapper" class="org.mybatis.spring.mapper.MapperFactoryBean"> 
 		<property name="mapperInterface" value="com.overtheflow.mapper.FolderMapper" 

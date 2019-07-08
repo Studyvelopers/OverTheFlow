@@ -4,6 +4,7 @@
 <configuration>
 	<!-- Aliasing -->
 	<typeAliases>
+		<typeAlias type="com.studyveloper.overtheflow.vo.MemberLikesPlaylistVO" alias="MemberLikesPlaylistVO"/>
 	</typeAliases>
 
 	<typeHandlers>
