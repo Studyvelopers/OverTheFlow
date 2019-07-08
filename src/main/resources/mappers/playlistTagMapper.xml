@@ -5,4 +5,9 @@
 		INSERT INTO playlist_tag (playlist_id, playlist_tag_contents)
 		VALUES (#{playlistId}, #{tag})
 	</insert>
+	
+	<delete id="deletePlaylistTagByPlaylistId" parameterType="String">
+		DELETE FROM playlist_tag
+		WHERE playlist_id = #{playlistId}
+	</delete>
 </mapper>
