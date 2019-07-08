@@ -26,4 +26,8 @@
 	<delete id="clean">
 		DELETE FROM playlist
 	</delete>
+	
+	<delete id="deletePlaylistById" parameterType="String">
+		DELETE FROM playlist WHERE playlist_id = #{id}
+	</delete>
 </mapper>

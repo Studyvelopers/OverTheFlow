@@ -12,4 +12,6 @@ public interface PlaylistMapper {
 	public List<PlaylistVO> searchPlaylistsByMemberId(String memberId) throws Exception;
 	
 	public void clean() throws Exception;
+	
+	public void deletePlaylistById(String id) throws Exception;
 }
