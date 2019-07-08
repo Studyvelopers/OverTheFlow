@@ -11,4 +11,6 @@ public interface MemberLikesPlaylistMapper {
 	public void noLikesPlaylist(MemberLikesPlaylistVO memberLikesPlaylistVO) throws Exception;
 	
 	public List<String> searchPlaylistsByMemberId(Map<String, Object> conditions) throws Exception;
+	
+	public List<String> searchMembersByPlaylistId(Map<String, Object> conditions) throws Exception;
 }

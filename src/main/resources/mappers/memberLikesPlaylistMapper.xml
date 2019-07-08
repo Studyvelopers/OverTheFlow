@@ -20,4 +20,14 @@
 			</if>
 		</if>
 	</select>
+	
+	<select id="searchMembersByPlaylistId" parameterType="map" resultType="String">
+		SELECT member_id FROM member_likes_playlist
+		WHERE playlist_id = #{playlistId}
+		<if test="pageNumber != null">
+			<if test="perPageCount != null">
+				LIMIT #{pageNumber}, #{perPageCount}
+			</if>
+		</if>
+	</select>
 </mapper>
