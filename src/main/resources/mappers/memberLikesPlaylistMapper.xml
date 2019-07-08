@@ -5,4 +5,9 @@
 		INSERT INTO member_likes_playlist (member_id, playlist_id)
 		VALUES (#{memberId}, #{playlistId})
 	</insert>
+	
+	<delete id="noLikesPlaylist" parameterType="memberLikesPlaylistVO">
+		DELETE FROM member_likes_playlist
+		WHERE member_id = #{memberId} AND playlist_id = #{playlistId}
+	</delete>
 </mapper>
