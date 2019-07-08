@@ -34,4 +34,15 @@
 	<delete id="deletePlaylistsByMemberId" parameterType="String">
 		DELETE FROM playlist WHERE member_id = #{memberId}
 	</delete>
+	
+	<update id="modifyPlaylist" parameterType="PlaylistVO">
+		UPDATE playlist 
+		SET 
+			playlist_title = #{title},
+			playlist_description = #{description},
+			playlist_register_date = #{registerDate},
+			playlist_visibility_flag = #{visibility},
+			member_id = #{memberId}
+		WHERE playlist_id = #{id}
+	</update>
 </mapper>
