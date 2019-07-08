@@ -5,86 +5,97 @@ import java.util.Date;
 public class MusicVO {
 	private String id;
 	private String title;
-	private	int playTime;
+	private	Integer playTime;
 	private Date registerDate;
 	private String description;
-	private boolean visibilityFlag;
-	private boolean downloadFlag;
-	private int playCount;
+	private Boolean visibilityFlag;
+	private Boolean downloadFlag;
+	private Integer playCount;
 	private String categoryId;
 	private String memberId;
 	
 	public MusicVO(){
 		
 	}
-	
+
 	public String getId() {
 		return id;
 	}
+
 	public void setId(String id) {
 		this.id = id;
 	}
+
 	public String getTitle() {
 		return title;
 	}
+
 	public void setTitle(String title) {
 		this.title = title;
 	}
-	public int getPlayTime() {
+
+	public Integer getPlayTime() {
 		return playTime;
 	}
-	public void setPlayTime(int playTime) {
+
+	public void setPlayTime(Integer playTime) {
 		this.playTime = playTime;
 	}
+
 	public Date getRegisterDate() {
 		return registerDate;
 	}
+
 	public void setRegisterDate(Date registerDate) {
 		this.registerDate = registerDate;
 	}
+
 	public String getDescription() {
 		return description;
 	}
+
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	public boolean isVisibilityFlag() {
+
+	public Boolean getVisibilityFlag() {
 		return visibilityFlag;
 	}
-	public void setVisibilityFlag(boolean visibilityFlag) {
+
+	public void setVisibilityFlag(Boolean visibilityFlag) {
 		this.visibilityFlag = visibilityFlag;
 	}
-	public boolean isDownloadFlag() {
+
+	public Boolean getDownloadFlag() {
 		return downloadFlag;
 	}
-	public void setDownloadFlag(boolean downloadFlag) {
+
+	public void setDownloadFlag(Boolean downloadFlag) {
 		this.downloadFlag = downloadFlag;
 	}
-	public int getPlayCount() {
+
+	public Integer getPlayCount() {
 		return playCount;
 	}
-	public void setPlayCount(int playCount) {
+
+	public void setPlayCount(Integer playCount) {
 		this.playCount = playCount;
 	}
+
 	public String getCategoryId() {
 		return categoryId;
 	}
+
 	public void setCategoryId(String categoryId) {
 		this.categoryId = categoryId;
 	}
+
 	public String getMemberId() {
 		return memberId;
 	}
+
 	public void setMemberId(String memberId) {
 		this.memberId = memberId;
-	}
-	
-	@Override
-	public String toString() {
-		return "MusicVO [id=" + id + ", title=" + title + ", playTime=" + playTime + ", registerDate=" + registerDate
-				+ ", description=" + description + ", visibilityFlag=" + visibilityFlag + ", downloadFlag="
-				+ downloadFlag + ", playCount=" + playCount + ", categoryId=" + categoryId + ", memberId=" + memberId
-				+ "]";
 	}
 
 	@Override
@@ -93,14 +104,14 @@ public class MusicVO {
 		int result = 1;
 		result = prime * result + ((categoryId == null) ? 0 : categoryId.hashCode());
 		result = prime * result + ((description == null) ? 0 : description.hashCode());
-		result = prime * result + (downloadFlag ? 1231 : 1237);
+		result = prime * result + ((downloadFlag == null) ? 0 : downloadFlag.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((memberId == null) ? 0 : memberId.hashCode());
-		result = prime * result + playCount;
-		result = prime * result + playTime;
+		result = prime * result + ((playCount == null) ? 0 : playCount.hashCode());
+		result = prime * result + ((playTime == null) ? 0 : playTime.hashCode());
 		result = prime * result + ((registerDate == null) ? 0 : registerDate.hashCode());
 		result = prime * result + ((title == null) ? 0 : title.hashCode());
-		result = prime * result + (visibilityFlag ? 1231 : 1237);
+		result = prime * result + ((visibilityFlag == null) ? 0 : visibilityFlag.hashCode());
 		return result;
 	}
 
@@ -123,7 +134,10 @@ public class MusicVO {
 				return false;
 		} else if (!description.equals(other.description))
 			return false;
-		if (downloadFlag != other.downloadFlag)
+		if (downloadFlag == null) {
+			if (other.downloadFlag != null)
+				return false;
+		} else if (!downloadFlag.equals(other.downloadFlag))
 			return false;
 		if (id == null) {
 			if (other.id != null)
@@ -135,9 +149,15 @@ public class MusicVO {
 				return false;
 		} else if (!memberId.equals(other.memberId))
 			return false;
-		if (playCount != other.playCount)
+		if (playCount == null) {
+			if (other.playCount != null)
+				return false;
+		} else if (!playCount.equals(other.playCount))
 			return false;
-		if (playTime != other.playTime)
+		if (playTime == null) {
+			if (other.playTime != null)
+				return false;
+		} else if (!playTime.equals(other.playTime))
 			return false;
 		if (registerDate == null) {
 			if (other.registerDate != null)
@@ -149,8 +169,19 @@ public class MusicVO {
 				return false;
 		} else if (!title.equals(other.title))
 			return false;
-		if (visibilityFlag != other.visibilityFlag)
+		if (visibilityFlag == null) {
+			if (other.visibilityFlag != null)
+				return false;
+		} else if (!visibilityFlag.equals(other.visibilityFlag))
 			return false;
 		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "MusicVO [id=" + id + ", title=" + title + ", playTime=" + playTime + ", registerDate=" + registerDate
+				+ ", description=" + description + ", visibilityFlag=" + visibilityFlag + ", downloadFlag="
+				+ downloadFlag + ", playCount=" + playCount + ", categoryId=" + categoryId + ", memberId=" + memberId
+				+ "]";
 	}
 }
