@@ -10,4 +10,9 @@
 		DELETE FROM playlist_tag
 		WHERE playlist_id = #{playlistId}
 	</delete>
+	
+	<delete id="deletePlaylistTag" parameterType="PlaylistTagVO">
+		DELETE FROM playlist_tag
+		WHERE playlist_id = #{playlistId} AND playlist_tag_contents = #{tag}
+	</delete>
 </mapper>
