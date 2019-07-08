@@ -6,7 +6,7 @@
 		VALUES (#{playlistId}, #{tag})
 	</insert>
 	
-	<delete id="deletePlaylistTagByPlaylistId" parameterType="String">
+	<delete id="deletePlaylistTagsByPlaylistId" parameterType="String">
 		DELETE FROM playlist_tag
 		WHERE playlist_id = #{playlistId}
 	</delete>
