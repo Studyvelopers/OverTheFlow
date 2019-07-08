@@ -49,5 +49,14 @@ public class PlaylistVO {
 	}
 	public void setMemberId(String memberId) {
 		this.memberId = memberId;
-	} 
+	}
+
+	@Override
+	public String toString() {
+		return "PlaylistVO [id=" + id + ", title=" + title + ", description=" + description + ", registerDate="
+				+ registerDate + ", visibility=" + visibility + ", memberId=" + memberId + "]";
+	}
+	
+	
+	
 }
