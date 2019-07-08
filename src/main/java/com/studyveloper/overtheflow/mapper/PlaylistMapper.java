@@ -14,4 +14,6 @@ public interface PlaylistMapper {
 	public void clean() throws Exception;
 	
 	public void deletePlaylistById(String id) throws Exception;
+	
+	public void deletePlaylistsByMemberId(String memberId) throws Exception;
 }
