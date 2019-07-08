@@ -6,16 +6,16 @@ import java.util.Map;
 import com.studyveloper.overtheflow.vo.MusicVO;
 
 public interface MusicMapper {
-	public int addMusic(MusicVO musicVO);
-	public int deleteAllMusic();
-	public int modifyMusic(MusicVO musicVO);
-	public boolean deleteMusic(String musicId);
+	public Integer addMusic(MusicVO musicVO);
+	public Integer deleteAllMusic();
+	public Integer modifyMusic(MusicVO musicVO);
+	public Boolean deleteMusic(String musicId);
 	public List<MusicVO> getAllMusicList();
 	public MusicVO searchMusicByMusicId(String musicId);
-	public int maxSearchMusicByMusicTitle(String title);
+	public Integer maxSearchMusicByMusicTitle(String title);
 	public List<MusicVO> searchMusicByMusicTitle(Map<String, Object> searchCondition);
-	public int maxSearchMusicByMemberNickname(String memberNickname);
+	public Integer maxSearchMusicByMemberNickname(String memberNickname);
 	public List<MusicVO> searchMusicByMemberNickname(Map<String, Object> searchCondition);
-	public int maxSearchMusicByMemberId(String memberId);
+	public Integer maxSearchMusicByMemberId(String memberId);
 	public List<MusicVO> searchMusicByMemberId(Map<String, Object> searchCondition);
 }
