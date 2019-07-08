@@ -23,4 +23,7 @@
 		SELECT * FROM playlist WHERE member_id = #{memberId}
 	</select>
 	
+	<delete id="clean">
+		DELETE FROM playlist
+	</delete>
 </mapper>
