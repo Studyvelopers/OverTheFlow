@@ -19,4 +19,8 @@
 		SELECT * FROM playlist WHERE playlist_id = #{id}
 	</select>
 	
+	<select id="searchPlaylistsByMemberId" parameterType="String" resultMap="result">
+		SELECT * FROM playlist WHERE member_id = #{memberId}
+	</select>
+	
 </mapper>
