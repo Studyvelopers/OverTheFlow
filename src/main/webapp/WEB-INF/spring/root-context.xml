@@ -42,6 +42,9 @@
 	<bean id="memberLikesPlaylistMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
 		<property name="mapperInterface"
 			value="com.studyveloper.overtheflow.mapper.MemberLikesPlaylistMapper" />
+	<bean id="playlistTagMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+		<property name="mapperInterface"
+			value="com.studyveloper.overtheflow.mapper.PlaylistTagMapper" />
 	<bean id="playlistMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
 		<property name="mapperInterface"
 			value="com.studyveloper.overtheflow.mapper.PlaylistMapper" />

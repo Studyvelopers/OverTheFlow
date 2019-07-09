@@ -5,6 +5,7 @@
 	<!-- Aliasing -->
 	<typeAliases>
 		<typeAlias type="com.studyveloper.overtheflow.vo.MemberLikesPlaylistVO" alias="MemberLikesPlaylistVO"/>
+		<typeAlias type="com.studyveloper.overtheflow.vo.PlaylistTagVO" alias="PlaylistTagVO"/>
 		<typeAlias alias="PlaylistVO" type="com.studyveloper.overtheflow.vo.PlaylistVO"/>
 		<typeAlias alias="memberLikesMusicVO" type="com.studyveloper.overtheflow.vo.MemberLikesMusicVO"/>
   	<typeAlias alias="musicTagVO" type="com.studyveloper.overtheflow.vo.MusicTagVO"/>
