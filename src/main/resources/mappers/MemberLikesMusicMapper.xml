@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.studyveloper.overtheflow.mapper.MemberLikesMusicMapper">
+	<resultMap id="memberLikesMusicVO" type="memberLikesMusicVO">
+		<result property="memberId" column="member_id"/>
+		<result property="musicId" column="music_id"/>
+	</resultMap>
+	
+	<insert id="addMemberLikesMusic" parameterType="memberLikesMusicVO">
+		INSERT INTO
+			member_likes_music
+		VALUES(#{memberId}, #{musicId})
+	</insert>
+	
+	<delete id="deleteAllMemberLikesMusic">
+		DELETE FROM member_likes_music
+	</delete>
+	
+	<delete id="deleteMemberLikesMusic" parameterType="memberLikesMusicVO">
+		DELETE FROM
+			member_likes_music
+		WHERE
+			member_id = #{memberId}
+		AND
+			music_id = #{musicId}
+	</delete>
+	
+	<select id="searchMemberLikesMusicByMusicId" parameterType="java.lang.String" resultMap="memberLikesMusicVO">
+		SELECT * FROM
+			member_likes_music
+		WHERE
+			music_id = #{musicId}
+	</select>
+	
+		<select id="searchMemberLikesMusicByMemberId" parameterType="java.lang.String" resultMap="memberLikesMusicVO">
+		SELECT * FROM
+			member_likes_music
+		WHERE
+			member_id = #{memberId}
+	</select>
+</mapper>
