@@ -1,7 +1,7 @@
 package com.studyveloper.overtheflow.mapper;
 
 import com.studyveloper.overtheflow.vo.CategoryVO;
-
+ 
 public interface CategoryMapper {
 	public Integer addCategory(CategoryVO categoryVO);
 	public Integer modifyCategory(CategoryVO categoryVO);
