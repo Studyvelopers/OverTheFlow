@@ -20,7 +20,7 @@ public class PlaylistLikeServiceImpl implements PlaylistLikeService {
 		// 전달인자 체크
 		if (playlistId == null || memberId == null) {
 			logger.error("전달인자 오류");
-			return null;
+			return false;
 		}
 		
 		try {
@@ -29,6 +29,27 @@ public class PlaylistLikeServiceImpl implements PlaylistLikeService {
 			like.setPlaylistId(playlistId);
 			
 			likeMapper.likesPlaylist(like);
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			return false;
+		}
+		
+		return true;
+	}
+
+	public Boolean cancelLikePlaylist(String playlistId, String memberId) {
+		// 전달인자 체크
+		if (playlistId == null || memberId == null) {
+			logger.error("전달인자 오류");
+			return false;
+		}
+		
+		try {
+			MemberLikesPlaylistVO like = new MemberLikesPlaylistVO();
+			like.setMemberId(memberId);
+			like.setPlaylistId(playlistId);
+			
+			likeMapper.noLikesPlaylist(like);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			return false;
