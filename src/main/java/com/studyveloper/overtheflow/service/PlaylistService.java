@@ -6,4 +6,6 @@ public interface PlaylistService {
 	public PlaylistBean createPlaylist(PlaylistBean playlistBean);
 	
 	public Boolean deletePlaylist(String playlistId);
+	
+	public PlaylistBean modifyPlaylist(PlaylistBean playlistBean);
 }

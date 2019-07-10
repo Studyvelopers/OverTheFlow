@@ -89,13 +89,13 @@ public class PlaylistServiceImpl implements PlaylistService {
 	}
 
 	public Boolean deletePlaylist(String playlistId) {
-		logger.info("플레이리스트 삭제 요청 (" + playlistId + ")");
-		
 		// 전달인자 null 체크
 		if (playlistId == null) {
 			logger.error("삭제할 대상이 없습니다.");
 			return false;
 		}
+				
+		logger.info("플레이리스트 삭제 요청 (" + playlistId + ")");
 		
 		try {
 			// 태그 정보 제거
@@ -111,5 +111,55 @@ public class PlaylistServiceImpl implements PlaylistService {
 		}
 		
 		return true;
+	}
+
+	public PlaylistBean modifyPlaylist(PlaylistBean playlistBean) {
+		// 전달인자 null 체크
+		if (playlistBean == null) {
+			logger.error("수정할 대상이 없습니다.");
+			return null;
+		}
+		
+		logger.info("플레이리스트 수정 (" + playlistBean.getId() + ")");
+		
+		// 데이터 체크
+		if (playlistBean.getVisibility() == null ||
+				playlistBean.getDescription() == null ||
+				playlistBean.getId() == null ||
+				playlistBean.getMemberId() == null ||
+				playlistBean.getRegisterDate() == null ||
+				playlistBean.getTitle() == null) {
+			logger.error("누락된 정보가 있습니다.");
+		}
+		
+		// VO 객체 생성
+		PlaylistVO playlistVO = new PlaylistVO();
+		playlistVO.setId(playlistBean.getId());
+		playlistVO.setDescription(playlistBean.getDescription());
+		playlistVO.setMemberId(playlistBean.getMemberId());
+		playlistVO.setRegisterDate(playlistBean.getRegisterDate());
+		playlistVO.setTitle(playlistBean.getTitle());
+		playlistVO.setVisibility(playlistBean.getVisibility());
+		
+		try {
+			// 플레이리스트 정보 수정
+			playlistMapper.modifyPlaylist(playlistVO);
+			
+			// 태그 정보 수정
+			playlistTagMapper.deletePlaylistTagsByPlaylistId(playlistVO.getId());
+			
+			// 태그 정보 등록
+			List<PlaylistTagVO> tags = playlistBean.getTags();
+			if (tags != null && tags.size() > 0) {
+				for (PlaylistTagVO tag : tags) {
+					playlistTagMapper.addPlaylistTag(tag);
+				}
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			return null;
+		}
+		
+		return playlistBean;
 	}
 }
