@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
@@ -17,6 +18,7 @@ import com.studyveloper.overtheflow.util.SearchUnit;
 import com.studyveloper.overtheflow.vo.MusicTagVO;
 import com.studyveloper.overtheflow.vo.MusicVO;
 
+@Service
 public class MusicServiceImpl implements MusicService {
 	@Autowired
 	private PlatformTransactionManager transactionManager;
@@ -38,7 +40,7 @@ public class MusicServiceImpl implements MusicService {
 			this.musicMapper.addMusic(musicVO);
 			
 			if(musicBean.getMusicTags() != null){
-				List<String> musicTags = musicBean.getMusicTags();
+				List<String> musicTags = musicBean.getMusicTags(); 
 				
 				for(String musicTag : musicTags){
 					MusicTagVO musicTagVO = new MusicTagVO();
@@ -74,12 +76,12 @@ public class MusicServiceImpl implements MusicService {
 			
 			this.musicMapper.modifyMusic(musicVO);
 			
+			String musicId = musicBean.getId();
+			
+			this.musicTagMapper.deleteMusicTagByMusicId(musicId);
+			
 			if(musicBean.getMusicTags() != null){
 				List<String> musicTags = musicBean.getMusicTags();
-				
-				String musicId = musicBean.getId();
-				
-				this.musicTagMapper.deleteMusicTagByMusicId(musicId);
 				
 				for(String musicTag : musicTags){
 					MusicTagVO musicTagVO = new MusicTagVO();
@@ -172,8 +174,7 @@ public class MusicServiceImpl implements MusicService {
 	}
 	
 	private boolean musicBeanNullCheck(MusicBean musicBean){
-		if(musicBean.getId() == null ||
-				musicBean.getTitle() == null ||
+		if(musicBean.getTitle() == null ||
 				musicBean.getPlayTime() == null ||
 				musicBean.getRegisterDate() == null ||
 				musicBean.getDescription() == null ||
@@ -181,15 +182,15 @@ public class MusicServiceImpl implements MusicService {
 				musicBean.getDownloadFlag() == null ||
 				musicBean.getPlayCount() == null ||
 				musicBean.getCategoryId() == null ||
-				musicBean.getMemberId() == null ||
-				musicBean.getMusicTags() == null) return true;
+				musicBean.getMemberId() == null) return true;
 		
 		List<String> musicTags = musicBean.getMusicTags();
 		
-		for(String musicTag : musicTags){
-			if(musicTag == null) return true;
+		if(musicTags != null){
+			for(String musicTag : musicTags){
+				if(musicTag == null) return true;
+			}
 		}
-		
 		return false;
 	}
 	
@@ -209,7 +210,7 @@ public class MusicServiceImpl implements MusicService {
 		musicVO.setMemberId(musicBean.getMemberId());
 		musicVO.setPlayCount(musicBean.getPlayCount());
 		musicVO.setPlayTime(musicBean.getPlayTime());
-		musicVO.setRegisterDate(new Date());
+		musicVO.setRegisterDate(musicBean.getRegisterDate());
 		musicVO.setTitle(musicBean.getTitle());
 		musicVO.setVisibilityFlag(musicBean.getVisibilityFlag());
 		
