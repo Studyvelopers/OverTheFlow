@@ -167,4 +167,41 @@ public class PlaylistServiceImpl implements PlaylistService {
 		
 		return playlistBean;
 	}
+	
+	public PlaylistBean searchPlaylistById(String playlistId) {
+		// 전달인자 체크
+		if (playlistId == null) {
+			logger.error("조회할 식별키가 없습니다.");
+			return null;
+		}
+		
+		PlaylistBean result = null;
+		try {
+			// 플레이리스트 정보 조회
+			PlaylistVO playlistVO = playlistMapper.searchPlaylistById(playlistId);
+			
+			// 정보가 없다면 널 리턴
+			if (playlistVO == null) {
+				return result;
+			}
+			
+			// 정보가 있으면 태그 정보 조회
+			List<String> tags = null;
+			tags = playlistTagMapper.searchTagsByPlaylistId(playlistId);
+			
+			// Bean 객체 생성
+			result = new PlaylistBean();
+			result.setDescription(playlistVO.getDescription());
+			result.setId(playlistVO.getId());
+			result.setMemberId(playlistVO.getMemberId());
+			result.setRegisterDate(playlistVO.getRegisterDate());
+			result.setTags(tags);
+			result.setTitle(playlistVO.getTitle());
+			result.setVisibility(playlistVO.getVisibility());
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+		
+		return result;
+	}
 }

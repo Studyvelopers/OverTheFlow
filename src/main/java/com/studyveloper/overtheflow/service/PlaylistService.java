@@ -8,4 +8,6 @@ public interface PlaylistService {
 	public Boolean deletePlaylist(String playlistId);
 	
 	public PlaylistBean modifyPlaylist(PlaylistBean playlistBean);
+	
+	public PlaylistBean searchPlaylistById(String playlistId);
 }
