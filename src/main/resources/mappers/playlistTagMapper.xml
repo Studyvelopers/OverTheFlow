@@ -20,4 +20,9 @@
 		SELECT playlist_id FROM playlist_tag
 		WHERE playlist_tag_contents = #{tag} 
 	</select>
+	
+	<select id="searchTagsByPlaylistId" parameterType="String" resultType="String">
+		SELECT playlist_tag_contents FROM playlist_tag
+		WHERE playlist_id = #{playlistId}
+	</select>
 </mapper>

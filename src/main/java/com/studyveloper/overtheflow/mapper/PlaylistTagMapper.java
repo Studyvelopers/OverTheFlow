@@ -12,4 +12,6 @@ public interface PlaylistTagMapper {
 	public void deletePlaylistTag(PlaylistTagVO playlistTagVO) throws Exception;
 	
 	public List<String> searchPlaylistsByTag(String tag) throws Exception;
+	
+	public List<String> searchTagsByPlaylistId(String playlistId) throws Exception;
 }
