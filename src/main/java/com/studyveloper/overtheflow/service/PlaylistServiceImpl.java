@@ -1,7 +1,10 @@
 package com.studyveloper.overtheflow.service;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -203,5 +206,48 @@ public class PlaylistServiceImpl implements PlaylistService {
 		}
 		
 		return result;
+	}
+
+	public List<PlaylistBean> searchPlaylistsByMemberId(String memberId, Integer pageNumber, Integer perPageCount) {
+		// 전달인자 체크
+		if (memberId == null) {
+			logger.error("전달인자 오류");
+			return null;
+		}
+		
+		List<PlaylistBean> playlists = new ArrayList<PlaylistBean>();
+		
+		// 회원아이디로 플레이리스트 검색
+		try {
+			Map<String, Object> conditions = new HashMap<String, Object>();
+			conditions.put("memberId", memberId);
+			conditions.put("pageNumber", pageNumber);
+			conditions.put("perPageCount", perPageCount);
+			
+			// 정보 조회
+			List<PlaylistVO> data = playlistMapper.searchPlaylistsByMemberId(conditions);
+			
+			// 태그 정보 조회
+			for (PlaylistVO playlist : data) {
+				List<String> tags = playlistTagMapper.searchTagsByPlaylistId(playlist.getId());
+				
+				// 빈 생성
+				PlaylistBean playlistBean = new PlaylistBean();
+				playlistBean.setDescription(playlist.getDescription());
+				playlistBean.setId(playlist.getId());
+				playlistBean.setMemberId(playlist.getMemberId());
+				playlistBean.setRegisterDate(playlist.getRegisterDate());
+				playlistBean.setTitle(playlist.getTitle());
+				playlistBean.setVisibility(playlist.getVisibility());
+				playlistBean.setTags(tags);
+				
+				// 빈 추가
+				playlists.add(playlistBean);
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+		
+		return playlists;
 	}
 }
