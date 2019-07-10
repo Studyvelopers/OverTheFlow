@@ -12,7 +12,7 @@ public class PlaylistBean {
 	private Date registerDate;
 	private Boolean visibility;
 	private String memberId;
-	private List<PlaylistTagVO> tags;
+	private List<String> tags;
 	public String getId() {
 		return id;
 	}
@@ -49,10 +49,10 @@ public class PlaylistBean {
 	public void setMemberId(String memberId) {
 		this.memberId = memberId;
 	}
-	public List<PlaylistTagVO> getTags() {
+	public List<String> getTags() {
 		return tags;
 	}
-	public void setTags(List<PlaylistTagVO> tags) {
+	public void setTags(List<String> tags) {
 		this.tags = tags;
 	}
 	@Override
@@ -118,7 +118,7 @@ public class PlaylistBean {
 		super();
 	}
 	public PlaylistBean(String id, String title, String description, Date registerDate, Boolean visibility,
-			String memberId, List<PlaylistTagVO> tags) {
+			String memberId, List<String> tags) {
 		super();
 		this.id = id;
 		this.title = title;
