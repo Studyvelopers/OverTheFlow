@@ -8,9 +8,10 @@
 		<typeAlias type="com.studyveloper.overtheflow.vo.PlaylistTagVO" alias="PlaylistTagVO"/>
 		<typeAlias alias="PlaylistVO" type="com.studyveloper.overtheflow.vo.PlaylistVO"/>
 		<typeAlias alias="memberLikesMusicVO" type="com.studyveloper.overtheflow.vo.MemberLikesMusicVO"/>
-  	<typeAlias alias="musicTagVO" type="com.studyveloper.overtheflow.vo.MusicTagVO"/>
+  		<typeAlias alias="musicTagVO" type="com.studyveloper.overtheflow.vo.MusicTagVO"/>
 		<typeAlias alias="categoryVO" type="com.studyveloper.overtheflow.vo.CategoryVO"></typeAlias>
 		<typeAlias alias="musicVO" type="com.studyveloper.overtheflow.vo.MusicVO"/>
+		<typeAlias type="com.studyveloper.overtheflow.vo.MemberVO" alias="MemberVO"/>
 	</typeAliases>
 	<typeHandlers>
 	</typeHandlers>
