@@ -39,6 +39,7 @@ public class MusicTagServiceImpl implements MusicTagService{
 			for(String tagName : tagNames){
 				MusicTagVO musicTagVO = new MusicTagVO();
 				musicTagVO.setMusicId(musicNo);
+				musicTagVO.setContents(tagName);
 				//DB에 제대로 등록이 되어있는지 확인하여 Exception처리 해줘야 하는가?
 				if(this.musicTagMapper.addMusicTag(musicTagVO) == 1) result.add(tagName);
 			}
@@ -46,6 +47,7 @@ public class MusicTagServiceImpl implements MusicTagService{
 		} catch(RuntimeException e){
 			this.transactionManager.rollback(transactionStatus);
 			//해당 RuntimeException 별로 상황에 맞는 Exception 처리
+			e.printStackTrace();
 			throw new Exception();
 		}
 		
@@ -133,5 +135,12 @@ public class MusicTagServiceImpl implements MusicTagService{
 		
 		return true;
 	}
-	
+
+	public void setTransactionManager(PlatformTransactionManager transactionManager) {
+		this.transactionManager = transactionManager;
+	}
+
+	public void setMusicTagMapper(MusicTagMapper musicTagMapper) {
+		this.musicTagMapper = musicTagMapper;
+	}
 }
