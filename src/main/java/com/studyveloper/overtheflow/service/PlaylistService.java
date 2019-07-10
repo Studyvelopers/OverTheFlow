@@ -4,4 +4,6 @@ import com.studyveloper.overtheflow.bean.PlaylistBean;
 
 public interface PlaylistService {
 	public PlaylistBean createPlaylist(PlaylistBean playlistBean);
+	
+	public Boolean deletePlaylist(String playlistId);
 }

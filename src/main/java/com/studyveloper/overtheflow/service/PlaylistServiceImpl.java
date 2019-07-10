@@ -20,8 +20,7 @@ public class PlaylistServiceImpl implements PlaylistService {
 
 	// logger
 	private static final Logger logger = LoggerFactory.getLogger(PlaylistServiceImpl.class);
-	private static final String TAG = "[PlaylistService]";
-	
+		
 	@Autowired
 	private PlaylistMapper playlistMapper;
 	
@@ -87,5 +86,30 @@ public class PlaylistServiceImpl implements PlaylistService {
 		logger.info(playlistBean.toString());
 		
 		return playlistBean;
+	}
+
+	public Boolean deletePlaylist(String playlistId) {
+		logger.info("플레이리스트 삭제 요청 (" + playlistId + ")");
+		
+		// 전달인자 null 체크
+		if (playlistId == null) {
+			logger.error("삭제할 대상이 없습니다.");
+			return false;
+		}
+		
+		try {
+			// 태그 정보 제거
+			playlistTagMapper.deletePlaylistTagsByPlaylistId(playlistId);
+			
+			// 플레이리스트 정보 제거
+			playlistMapper.deletePlaylistById(playlistId);
+			
+		} catch (Exception e) {
+			// 예외 처리
+			logger.error(e.getMessage());
+			return false;
+		}
+		
+		return true;
 	}
 }
