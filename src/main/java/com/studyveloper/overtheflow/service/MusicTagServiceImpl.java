@@ -115,7 +115,7 @@ public class MusicTagServiceImpl implements MusicTagService{
 		return result;
 	}
 
-	public boolean deleteTags(String musicNo) throws Exception {
+	public Boolean deleteTags(String musicNo) throws Exception {
 		// TODO Auto-generated method stub
 		if(musicNo == null) throw new Exception();
 		
