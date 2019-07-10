@@ -65,12 +65,14 @@ public class PlaylistServiceImpl implements PlaylistService {
 		}
 		
 		// 태그 정보 등록
-		List<PlaylistTagVO> tags = playlistBean.getTags();
+		List<String> tags = playlistBean.getTags();
 		try {
 			if (tags != null && tags.size() > 0) {
-				for (PlaylistTagVO tag : tags) {
-					tag.setPlaylistId(id);
-					playlistTagMapper.addPlaylistTag(tag);
+				for (String tag : tags) {
+					PlaylistTagVO tagVO = new PlaylistTagVO();
+					tagVO.setPlaylistId(id);
+					tagVO.setTag(tag);
+					playlistTagMapper.addPlaylistTag(tagVO);
 				}
 			}
 		}  catch (Exception e) {
@@ -149,10 +151,13 @@ public class PlaylistServiceImpl implements PlaylistService {
 			playlistTagMapper.deletePlaylistTagsByPlaylistId(playlistVO.getId());
 			
 			// 태그 정보 등록
-			List<PlaylistTagVO> tags = playlistBean.getTags();
+			List<String> tags = playlistBean.getTags();
 			if (tags != null && tags.size() > 0) {
-				for (PlaylistTagVO tag : tags) {
-					playlistTagMapper.addPlaylistTag(tag);
+				for (String tag : tags) {
+					PlaylistTagVO newTag = new PlaylistTagVO();
+					newTag.setPlaylistId(playlistBean.getId());
+					newTag.setTag(tag);
+					playlistTagMapper.addPlaylistTag(newTag);
 				}
 			}
 		} catch (Exception e) {
