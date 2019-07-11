@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
@@ -11,6 +12,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import com.studyveloper.overtheflow.mapper.MemberLikesMusicMapper;
 import com.studyveloper.overtheflow.vo.MemberLikesMusicVO;
 
+@Service
 public class MusicLikeServiceImpl implements MusicLikeService {
 	@Autowired
 	private PlatformTransactionManager transactionManager;
