@@ -21,121 +21,121 @@ public class MemberServiceImpl implements MemberService {
 	
 	public MemberBean register(MemberBean memberBean) {
 		// TODO Auto-generated method stub
-		logger.info("íšŒì›ê°€ì… ìš”ì²­");
-		logger.trace("ìš”ì²­ë°›ì€ íšŒì›ê°€ì… ì •ë³´ : \n"+memberBean.toString());
+		logger.info("?šŒ?›ê°??… ?š”ì²?");
+		logger.trace("?š”ì²?ë°›ì? ?šŒ?›ê°??… ? •ë³? : \n"+memberBean.toString());
 		if(!nullChk(memberBean)){
 			return null;
 		}
 		MemberVO memberVO = new MemberVO(memberBean);
 		
 		memberVO = memberDAO.register(memberVO);
-		logger.trace("íšŒì›ê°€ì… ì„±ê³µì— ëŒ€í•œ ì •ë³´ : \n"+memberVO.toString());
-		logger.info("íšŒì›ê°€ì… ìš”ì²­ì— ëŒ€í•œ ì‘ë‹µ");
+		logger.trace("?šŒ?›ê°??… ?„±ê³µì— ???•œ ? •ë³? : \n"+memberVO.toString());
+		logger.info("?šŒ?›ê°??… ?š”ì²??— ???•œ ?‘?‹µ");
 		return new MemberBean(memberVO);
 	}
 	
-	public boolean unRegister(MemberBean memberBean){
-		logger.info("íšŒì›íƒˆí‡´ ìš”ì²­");
+	public Boolean unRegister(MemberBean memberBean){
+		logger.info("?šŒ?›?ƒˆ?‡´ ?š”ì²?");
 		if(!nullChk(memberBean)){
-			logger.error("íšŒì›íƒˆí‡´ë¥¼ ìœ„í•´ ì…ë ¥ë°›ì€ ì •ë³´ê°€ NULL ë˜ëŠ” ë¹ˆ ë¬¸ìì—´ì…ë‹ˆë‹¤.");
+			logger.error("?šŒ?›?ƒˆ?‡´ë¥? ?œ„?•´ ?…? ¥ë°›ì? ? •ë³´ê? NULL ?˜?Š” ë¹? ë¬¸ì?—´?…?‹ˆ?‹¤.");
 			return false;
 		}
-		logger.trace("íšŒì› íƒˆí‡´ë¥¼ ìš”ì²­í•œ íšŒì›ì •ë³´ : " +memberBean.toString());
+		logger.trace("?šŒ?› ?ƒˆ?‡´ë¥? ?š”ì²??•œ ?šŒ?›? •ë³? : " +memberBean.toString());
 		boolean result = false;
 		MemberVO memberVO = new MemberVO(memberBean);
 		result = memberDAO.unregister(memberVO);
 		if(result){
-			logger.info("íšŒì›íƒˆí‡´ ì„±ê³µ");
+			logger.info("?šŒ?›?ƒˆ?‡´ ?„±ê³?");
 		}else{
-			logger.error("íšŒì›íƒˆí‡´ ì‹¤íŒ¨");
+			logger.error("?šŒ?›?ƒˆ?‡´ ?‹¤?Œ¨");
 		}
 		
-		logger.info("íšŒì›íƒˆí‡´ìš”ì²­ì— ëŒ€í•œ ì‘ë‹µ");
+		logger.info("?šŒ?›?ƒˆ?‡´?š”ì²??— ???•œ ?‘?‹µ");
 		return result;
 	}
 	
 	public MemberBean modifyMember(String targetMemberId, String requestMemberId, String password, MemberBean memberBean){
-		logger.info("íšŒì›ì •ë³´ ìˆ˜ì • ìš”ì²­");
+		logger.info("?šŒ?›? •ë³? ?ˆ˜? • ?š”ì²?");
 		if(targetMemberId == null || targetMemberId.trim().equals("")){
-			logger.error("íšŒì›ì •ë³´ë¥¼ ìˆ˜ì •í•˜ê¸° ìœ„í•œ ëŒ€ìƒ íšŒì›IDê°€ NULL ë˜ëŠ” ë¹ˆë¬¸ìì…ë‹ˆë‹¤.");
+			logger.error("?šŒ?›? •ë³´ë?? ?ˆ˜? •?•˜ê¸? ?œ„?•œ ???ƒ ?šŒ?›IDê°? NULL ?˜?Š” ë¹ˆë¬¸??…?‹ˆ?‹¤.");
 			return null;
 		}else if(requestMemberId == null || requestMemberId.trim().equals("")){
-			logger.error("íšŒì›ì •ë³´  ìˆ˜ì •ì„ ìš”ì²­í•œ íšŒì›IDê°€ NULL ë˜ëŠ” ë¹ˆë¬¸ìì…ë‹ˆë‹¤.");
+			logger.error("?šŒ?›? •ë³?  ?ˆ˜? •?„ ?š”ì²??•œ ?šŒ?›IDê°? NULL ?˜?Š” ë¹ˆë¬¸??…?‹ˆ?‹¤.");
 			return null;
 		}else if(password == null || password.trim().equals("")){
-			logger.error("íšŒì›ì •ë³´ë¥¼ ìˆ˜ì •í•˜ê¸° ìœ„í•´ í•„ìš”í•œ ì‹ë³„ì •ë³´ íŒ¨ìŠ¤ì›Œë“œê°€ NULL ë˜ëŠ” ë¹ˆë¬¸ìì…ë‹ˆë‹¤.");
+			logger.error("?šŒ?›? •ë³´ë?? ?ˆ˜? •?•˜ê¸? ?œ„?•´ ?•„?š”?•œ ?‹ë³„ì •ë³? ?Œ¨?Š¤?›Œ?“œê°? NULL ?˜?Š” ë¹ˆë¬¸??…?‹ˆ?‹¤.");
 			return null;
 		}else if(memberBean == null){
-			logger.error("íšŒì›ì •ë³´  ìˆ˜ì •í•˜ê¸° ìœ„í•œ ì •ë³´ê°€ NULL ë˜ëŠ” ë¹ˆë¬¸ìì…ë‹ˆë‹¤.");
+			logger.error("?šŒ?›? •ë³?  ?ˆ˜? •?•˜ê¸? ?œ„?•œ ? •ë³´ê? NULL ?˜?Š” ë¹ˆë¬¸??…?‹ˆ?‹¤.");
 		}
 		
-		logger.trace("íšŒì›ì •ë³´ ìˆ˜ì •ì„ ìš”ì²­í•œ íšŒì›ID : " + requestMemberId);
-		logger.trace("íšŒì›ì •ë³´ë¥¼ ìˆ˜ì •í•˜ë ¤ëŠ” ëŒ€ìƒ íšŒì›ID : " + targetMemberId);
-		logger.trace("íšŒì›ì •ë³´ ìˆ˜ì •ì„ ìš”ì²­í•œ íšŒì›ì˜ íŒ¨ìŠ¤ì›Œë“œ : " + password);
-		logger.trace("íšŒì›ì •ë³´ ìˆ˜ì •ì„ ìš”ì²­í•œ ì •ë³´ : " + memberBean.toString());
+		logger.trace("?šŒ?›? •ë³? ?ˆ˜? •?„ ?š”ì²??•œ ?šŒ?›ID : " + requestMemberId);
+		logger.trace("?šŒ?›? •ë³´ë?? ?ˆ˜? •?•˜? ¤?Š” ???ƒ ?šŒ?›ID : " + targetMemberId);
+		logger.trace("?šŒ?›? •ë³? ?ˆ˜? •?„ ?š”ì²??•œ ?šŒ?›?˜ ?Œ¨?Š¤?›Œ?“œ : " + password);
+		logger.trace("?šŒ?›? •ë³? ?ˆ˜? •?„ ?š”ì²??•œ ? •ë³? : " + memberBean.toString());
 		boolean res = memberDAO.modifyMember(new MemberVO(memberBean));
 		if(res){
-			logger.info("íšŒì›ì •ë³´ ìˆ˜ì • ì„±ê³µ");
+			logger.info("?šŒ?›? •ë³? ?ˆ˜? • ?„±ê³?");
 		}else{
-			logger.error("íšŒì›ì •ë³´ ìˆ˜ì • ì‹¤íŒ¨");
+			logger.error("?šŒ?›? •ë³? ?ˆ˜? • ?‹¤?Œ¨");
 		}
 		
-		logger.info("íšŒì›ì •ë³´ ìˆ˜ì • ìš”ì²­ì— ëŒ€í•œ ì‘ë‹µ");
+		logger.info("?šŒ?›? •ë³? ?ˆ˜? • ?š”ì²??— ???•œ ?‘?‹µ");
 		return memberBean;
 	}
 	
 	public MemberBean getMember(String memberId){
-		logger.info("íšŒì›ì •ë³´ ì¡°íšŒ ìš”ì²­");
-		logger.trace("íšŒì›ì •ë³´ ì¡°íšŒë¥¼ ìš”ì²­í•œ íšŒì›ì˜ID : " + memberId);
+		logger.info("?šŒ?›? •ë³? ì¡°íšŒ ?š”ì²?");
+		logger.trace("?šŒ?›? •ë³? ì¡°íšŒë¥? ?š”ì²??•œ ?šŒ?›?˜ID : " + memberId);
 		MemberVO memberVO = memberDAO.getMember(memberId);
 		MemberBean memberBean = null;
 		if(memberVO == null){
-			logger.error("ê²€ìƒ‰ëœ íšŒì›ì´ ì—†ìŠµë‹ˆë‹¤.");
+			logger.error("ê²??ƒ‰?œ ?šŒ?›?´ ?—†?Šµ?‹ˆ?‹¤.");
 		}else{
-			logger.trace("ê²€ìƒ‰ëœ íšŒì›ì˜ ì •ë³´ : "+ memberVO.toString());
+			logger.trace("ê²??ƒ‰?œ ?šŒ?›?˜ ? •ë³? : "+ memberVO.toString());
 			memberBean = new MemberBean(memberVO);
 		}
 		
-		logger.info("íšŒì›ì •ë³´ ì¡°íšŒ ìš”ì²­ì— ëŒ€í•œ ì‘ë‹µ");
+		logger.info("?šŒ?›? •ë³? ì¡°íšŒ ?š”ì²??— ???•œ ?‘?‹µ");
 		
 		return memberBean;
 	}
 	
 	public List<MemberBean> getMembersByNickName(String memberId){
-		logger.info("ë‹‰ë„¤ì„ìœ¼ë¡œ íšŒì›ê²€ìƒ‰ ìš”ì²­");
-		logger.trace("ê²€ìƒ‰ì„ ìš”ì²­í•œ ë‹‰ë„¤ì„ í‚¤ì›Œë“œ : " + memberId);
+		logger.info("?‹‰?„¤?„?œ¼ë¡? ?šŒ?›ê²??ƒ‰ ?š”ì²?");
+		logger.trace("ê²??ƒ‰?„ ?š”ì²??•œ ?‹‰?„¤?„ ?‚¤?›Œ?“œ : " + memberId);
 		List<MemberBean> memberBeanList = new ArrayList<>();
 		List<MemberVO> memberVOList = memberDAO.getMemebersByNickName(memberId);
 		MemberVO memberVO = null;
 		if(memberVOList == null || memberVOList.size() == 0){
-			logger.error("ê²€ìƒ‰ëœ íšŒì›ì´ ì—†ìŠµë‹ˆë‹¤.");
+			logger.error("ê²??ƒ‰?œ ?šŒ?›?´ ?—†?Šµ?‹ˆ?‹¤.");
 		}else{
-			logger.trace("ê²€ìƒ‰ëœ íšŒì›ì˜ ìˆ˜ : "+ memberVOList.size());
+			logger.trace("ê²??ƒ‰?œ ?šŒ?›?˜ ?ˆ˜ : "+ memberVOList.size());
 			for(int i=0; i<memberVOList.size(); i++){
 				memberVO = memberVOList.get(i);
-				logger.trace("ê²€ìƒ‰ëœ íšŒì›ì˜ ì •ë³´ : " + memberVO.toString());
+				logger.trace("ê²??ƒ‰?œ ?šŒ?›?˜ ? •ë³? : " + memberVO.toString());
 				memberBeanList.add(new MemberBean(memberVO));
 			}
 		}
 		
-		logger.info("íšŒì›ì •ë³´ ì¡°íšŒ ìš”ì²­ì— ëŒ€í•œ ì‘ë‹µ");
+		logger.info("?šŒ?›? •ë³? ì¡°íšŒ ?š”ì²??— ???•œ ?‘?‹µ");
 		
 		return memberBeanList;
 	}
 	
-	private boolean nullChk(MemberBean memberBean){
+	private Boolean nullChk(MemberBean memberBean){
 		boolean res = false;
 		if(memberBean.getEmail() == null || memberBean.getEmail().trim().equals("")){
-			logger.error("ì´ë©”ì¼ì´ NULL ë˜ëŠ” ë¹ˆë¬¸ì ì…ë‹ˆë‹¤.");
+			logger.error("?´ë©”ì¼?´ NULL ?˜?Š” ë¹ˆë¬¸? ?…?‹ˆ?‹¤.");
 		}
 		else if(memberBean.getPassword() == null || memberBean.getPassword().trim().equals("")){
-			logger.error("íŒ¨ìŠ¤ì›Œë“œê°€ NULL ë˜ëŠ” ë¹ˆë¬¸ì ì…ë‹ˆë‹¤.");
+			logger.error("?Œ¨?Š¤?›Œ?“œê°? NULL ?˜?Š” ë¹ˆë¬¸? ?…?‹ˆ?‹¤.");
 		}
 		else if(memberBean.getNickname() == null || memberBean.getNickname().trim().equals("")){
-			logger.error("ë‹‰ë„¤ì„ì´ NULL ë˜ëŠ” ë¹ˆë¬¸ì ì…ë‹ˆë‹¤.");
+			logger.error("?‹‰?„¤?„?´ NULL ?˜?Š” ë¹ˆë¬¸? ?…?‹ˆ?‹¤.");
 		}
 		else if(memberBean.getId() == null || memberBean.getId().trim().equals("")){
-			logger.error("IDê°€ NULL ë˜ëŠ” ë¹ˆë¬¸ì ì…ë‹ˆë‹¤.");
+			logger.error("IDê°? NULL ?˜?Š” ë¹ˆë¬¸? ?…?‹ˆ?‹¤.");
 		}else{
 			res= true;
 		}
@@ -144,16 +144,16 @@ public class MemberServiceImpl implements MemberService {
 	}
 	
 	public List<MemberBean> getMembersByEmail(String email){
-		logger.info("ì´ë©”ì¼ë¡œ íšŒì›ì •ë³´ ê²€ìƒ‰ ìš”ì²­");
+		logger.info("?´ë©”ì¼ë¡? ?šŒ?›? •ë³? ê²??ƒ‰ ?š”ì²?");
 		List<MemberVO> memberVOList = null;
 		MemberVO memberVO = null;
 		List<MemberBean> memberBeanList = new ArrayList<>();
 		memberVOList = memberDAO.getMembersByEmail(email);
 		
 		if(memberVOList == null || memberVOList.size() == 0){
-			logger.warn("ì´ë©”ì¼ë¡œ ê²€ìƒ‰ëœ íšŒì›ì´ ì—†ìŠµë‹ˆë‹¤.");
+			logger.warn("?´ë©”ì¼ë¡? ê²??ƒ‰?œ ?šŒ?›?´ ?—†?Šµ?‹ˆ?‹¤.");
 		}else{
-			logger.trace("ì´ë©”ì¼ë¡œ ê²€ìƒ‰ëœ íšŒì›ì˜ ìˆ˜ : " + memberVOList.size() + "\n ì´ë©”ì¼ë¡œ ê²€ìƒ‰ëœ íšŒì›ì˜ ì •ë³´\n");
+			logger.trace("?´ë©”ì¼ë¡? ê²??ƒ‰?œ ?šŒ?›?˜ ?ˆ˜ : " + memberVOList.size() + "\n ?´ë©”ì¼ë¡? ê²??ƒ‰?œ ?šŒ?›?˜ ? •ë³?\n");
 			for(int i=0; i<memberVOList.size(); i++){
 				memberVO = memberVOList.get(i);
 				logger.trace(memberVO.toString() );
@@ -161,53 +161,53 @@ public class MemberServiceImpl implements MemberService {
 			}
 		}
 		
-		logger.info("ì´ë©”ì¼ë¡œ íšŒì›ì •ë³´ ê²€ìƒ‰ ì‘ë‹µ");
+		logger.info("?´ë©”ì¼ë¡? ?šŒ?›? •ë³? ê²??ƒ‰ ?‘?‹µ");
 		return memberBeanList;
 	}
 	
-	public boolean follow(String loginId, String memberId){
-		logger.info(loginId + "ê°€ " + memberId + " íšŒì›ì„ íŒ”ë¡œìš° ìš”ì²­í–ˆìŠµë‹ˆë‹¤. ");
+	public Boolean follow(String loginId, String memberId){
+		logger.info(loginId + "ê°? " + memberId + " ?šŒ?›?„ ?Œ”ë¡œìš° ?š”ì²??–ˆ?Šµ?‹ˆ?‹¤. ");
 		boolean res = false;
 		
 		if(loginId == null || loginId.trim().equals("")){
-			logger.error("loginIdê°€ NULL ë˜ëŠ” ë¹ˆë¬¸ìì…ë‹ˆë‹¤.");
+			logger.error("loginIdê°? NULL ?˜?Š” ë¹ˆë¬¸??…?‹ˆ?‹¤.");
 		}else if(memberId == null || memberId.trim().equals("")){
-			logger.error("memberIdê°€ NULL ë˜ëŠ” ë¹ˆë¬¸ìì…ë‹ˆë‹¤.");
+			logger.error("memberIdê°? NULL ?˜?Š” ë¹ˆë¬¸??…?‹ˆ?‹¤.");
 		}else{
 			res = memberDAO.follow(loginId, memberId);
 		}
 		
-		logger.info(loginId + "ê°€ " + memberId + " íšŒì›ì„ íŒ”ë¡œìš° ìš”ì²­ì— ëŒ€í•œ ì‘ë‹µ. ");
+		logger.info(loginId + "ê°? " + memberId + " ?šŒ?›?„ ?Œ”ë¡œìš° ?š”ì²??— ???•œ ?‘?‹µ. ");
 		return res;
 	}
 	
-	public boolean unFollow(String loginId, String memberId){
-		logger.info(loginId + "ê°€ " + memberId + " íšŒì›ì„ ì–¸íŒ”ë¡œìš° ìš”ì²­í–ˆìŠµë‹ˆë‹¤.");
+	public Boolean unFollow(String loginId, String memberId){
+		logger.info(loginId + "ê°? " + memberId + " ?šŒ?›?„ ?–¸?Œ”ë¡œìš° ?š”ì²??–ˆ?Šµ?‹ˆ?‹¤.");
 		boolean res = false;
 		
 		if(loginId == null || loginId.trim().equals("")){
-			logger.error("loginIdê°€ NULL ë˜ëŠ” ë¹ˆë¬¸ìì…ë‹ˆë‹¤.");
+			logger.error("loginIdê°? NULL ?˜?Š” ë¹ˆë¬¸??…?‹ˆ?‹¤.");
 		}else if(memberId == null || memberId.trim().equals("")){
-			logger.error("memberIdê°€ NULL ë˜ëŠ” ë¹ˆë¬¸ìì…ë‹ˆë‹¤.");
+			logger.error("memberIdê°? NULL ?˜?Š” ë¹ˆë¬¸??…?‹ˆ?‹¤.");
 		}else{
 			res = memberDAO.unFollow(loginId, memberId);
 		}
 		
-		logger.info(loginId + "ê°€ " + memberId + " íšŒì› ì–¸íŒ”ë¡œìš° ìš”ì²­ì— ëŒ€í•œ ì‘ë‹µ.");
+		logger.info(loginId + "ê°? " + memberId + " ?šŒ?› ?–¸?Œ”ë¡œìš° ?š”ì²??— ???•œ ?‘?‹µ.");
 		return res;
 		
 	}
 	
 	public List<MemberBean> getFollows(String memberId){
-		logger.info(memberId + " ê°€ íŒ”ë¡œìš°í•œ íšŒì› ëª©ë¡ ì¡°íšŒ ìš”ì²­");
+		logger.info(memberId + " ê°? ?Œ”ë¡œìš°?•œ ?šŒ?› ëª©ë¡ ì¡°íšŒ ?š”ì²?");
 		List<MemberBean> memberBeanList = new ArrayList<>();
 		
 		if(memberId == null || memberId.trim().equals("")){
-			logger.error("memberIdê°€ NULL ë˜ëŠ” ë¹ˆë¬¸ìì…ë‹ˆë‹¤.");
+			logger.error("memberIdê°? NULL ?˜?Š” ë¹ˆë¬¸??…?‹ˆ?‹¤.");
 		}else{
 			List<MemberVO> memberVOList = memberDAO.getFollows(memberId);
 			MemberVO memberVO = null;
-			logger.trace(memberId + "ê°€ íŒ”ë¡œìš°í•œ íšŒì›ì˜ ìˆ˜ : "+ memberVOList.size());
+			logger.trace(memberId + "ê°? ?Œ”ë¡œìš°?•œ ?šŒ?›?˜ ?ˆ˜ : "+ memberVOList.size());
 			
 			for(int i=0; i< memberVOList.size(); i++){
 				memberVO = memberVOList.get(i);
@@ -217,20 +217,20 @@ public class MemberServiceImpl implements MemberService {
 			}
 		}
 		
-		logger.info(memberId + " ê°€ íŒ”ë¡œìš°í•œ íšŒì› ëª©ë¡ ì¡°íšŒ ìš”ì²­ì— ëŒ€í•œ ì‘ë‹µ");
+		logger.info(memberId + " ê°? ?Œ”ë¡œìš°?•œ ?šŒ?› ëª©ë¡ ì¡°íšŒ ?š”ì²??— ???•œ ?‘?‹µ");
 		return memberBeanList;	
 	}
 
 	public List<MemberBean> getFollowers(String memberId){
-		logger.info(memberId + " ë¥¼ íŒ”ë¡œìš°í•œ íšŒì› ëª©ë¡ ì¡°íšŒ ìš”ì²­");
+		logger.info(memberId + " ë¥? ?Œ”ë¡œìš°?•œ ?šŒ?› ëª©ë¡ ì¡°íšŒ ?š”ì²?");
 		List<MemberBean> memberBeanList = new ArrayList<>();
 		
 		if(memberId == null || memberId.trim().equals("")){
-			logger.error("memberIdê°€ NULL ë˜ëŠ” ë¹ˆë¬¸ìì…ë‹ˆë‹¤.");
+			logger.error("memberIdê°? NULL ?˜?Š” ë¹ˆë¬¸??…?‹ˆ?‹¤.");
 		}else{
 			List<MemberVO> memberVOList = memberDAO.getFollowers(memberId);
 			MemberVO memberVO = null;
-			logger.trace(memberId + "ë¥¼ íŒ”ë¡œìš°í•œ íšŒì›ì˜ ìˆ˜ : "+ memberVOList.size());
+			logger.trace(memberId + "ë¥? ?Œ”ë¡œìš°?•œ ?šŒ?›?˜ ?ˆ˜ : "+ memberVOList.size());
 			
 			for(int i=0; i< memberVOList.size(); i++){
 				memberVO = memberVOList.get(i);
@@ -240,7 +240,7 @@ public class MemberServiceImpl implements MemberService {
 			}
 		}
 		
-		logger.info(memberId + " ë¥¼ íŒ”ë¡œìš°í•œ íšŒì› ëª©ë¡ ì¡°íšŒ ìš”ì²­ì— ëŒ€í•œ ì‘ë‹µ");
+		logger.info(memberId + " ë¥? ?Œ”ë¡œìš°?•œ ?šŒ?› ëª©ë¡ ì¡°íšŒ ?š”ì²??— ???•œ ?‘?‹µ");
 		return memberBeanList;	
 	}
 	

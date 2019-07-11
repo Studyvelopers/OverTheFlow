@@ -22,90 +22,90 @@ public class MemberDAO {
 	private static final Logger logger = LoggerFactory.getLogger(MemberDAO.class);
 	
 	public MemberVO register(MemberVO memberVO){
-		logger.info("νμ›κ°€μ… μ”μ²­");
-		logger.trace("μ”μ²­λ°›μ€ νμ›κ°€μ… μ •λ³΄ : "+memberVO.toString());
+		logger.info("??›κ°??… ?”μ²?");
+		logger.trace("?”μ²?λ°›μ? ??›κ°??… ? •λ³? : "+memberVO.toString());
 		memberVO.setId(""+memberVO.hashCode());
 		try{
 			memberMapper.registerMember(memberVO);
 		}catch(DuplicateKeyException e){
 			e.printStackTrace();
 		}
-		logger.info("νμ›κ°€μ… μ”μ²­μ— λ€ν• μ‘λ‹µ");
+		logger.info("??›κ°??… ?”μ²??— ???• ?‘?‹µ");
 		return memberVO;
 	}
 	
 	public boolean unregister(MemberVO memberVO){
-		logger.info("νμ›νƒν‡΄ μ”μ²­");
-		logger.trace("νμ›νƒν‡΄λ¥Ό μ”μ²­ν• νμ›μ •λ³΄ : " + memberVO.toString());
+		logger.info("??›?ƒ?‡΄ ?”μ²?");
+		logger.trace("??›?ƒ?‡΄λ¥? ?”μ²??• ??›? •λ³? : " + memberVO.toString());
 		boolean result = false;
 		
 		int res = memberMapper.unregisterMember(memberVO);
 		if(res == 1){
 			result = true;
-			logger.info("νƒν‡΄ μ„±κ³µμ— μ„±κ³µν•μ€μµλ‹λ‹¤.");
+			logger.info("?ƒ?‡΄ ?„±κ³µμ— ?„±κ³µν•???µ?‹?‹¤.");
 		}else{
-			logger.error("νƒν‡΄λ¥Ό μ”μ²­ν• νμ›κ³Ό μΌμΉν•λ” μ •λ³΄κ°€ μ—†μµλ‹λ‹¤.");
+			logger.error("?ƒ?‡΄λ¥? ?”μ²??• ??›κ³? ?ΌμΉν•?” ? •λ³΄κ? ?—†?µ?‹?‹¤.");
 		}
 		
-		logger.info("νμ› νƒν‡΄μ”μ²­μ— λ€ν• μ‘λ‹µ");
+		logger.info("??› ?ƒ?‡΄?”μ²??— ???• ?‘?‹µ");
 		return result;
 	}
 	
 	public boolean modifyMember(MemberVO memberVO){
-		logger.info("νμ›μ •λ³΄ μμ • μ”μ²­");
+		logger.info("??›? •λ³? ?? • ?”μ²?");
 		if(memberVO == null){
-			logger.error("μμ •ν•λ ¤λ” νμ›μ μ •λ³΄κ°€ NULLμ…λ‹λ‹¤.");
+			logger.error("?? •?•? ¤?” ??›? ? •λ³΄κ? NULL?…?‹?‹¤.");
 		}else{
-			logger.info("μμ •ν•λ ¤λ” νμ›μ μ •λ³΄ : " + memberVO.toString());
+			logger.info("?? •?•? ¤?” ??›? ? •λ³? : " + memberVO.toString());
 		}
 		boolean result = false;
 		
 		int res = memberMapper.modifyMember(memberVO);
 		if(res == 1){
-			logger.info("νμ›μ •λ³΄ μμ • μ„±κ³µ");
+			logger.info("??›? •λ³? ?? • ?„±κ³?");
 			result = true;
 		}else{
-			logger.error("νμ›μ •λ³΄ μμ • μ‹¤ν¨");
+			logger.error("??›? •λ³? ?? • ?‹¤?¨");
 		}
 		
-		logger.info("νμ›μ •λ³΄ μμ • μ”μ²­μ— λ€ν• μ‘λ‹µ");
+		logger.info("??›? •λ³? ?? • ?”μ²??— ???• ?‘?‹µ");
 		return result;
 	}
 	
 	public MemberVO getMember(String memberId){
-		logger.info("νμ›μ •λ³΄ μ΅°ν μ”μ²­");
+		logger.info("??›? •λ³? μ΅°ν ?”μ²?");
 		
 		MemberVO memberVO = null;
 		
 		memberVO = memberMapper.getMember(memberId);
 		
 		if(memberVO == null){
-			logger.error("κ²€μƒ‰λ νμ›μ΄ μ—†μµλ‹λ‹¤.");
+			logger.error("κ²??ƒ‰? ??›?΄ ?—†?µ?‹?‹¤.");
 		}else{
-			logger.info("κ²€μƒ‰λ νμ›μ μ •λ³΄ : " + memberVO.toString());
+			logger.info("κ²??ƒ‰? ??›? ? •λ³? : " + memberVO.toString());
 		}
 		
-		logger.info("νμ›μ •λ³΄ μ΅°ν μ”μ²­μ— λ€ν• μ‘λ‹µ");
+		logger.info("??›? •λ³? μ΅°ν ?”μ²??— ???• ?‘?‹µ");
 		
 		return memberVO;
 	}
 	
 	public List<MemberVO> getMemebersByNickName(String nickname){
-		logger.info("λ‹‰λ„¤μ„μΌλ΅ νμ›μ •λ³΄ κ²€μƒ‰ μ”μ²­");
+		logger.info("?‹‰?„¤?„?Όλ΅? ??›? •λ³? κ²??ƒ‰ ?”μ²?");
 		List<MemberVO> memberList = memberMapper.getMembersByNickName(nickname);
-		logger.info("λ‹‰λ„¤μ„μΌλ΅ νμ›μ •λ³΄ κ²€μƒ‰ κ²°κ³Ό μ‘λ‹µ");
+		logger.info("?‹‰?„¤?„?Όλ΅? ??›? •λ³? κ²??ƒ‰ κ²°κ³Ό ?‘?‹µ");
 		return memberList;
 	}
 	
 	public List<MemberVO> getMembersByEmail(String email){
-		logger.info("μ΄λ©”μΌλ΅ νμ›μ •λ³΄ κ²€μƒ‰ μ”μ²­");
+		logger.info("?΄λ©”μΌλ΅? ??›? •λ³? κ²??ƒ‰ ?”μ²?");
 		List<MemberVO> memberVOList = memberMapper.getMembersByEmail(email);
-		logger.info("μ΄λ©”μΌλ΅ νμ›μ •λ³΄ κ²€μƒ‰ μ‘λ‹µ");
+		logger.info("?΄λ©”μΌλ΅? ??›? •λ³? κ²??ƒ‰ ?‘?‹µ");
 		return memberVOList;
 	}
 	
 	public boolean follow(String loginId, String memberId){
-		logger.info(loginId + "κ°€ " + memberId + " νμ›μ„ ν”λ΅μ° μ”μ²­ν–μµλ‹λ‹¤. ");
+		logger.info(loginId + "κ°? " + memberId + " ??›?„ ?”λ΅μ° ?”μ²??–?µ?‹?‹¤. ");
 		boolean res = true;
 		Map<String, String> map = new HashMap<>();
 		try{
@@ -118,22 +118,22 @@ public class MemberDAO {
 		}
 		catch(DataIntegrityViolationException ex){
 			ex.printStackTrace();
-			logger.info(memberId + "κ°€ μ΅΄μ¬ν•μ§€ μ•λ” νμ›μ…λ‹λ‹¤.");
+			logger.info(memberId + "κ°? μ΅΄μ¬?•μ§? ?•?” ??›?…?‹?‹¤.");
 			res = false;
 		}
 		
 		if(res){
-			logger.info("ν”λ΅μ° μ„±κ³µν–μµλ‹λ‹¤.");
+			logger.info("?”λ΅μ° ?„±κ³µν–?µ?‹?‹¤.");
 		}else{
-			logger.error("ν”λ΅μ° μ‹¤ν¨ν–μµλ‹λ‹¤.");
+			logger.error("?”λ΅μ° ?‹¤?¨?–?µ?‹?‹¤.");
 		}
-		logger.info(loginId + "κ°€ " + memberId + " νμ›μ„ ν”λ΅μ° μ”μ²­μ— λ€ν• μ‘λ‹µ. ");
+		logger.info(loginId + "κ°? " + memberId + " ??›?„ ?”λ΅μ° ?”μ²??— ???• ?‘?‹µ. ");
 		
 		return res;
 	}
 	
 	public boolean unFollow(String loginId, String memberId){
-		logger.info(loginId + "κ°€ " + memberId + " νμ›μ„ μ–Έν”λ΅μ° μ”μ²­ν–μµλ‹λ‹¤.");
+		logger.info(loginId + "κ°? " + memberId + " ??›?„ ?–Έ?”λ΅μ° ?”μ²??–?µ?‹?‹¤.");
 		
 		boolean res = true;
 		Map<String, String> map = new HashMap<>();
@@ -147,51 +147,51 @@ public class MemberDAO {
 		}
 		catch(DataIntegrityViolationException ex){
 			ex.printStackTrace();
-			logger.info(memberId + "κ°€ μ΅΄μ¬ν•μ§€ μ•λ” νμ›μ…λ‹λ‹¤.");
+			logger.info(memberId + "κ°? μ΅΄μ¬?•μ§? ?•?” ??›?…?‹?‹¤.");
 			res = false;
 		}
 		
 		if(res){
-			logger.info("μ–Έν”λ΅μ° μ„±κ³µν–μµλ‹λ‹¤.");
+			logger.info("?–Έ?”λ΅μ° ?„±κ³µν–?µ?‹?‹¤.");
 		}else{
-			logger.error("μ–Έν”λ΅μ° μ‹¤ν¨ν–μµλ‹λ‹¤.");
+			logger.error("?–Έ?”λ΅μ° ?‹¤?¨?–?µ?‹?‹¤.");
 		}
 		
-		logger.info(loginId + "κ°€ " + memberId + " νμ› μ–Έν”λ΅μ° μ”μ²­μ— λ€ν• μ‘λ‹µ.");
+		logger.info(loginId + "κ°? " + memberId + " ??› ?–Έ?”λ΅μ° ?”μ²??— ???• ?‘?‹µ.");
 		return res;
 	}
 	
 	public List<MemberVO> getFollows(String memberId){
-		logger.info(memberId + " νμ›μ΄ ν”λ΅μ°ν• νμ› λª©λ΅ μ΅°ν μ”μ²­");
+		logger.info(memberId + " ??›?΄ ?”λ΅μ°?• ??› λª©λ΅ μ΅°ν ?”μ²?");
 		List<String> followList = memberMapper.getFollows(memberId);
-		logger.trace(memberId+"κ°€ ν”λ΅μ°ν• νμ› μ : " + followList.size());
+		logger.trace(memberId+"κ°? ?”λ΅μ°?• ??› ? : " + followList.size());
 		List<MemberVO> memberList = new ArrayList<>();
 		MemberVO memberVO = null;
-		logger.trace(memberId + "κ°€ ν”λ΅μ°ν• νμ› μ •λ³΄");
+		logger.trace(memberId + "κ°? ?”λ΅μ°?• ??› ? •λ³?");
 		for(int i=0; i<followList.size(); i++){
 			memberVO = getMember(followList.get(i));
 			memberList.add(memberVO);
 			logger.trace(memberVO.toString());
 		}
 		
-		logger.info(memberId + " νμ›μ΄ ν”λ΅μ°ν• νμ› λª©λ΅ μ΅°ν μ”μ²­μ— λ€ν• μ‘λ‹µ");
+		logger.info(memberId + " ??›?΄ ?”λ΅μ°?• ??› λª©λ΅ μ΅°ν ?”μ²??— ???• ?‘?‹µ");
 		return memberList;
 	}
 
 	public List<MemberVO> getFollowers(String memberId){
-		logger.info(memberId + " νμ›μ„ ν”λ΅μ°ν• νμ› λª©λ΅ μ΅°ν μ”μ²­");
+		logger.info(memberId + " ??›?„ ?”λ΅μ°?• ??› λª©λ΅ μ΅°ν ?”μ²?");
 		List<String> followerList = memberMapper.getFollowers(memberId);
-		logger.trace(memberId+"λ¥Ό ν”λ΅μ°ν• νμ› μ : " + followerList.size());
+		logger.trace(memberId+"λ¥? ?”λ΅μ°?• ??› ? : " + followerList.size());
 		List<MemberVO> memberList = new ArrayList<>();
 		MemberVO memberVO = null;
-		logger.trace(memberId + "λ¥Ό ν”λ΅μ°ν• νμ› μ •λ³΄");
+		logger.trace(memberId + "λ¥? ?”λ΅μ°?• ??› ? •λ³?");
 		for(int i=0; i<followerList.size(); i++){
 			memberVO = getMember(followerList.get(i));
 			memberList.add(memberVO);
 			logger.trace(memberVO.toString());
 		}
 		
-		logger.info(memberId + " νμ›μ„ ν”λ΅μ°ν• νμ› λª©λ΅ μ΅°ν μ”μ²­μ— λ€ν• μ‘λ‹µ");
+		logger.info(memberId + " ??›?„ ?”λ΅μ°?• ??› λª©λ΅ μ΅°ν ?”μ²??— ???• ?‘?‹µ");
 		return memberList;
 	}
 
