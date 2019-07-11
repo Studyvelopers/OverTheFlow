@@ -1,6 +1,7 @@
 package com.studyveloper.overtheflow.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import com.studyveloper.overtheflow.bean.MemberBean;
 import com.studyveloper.overtheflow.mapper.MemberMapper;
+import com.studyveloper.overtheflow.util.IdentifierGenerator;
 import com.studyveloper.overtheflow.vo.MemberVO;
 
 @Service
@@ -29,9 +31,14 @@ public class MemberServiceImpl implements MemberService {
 		if(!nullChk(memberBean)){
 			return null;
 		}
-		MemberVO memberVO = new MemberVO(memberBean);
-		
-		memberVO.setId(""+memberVO.hashCode());
+		MemberVO memberVO = new MemberVO();
+		memberVO.setEmail(memberBean.getEmail());
+		memberVO.setIntroduction(memberBean.getIntroduction());
+		memberVO.setNickname(memberBean.getNickname());
+		memberVO.setPassword(memberBean.getPassword());
+		memberVO.setRegisterDate(new Date());
+		memberVO.setTypeId(memberBean.getTypeId());
+		memberVO.setId(IdentifierGenerator.generateId(memberBean.getNickname().hashCode()));
 		
 		try{
 			memberMapper.registerMember(memberVO);
@@ -49,7 +56,15 @@ public class MemberServiceImpl implements MemberService {
 		}
 		logger.trace("?��?�� ?��?���? ?���??�� ?��?��?���? : " +memberBean.toString());
 		boolean result = false;
-		MemberVO memberVO = new MemberVO(memberBean);
+		MemberVO memberVO = new MemberVO();
+		memberVO.setEmail(memberBean.getEmail());
+		memberVO.setIntroduction(memberBean.getIntroduction());
+		memberVO.setNickname(memberBean.getNickname());
+		memberVO.setPassword(memberBean.getPassword());
+		memberVO.setRegisterDate(memberBean.getRegisterDate());
+		memberVO.setTypeId(memberBean.getTypeId());
+		memberVO.setId(memberBean.getId());
+		
 		logger.info("?��?��?��?�� ?���?");
 		logger.trace("?��?��?��?���? ?���??�� ?��?��?���? : " + memberVO.toString());
 
@@ -95,7 +110,16 @@ public class MemberServiceImpl implements MemberService {
 		
 		boolean result = false;
 		
-		int res = memberMapper.modifyMember(new MemberVO(memberBean));
+		MemberVO memberVO = new MemberVO();
+		memberVO.setEmail(memberBean.getEmail());
+		memberVO.setIntroduction(memberBean.getIntroduction());
+		memberVO.setNickname(memberBean.getNickname());
+		memberVO.setPassword(memberBean.getPassword());
+		memberVO.setRegisterDate(memberBean.getRegisterDate());
+		memberVO.setTypeId(memberBean.getTypeId());
+		memberVO.setId(memberBean.getId());
+		
+		int res = memberMapper.modifyMember(memberVO);
 		if(res == 1){
 			logger.info("?��?��?���? ?��?�� ?���?");
 			result = true;
