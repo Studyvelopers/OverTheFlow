@@ -1,124 +1,168 @@
 package com.studyveloper.overtheflow.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import com.studyveloper.overtheflow.bean.MemberBean;
-import com.studyveloper.overtheflow.dao.MemberDAO;
+import com.studyveloper.overtheflow.mapper.MemberMapper;
 import com.studyveloper.overtheflow.vo.MemberVO;
 
 @Service
 public class MemberServiceImpl implements MemberService {
 
 	@Autowired
-	private MemberDAO memberDAO;
+	private MemberMapper memberMapper;
+	
 	private static final Logger logger = LoggerFactory.getLogger(MemberServiceImpl.class);
 	
 	public MemberBean register(MemberBean memberBean) {
 		// TODO Auto-generated method stub
-		logger.info("?šŒ?›ê°??… ?š”ì²?");
-		logger.trace("?š”ì²?ë°›ì? ?šŒ?›ê°??… ? •ë³? : \n"+memberBean.toString());
 		if(!nullChk(memberBean)){
 			return null;
 		}
 		MemberVO memberVO = new MemberVO(memberBean);
 		
-		memberVO = memberDAO.register(memberVO);
-		logger.trace("?šŒ?›ê°??… ?„±ê³µì— ???•œ ? •ë³? : \n"+memberVO.toString());
-		logger.info("?šŒ?›ê°??… ?š”ì²??— ???•œ ?‘?‹µ");
+		memberVO.setId(""+memberVO.hashCode());
+		
+		try{
+			memberMapper.registerMember(memberVO);
+		}catch(DuplicateKeyException e){
+			e.printStackTrace();
+		}
+		
 		return new MemberBean(memberVO);
 	}
 	
 	public Boolean unRegister(MemberBean memberBean){
-		logger.info("?šŒ?›?ƒˆ?‡´ ?š”ì²?");
 		if(!nullChk(memberBean)){
-			logger.error("?šŒ?›?ƒˆ?‡´ë¥? ?œ„?•´ ?…? ¥ë°›ì? ? •ë³´ê? NULL ?˜?Š” ë¹? ë¬¸ì?—´?…?‹ˆ?‹¤.");
+			
 			return false;
 		}
-		logger.trace("?šŒ?› ?ƒˆ?‡´ë¥? ?š”ì²??•œ ?šŒ?›? •ë³? : " +memberBean.toString());
+		logger.trace("?ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½ï¿½? ?ï¿½ï¿½ï¿½??ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ï¿½? : " +memberBean.toString());
 		boolean result = false;
 		MemberVO memberVO = new MemberVO(memberBean);
-		result = memberDAO.unregister(memberVO);
-		if(result){
-			logger.info("?šŒ?›?ƒˆ?‡´ ?„±ê³?");
+		logger.info("?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½ï¿½?");
+		logger.trace("?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ï¿½? ?ï¿½ï¿½ï¿½??ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ï¿½? : " + memberVO.toString());
+
+		int res = memberMapper.unregisterMember(memberVO);
+		if(res == 1){
+			result = true;
+			logger.info("?ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½ê³µì— ?ï¿½ï¿½ê³µí•˜???ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½.");
 		}else{
-			logger.error("?šŒ?›?ƒˆ?‡´ ?‹¤?Œ¨");
+			logger.error("?ï¿½ï¿½?ï¿½ï¿½ï¿½? ?ï¿½ï¿½ï¿½??ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½ï¿½? ?ï¿½ï¿½ì¹˜í•˜?ï¿½ï¿½ ?ï¿½ï¿½ë³´ï¿½? ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½.");
 		}
 		
-		logger.info("?šŒ?›?ƒˆ?‡´?š”ì²??— ???•œ ?‘?‹µ");
+		logger.info("?ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ï¿½??ï¿½ï¿½ ???ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½");
+		
+		if(result){
+			logger.info("?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½ï¿½?");
+		}else{
+			logger.error("?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½");
+		}
+		
+		logger.info("?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ï¿½??ï¿½ï¿½ ???ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½");
 		return result;
 	}
 	
 	public MemberBean modifyMember(String targetMemberId, String requestMemberId, String password, MemberBean memberBean){
-		logger.info("?šŒ?›? •ë³? ?ˆ˜? • ?š”ì²?");
+		logger.info("?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ï¿½? ?ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½ï¿½?");
 		if(targetMemberId == null || targetMemberId.trim().equals("")){
-			logger.error("?šŒ?›? •ë³´ë?? ?ˆ˜? •?•˜ê¸? ?œ„?•œ ???ƒ ?šŒ?›IDê°? NULL ?˜?Š” ë¹ˆë¬¸??…?‹ˆ?‹¤.");
+			logger.error("?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ë³´ï¿½?? ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ï¿½? ?ï¿½ï¿½?ï¿½ï¿½ ???ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½IDï¿½? NULL ?ï¿½ï¿½?ï¿½ï¿½ ë¹ˆë¬¸?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½.");
 			return null;
 		}else if(requestMemberId == null || requestMemberId.trim().equals("")){
-			logger.error("?šŒ?›? •ë³?  ?ˆ˜? •?„ ?š”ì²??•œ ?šŒ?›IDê°? NULL ?˜?Š” ë¹ˆë¬¸??…?‹ˆ?‹¤.");
+			logger.error("?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ï¿½?  ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½ï¿½??ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½IDï¿½? NULL ?ï¿½ï¿½?ï¿½ï¿½ ë¹ˆë¬¸?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½.");
 			return null;
 		}else if(password == null || password.trim().equals("")){
-			logger.error("?šŒ?›? •ë³´ë?? ?ˆ˜? •?•˜ê¸? ?œ„?•´ ?•„?š”?•œ ?‹ë³„ì •ë³? ?Œ¨?Š¤?›Œ?“œê°? NULL ?˜?Š” ë¹ˆë¬¸??…?‹ˆ?‹¤.");
+			logger.error("?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ë³´ï¿½?? ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ï¿½? ?ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½ë³„ì •ï¿½? ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ï¿½? NULL ?ï¿½ï¿½?ï¿½ï¿½ ë¹ˆë¬¸?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½.");
 			return null;
 		}else if(memberBean == null){
-			logger.error("?šŒ?›? •ë³?  ?ˆ˜? •?•˜ê¸? ?œ„?•œ ? •ë³´ê? NULL ?˜?Š” ë¹ˆë¬¸??…?‹ˆ?‹¤.");
+			logger.error("?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ï¿½?  ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ï¿½? ?ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½ë³´ï¿½? NULL ?ï¿½ï¿½?ï¿½ï¿½ ë¹ˆë¬¸?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½.");
 		}
 		
-		logger.trace("?šŒ?›? •ë³? ?ˆ˜? •?„ ?š”ì²??•œ ?šŒ?›ID : " + requestMemberId);
-		logger.trace("?šŒ?›? •ë³´ë?? ?ˆ˜? •?•˜? ¤?Š” ???ƒ ?šŒ?›ID : " + targetMemberId);
-		logger.trace("?šŒ?›? •ë³? ?ˆ˜? •?„ ?š”ì²??•œ ?šŒ?›?˜ ?Œ¨?Š¤?›Œ?“œ : " + password);
-		logger.trace("?šŒ?›? •ë³? ?ˆ˜? •?„ ?š”ì²??•œ ? •ë³? : " + memberBean.toString());
-		boolean res = memberDAO.modifyMember(new MemberVO(memberBean));
-		if(res){
-			logger.info("?šŒ?›? •ë³? ?ˆ˜? • ?„±ê³?");
+		logger.trace("?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ï¿½? ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½ï¿½??ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½ID : " + requestMemberId);
+		logger.trace("?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ë³´ï¿½?? ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ ???ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½ID : " + targetMemberId);
+		logger.trace("?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ï¿½? ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½ï¿½??ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ : " + password);
+		logger.trace("?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ï¿½? ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½ï¿½??ï¿½ï¿½ ?ï¿½ï¿½ï¿½? : " + memberBean.toString());
+		
+		boolean result = false;
+		
+		int res = memberMapper.modifyMember(new MemberVO(memberBean));
+		if(res == 1){
+			logger.info("?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ï¿½? ?ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½ï¿½?");
+			result = true;
 		}else{
-			logger.error("?šŒ?›? •ë³? ?ˆ˜? • ?‹¤?Œ¨");
+			logger.error("?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ï¿½? ?ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½");
 		}
 		
-		logger.info("?šŒ?›? •ë³? ?ˆ˜? • ?š”ì²??— ???•œ ?‘?‹µ");
+		logger.info("?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ï¿½? ?ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½ï¿½??ï¿½ï¿½ ???ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½");
+		if(result){
+			logger.info("?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ï¿½? ?ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½ï¿½?");
+		}else{
+			logger.error("?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ï¿½? ?ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½");
+		}
+		
+		logger.info("?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ï¿½? ?ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½ï¿½??ï¿½ï¿½ ???ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½");
 		return memberBean;
 	}
 	
 	public MemberBean getMember(String memberId){
-		logger.info("?šŒ?›? •ë³? ì¡°íšŒ ?š”ì²?");
-		logger.trace("?šŒ?›? •ë³? ì¡°íšŒë¥? ?š”ì²??•œ ?šŒ?›?˜ID : " + memberId);
-		MemberVO memberVO = memberDAO.getMember(memberId);
+		logger.info("?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ï¿½? ì¡°íšŒ ?ï¿½ï¿½ï¿½?");
+		logger.trace("?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ï¿½? ì¡°íšŒï¿½? ?ï¿½ï¿½ï¿½??ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ID : " + memberId);
+		
+		MemberVO memberVO = null;
+		
+		memberVO = memberMapper.getMember(memberId);
+		
+		if(memberVO == null){
+			logger.error("ï¿½??ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½.");
+		}else{
+			logger.info("ï¿½??ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½ï¿½? : " + memberVO.toString());
+		}
+		
+		logger.info("?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ï¿½? ì¡°íšŒ ?ï¿½ï¿½ï¿½??ï¿½ï¿½ ???ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½");
+		
 		MemberBean memberBean = null;
 		if(memberVO == null){
-			logger.error("ê²??ƒ‰?œ ?šŒ?›?´ ?—†?Šµ?‹ˆ?‹¤.");
+			logger.error("ï¿½??ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½.");
 		}else{
-			logger.trace("ê²??ƒ‰?œ ?šŒ?›?˜ ? •ë³? : "+ memberVO.toString());
+			logger.trace("ï¿½??ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½ï¿½? : "+ memberVO.toString());
 			memberBean = new MemberBean(memberVO);
 		}
 		
-		logger.info("?šŒ?›? •ë³? ì¡°íšŒ ?š”ì²??— ???•œ ?‘?‹µ");
+		logger.info("?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ï¿½? ì¡°íšŒ ?ï¿½ï¿½ï¿½??ï¿½ï¿½ ???ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½");
 		
 		return memberBean;
 	}
 	
-	public List<MemberBean> getMembersByNickName(String memberId){
-		logger.info("?‹‰?„¤?„?œ¼ë¡? ?šŒ?›ê²??ƒ‰ ?š”ì²?");
-		logger.trace("ê²??ƒ‰?„ ?š”ì²??•œ ?‹‰?„¤?„ ?‚¤?›Œ?“œ : " + memberId);
-		List<MemberBean> memberBeanList = new ArrayList<>();
-		List<MemberVO> memberVOList = memberDAO.getMemebersByNickName(memberId);
+	public List<MemberBean> getMembersByNickName(String nickname){
+		logger.info("?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ï¿½? ?ï¿½ï¿½?ï¿½ï¿½ï¿½??ï¿½ï¿½ ?ï¿½ï¿½ï¿½?");
+
+		List<MemberBean> memberBeanList = new ArrayList<MemberBean>();
+		
+		List<MemberVO> memberVOList = memberMapper.getMembersByNickName(nickname);
+
 		MemberVO memberVO = null;
 		if(memberVOList == null || memberVOList.size() == 0){
-			logger.error("ê²??ƒ‰?œ ?šŒ?›?´ ?—†?Šµ?‹ˆ?‹¤.");
+			logger.error("ï¿½??ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½.");
 		}else{
-			logger.trace("ê²??ƒ‰?œ ?šŒ?›?˜ ?ˆ˜ : "+ memberVOList.size());
+			logger.trace("ï¿½??ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½ : "+ memberVOList.size());
 			for(int i=0; i<memberVOList.size(); i++){
 				memberVO = memberVOList.get(i);
-				logger.trace("ê²??ƒ‰?œ ?šŒ?›?˜ ? •ë³? : " + memberVO.toString());
+				logger.trace("ï¿½??ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½ï¿½? : " + memberVO.toString());
 				memberBeanList.add(new MemberBean(memberVO));
 			}
 		}
 		
-		logger.info("?šŒ?›? •ë³? ì¡°íšŒ ?š”ì²??— ???•œ ?‘?‹µ");
+		logger.info("?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ï¿½? ì¡°íšŒ ?ï¿½ï¿½ï¿½??ï¿½ï¿½ ???ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½");
 		
 		return memberBeanList;
 	}
@@ -126,16 +170,16 @@ public class MemberServiceImpl implements MemberService {
 	private Boolean nullChk(MemberBean memberBean){
 		boolean res = false;
 		if(memberBean.getEmail() == null || memberBean.getEmail().trim().equals("")){
-			logger.error("?´ë©”ì¼?´ NULL ?˜?Š” ë¹ˆë¬¸? ?…?‹ˆ?‹¤.");
+			logger.error("?ï¿½ï¿½ë©”ì¼?ï¿½ï¿½ NULL ?ï¿½ï¿½?ï¿½ï¿½ ë¹ˆë¬¸?ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½.");
 		}
 		else if(memberBean.getPassword() == null || memberBean.getPassword().trim().equals("")){
-			logger.error("?Œ¨?Š¤?›Œ?“œê°? NULL ?˜?Š” ë¹ˆë¬¸? ?…?‹ˆ?‹¤.");
+			logger.error("?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ï¿½? NULL ?ï¿½ï¿½?ï¿½ï¿½ ë¹ˆë¬¸?ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½.");
 		}
 		else if(memberBean.getNickname() == null || memberBean.getNickname().trim().equals("")){
-			logger.error("?‹‰?„¤?„?´ NULL ?˜?Š” ë¹ˆë¬¸? ?…?‹ˆ?‹¤.");
+			logger.error("?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ NULL ?ï¿½ï¿½?ï¿½ï¿½ ë¹ˆë¬¸?ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½.");
 		}
 		else if(memberBean.getId() == null || memberBean.getId().trim().equals("")){
-			logger.error("IDê°? NULL ?˜?Š” ë¹ˆë¬¸? ?…?‹ˆ?‹¤.");
+			logger.error("IDï¿½? NULL ?ï¿½ï¿½?ï¿½ï¿½ ë¹ˆë¬¸?ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½.");
 		}else{
 			res= true;
 		}
@@ -144,16 +188,18 @@ public class MemberServiceImpl implements MemberService {
 	}
 	
 	public List<MemberBean> getMembersByEmail(String email){
-		logger.info("?´ë©”ì¼ë¡? ?šŒ?›? •ë³? ê²??ƒ‰ ?š”ì²?");
+		logger.info("?ï¿½ï¿½ë©”ì¼ï¿½? ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ï¿½? ï¿½??ï¿½ï¿½ ?ï¿½ï¿½ï¿½?");
 		List<MemberVO> memberVOList = null;
 		MemberVO memberVO = null;
-		List<MemberBean> memberBeanList = new ArrayList<>();
-		memberVOList = memberDAO.getMembersByEmail(email);
+		List<MemberBean> memberBeanList = new ArrayList<MemberBean>();
+		
+		memberVOList = memberMapper.getMembersByEmail(email);
+
 		
 		if(memberVOList == null || memberVOList.size() == 0){
-			logger.warn("?´ë©”ì¼ë¡? ê²??ƒ‰?œ ?šŒ?›?´ ?—†?Šµ?‹ˆ?‹¤.");
+			logger.warn("?ï¿½ï¿½ë©”ì¼ï¿½? ï¿½??ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½.");
 		}else{
-			logger.trace("?´ë©”ì¼ë¡? ê²??ƒ‰?œ ?šŒ?›?˜ ?ˆ˜ : " + memberVOList.size() + "\n ?´ë©”ì¼ë¡? ê²??ƒ‰?œ ?šŒ?›?˜ ? •ë³?\n");
+			logger.trace("?ï¿½ï¿½ë©”ì¼ï¿½? ï¿½??ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½ : " + memberVOList.size() + "\n ?ï¿½ï¿½ë©”ì¼ï¿½? ï¿½??ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½ï¿½?\n");
 			for(int i=0; i<memberVOList.size(); i++){
 				memberVO = memberVOList.get(i);
 				logger.trace(memberVO.toString() );
@@ -161,53 +207,116 @@ public class MemberServiceImpl implements MemberService {
 			}
 		}
 		
-		logger.info("?´ë©”ì¼ë¡? ?šŒ?›? •ë³? ê²??ƒ‰ ?‘?‹µ");
+		logger.info("?ï¿½ï¿½ë©”ì¼ï¿½? ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ï¿½? ï¿½??ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½");
 		return memberBeanList;
 	}
 	
 	public Boolean follow(String loginId, String memberId){
-		logger.info(loginId + "ê°? " + memberId + " ?šŒ?›?„ ?Œ”ë¡œìš° ?š”ì²??–ˆ?Šµ?‹ˆ?‹¤. ");
+		logger.info(loginId + "ï¿½? " + memberId + " ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½ë¡œìš° ?ï¿½ï¿½ï¿½??ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½. ");
 		boolean res = false;
 		
 		if(loginId == null || loginId.trim().equals("")){
-			logger.error("loginIdê°? NULL ?˜?Š” ë¹ˆë¬¸??…?‹ˆ?‹¤.");
+			logger.error("loginIdï¿½? NULL ?ï¿½ï¿½?ï¿½ï¿½ ë¹ˆë¬¸?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½.");
 		}else if(memberId == null || memberId.trim().equals("")){
-			logger.error("memberIdê°? NULL ?˜?Š” ë¹ˆë¬¸??…?‹ˆ?‹¤.");
+			logger.error("memberIdï¿½? NULL ?ï¿½ï¿½?ï¿½ï¿½ ë¹ˆë¬¸?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½.");
 		}else{
-			res = memberDAO.follow(loginId, memberId);
+			logger.info(loginId + "ï¿½? " + memberId + " ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½ë¡œìš° ?ï¿½ï¿½ï¿½??ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½. ");
+			res = true;
+			Map<String, String> map = new HashMap<String, String>();
+			try{
+				map.put("loginId", loginId);
+				map.put("memberId", memberId);
+				memberMapper.follow(map);
+			}catch(DuplicateKeyException e){
+				e.printStackTrace();
+				res= false;
+			}
+			catch(DataIntegrityViolationException ex){
+				ex.printStackTrace();
+				logger.info(memberId + "ï¿½? ì¡´ì¬?ï¿½ï¿½ï¿½? ?ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½.");
+				res = false;
+			}
+			
+			if(res){
+				logger.info("?ï¿½ï¿½ë¡œìš° ?ï¿½ï¿½ê³µí–ˆ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½.");
+			}else{
+				logger.error("?ï¿½ï¿½ë¡œìš° ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½.");
+			}
+			logger.info(loginId + "ï¿½? " + memberId + " ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½ë¡œìš° ?ï¿½ï¿½ï¿½??ï¿½ï¿½ ???ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½. ");
 		}
 		
-		logger.info(loginId + "ê°? " + memberId + " ?šŒ?›?„ ?Œ”ë¡œìš° ?š”ì²??— ???•œ ?‘?‹µ. ");
+		logger.info(loginId + "ï¿½? " + memberId + " ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½ë¡œìš° ?ï¿½ï¿½ï¿½??ï¿½ï¿½ ???ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½. ");
 		return res;
 	}
 	
 	public Boolean unFollow(String loginId, String memberId){
-		logger.info(loginId + "ê°? " + memberId + " ?šŒ?›?„ ?–¸?Œ”ë¡œìš° ?š”ì²??–ˆ?Šµ?‹ˆ?‹¤.");
+		logger.info(loginId + "ï¿½? " + memberId + " ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½ë¡œìš° ?ï¿½ï¿½ï¿½??ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½.");
 		boolean res = false;
 		
 		if(loginId == null || loginId.trim().equals("")){
-			logger.error("loginIdê°? NULL ?˜?Š” ë¹ˆë¬¸??…?‹ˆ?‹¤.");
+			logger.error("loginIdï¿½? NULL ?ï¿½ï¿½?ï¿½ï¿½ ë¹ˆë¬¸?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½.");
 		}else if(memberId == null || memberId.trim().equals("")){
-			logger.error("memberIdê°? NULL ?˜?Š” ë¹ˆë¬¸??…?‹ˆ?‹¤.");
+			logger.error("memberIdï¿½? NULL ?ï¿½ï¿½?ï¿½ï¿½ ë¹ˆë¬¸?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½.");
 		}else{
-			res = memberDAO.unFollow(loginId, memberId);
+			//
+
+			logger.info(loginId + "ï¿½? " + memberId + " ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½ë¡œìš° ?ï¿½ï¿½ï¿½??ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½.");
+			
+			res = true;
+			Map<String, String> map = new HashMap<String, String>();
+			try{	
+				map.put("loginId", loginId);
+				map.put("memberId", memberId);
+				memberMapper.unFollow(map);
+			}catch(DuplicateKeyException e){
+				e.printStackTrace();
+				res= false;
+			}
+			catch(DataIntegrityViolationException ex){
+				ex.printStackTrace();
+				logger.info(memberId + "ï¿½? ì¡´ì¬?ï¿½ï¿½ï¿½? ?ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½.");
+				res = false;
+			}
+			
+			if(res){
+				logger.info("?ï¿½ï¿½?ï¿½ï¿½ë¡œìš° ?ï¿½ï¿½ê³µí–ˆ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½.");
+			}else{
+				logger.error("?ï¿½ï¿½?ï¿½ï¿½ë¡œìš° ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½.");
+			}
+			
+			logger.info(loginId + "ï¿½? " + memberId + " ?ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½ë¡œìš° ?ï¿½ï¿½ï¿½??ï¿½ï¿½ ???ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½.");
+			//
 		}
 		
-		logger.info(loginId + "ê°? " + memberId + " ?šŒ?› ?–¸?Œ”ë¡œìš° ?š”ì²??— ???•œ ?‘?‹µ.");
+		logger.info(loginId + "ï¿½? " + memberId + " ?ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½ë¡œìš° ?ï¿½ï¿½ï¿½??ï¿½ï¿½ ???ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½.");
 		return res;
 		
 	}
 	
 	public List<MemberBean> getFollows(String memberId){
-		logger.info(memberId + " ê°? ?Œ”ë¡œìš°?•œ ?šŒ?› ëª©ë¡ ì¡°íšŒ ?š”ì²?");
-		List<MemberBean> memberBeanList = new ArrayList<>();
+		logger.info(memberId + " ï¿½? ?ï¿½ï¿½ë¡œìš°?ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½ ëª©ë¡ ì¡°íšŒ ?ï¿½ï¿½ï¿½?");
+		List<MemberBean> memberBeanList = new ArrayList<MemberBean>();
 		
 		if(memberId == null || memberId.trim().equals("")){
-			logger.error("memberIdê°? NULL ?˜?Š” ë¹ˆë¬¸??…?‹ˆ?‹¤.");
+			logger.error("memberIdï¿½? NULL ?ï¿½ï¿½?ï¿½ï¿½ ë¹ˆë¬¸?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½.");
 		}else{
-			List<MemberVO> memberVOList = memberDAO.getFollows(memberId);
+			//
+			logger.info(memberId + " ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½ë¡œìš°?ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½ ëª©ë¡ ì¡°íšŒ ?ï¿½ï¿½ï¿½?");
+			List<String> followList = memberMapper.getFollows(memberId);
+			logger.trace(memberId+"ï¿½? ?ï¿½ï¿½ë¡œìš°?ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½ : " + followList.size());
+			List<MemberVO> memberVOList = new ArrayList<MemberVO>();
 			MemberVO memberVO = null;
-			logger.trace(memberId + "ê°? ?Œ”ë¡œìš°?•œ ?šŒ?›?˜ ?ˆ˜ : "+ memberVOList.size());
+			logger.trace(memberId + "ï¿½? ?ï¿½ï¿½ë¡œìš°?ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½ï¿½?");
+			for(int i=0; i<followList.size(); i++){
+				memberVO = memberMapper.getMember(followList.get(i));
+				memberVOList.add(memberVO);
+				logger.trace(memberVO.toString());
+			}
+			
+			logger.info(memberId + " ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½ë¡œìš°?ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½ ëª©ë¡ ì¡°íšŒ ?ï¿½ï¿½ï¿½??ï¿½ï¿½ ???ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½");
+			//
+			memberVO = null;
+			logger.trace(memberId + "ï¿½? ?ï¿½ï¿½ë¡œìš°?ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½ : "+ memberVOList.size());
 			
 			for(int i=0; i< memberVOList.size(); i++){
 				memberVO = memberVOList.get(i);
@@ -217,20 +326,37 @@ public class MemberServiceImpl implements MemberService {
 			}
 		}
 		
-		logger.info(memberId + " ê°? ?Œ”ë¡œìš°?•œ ?šŒ?› ëª©ë¡ ì¡°íšŒ ?š”ì²??— ???•œ ?‘?‹µ");
+		logger.info(memberId + " ï¿½? ?ï¿½ï¿½ë¡œìš°?ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½ ëª©ë¡ ì¡°íšŒ ?ï¿½ï¿½ï¿½??ï¿½ï¿½ ???ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½");
 		return memberBeanList;	
 	}
 
 	public List<MemberBean> getFollowers(String memberId){
-		logger.info(memberId + " ë¥? ?Œ”ë¡œìš°?•œ ?šŒ?› ëª©ë¡ ì¡°íšŒ ?š”ì²?");
-		List<MemberBean> memberBeanList = new ArrayList<>();
+		logger.info(memberId + " ï¿½? ?ï¿½ï¿½ë¡œìš°?ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½ ëª©ë¡ ì¡°íšŒ ?ï¿½ï¿½ï¿½?");
+		List<MemberBean> memberBeanList = new ArrayList<MemberBean>();
 		
 		if(memberId == null || memberId.trim().equals("")){
-			logger.error("memberIdê°? NULL ?˜?Š” ë¹ˆë¬¸??…?‹ˆ?‹¤.");
+			logger.error("memberIdï¿½? NULL ?ï¿½ï¿½?ï¿½ï¿½ ë¹ˆë¬¸?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½.");
 		}else{
-			List<MemberVO> memberVOList = memberDAO.getFollowers(memberId);
+			//
+//			List<MemberVO> memberVOList = memberDAO.getFollowers(memberId);
+			
+			logger.info(memberId + " ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½ë¡œìš°?ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½ ëª©ë¡ ì¡°íšŒ ?ï¿½ï¿½ï¿½?");
+			List<String> followerList = memberMapper.getFollowers(memberId);
+			logger.trace(memberId+"ï¿½? ?ï¿½ï¿½ë¡œìš°?ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½ : " + followerList.size());
+			List<MemberVO> memberVOList = new ArrayList<MemberVO>();
 			MemberVO memberVO = null;
-			logger.trace(memberId + "ë¥? ?Œ”ë¡œìš°?•œ ?šŒ?›?˜ ?ˆ˜ : "+ memberVOList.size());
+			logger.trace(memberId + "ï¿½? ?ï¿½ï¿½ë¡œìš°?ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½ï¿½?");
+			for(int i=0; i<followerList.size(); i++){
+				memberVO = memberMapper.getMember(followerList.get(i));
+				memberVOList.add(memberVO);
+				logger.trace(memberVO.toString());
+			}
+			
+			logger.info(memberId + " ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½ë¡œìš°?ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½ ëª©ë¡ ì¡°íšŒ ?ï¿½ï¿½ï¿½??ï¿½ï¿½ ???ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½");
+			
+			//
+			memberVO = null;
+			logger.trace(memberId + "ï¿½? ?ï¿½ï¿½ë¡œìš°?ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½ : "+ memberVOList.size());
 			
 			for(int i=0; i< memberVOList.size(); i++){
 				memberVO = memberVOList.get(i);
@@ -240,7 +366,7 @@ public class MemberServiceImpl implements MemberService {
 			}
 		}
 		
-		logger.info(memberId + " ë¥? ?Œ”ë¡œìš°?•œ ?šŒ?› ëª©ë¡ ì¡°íšŒ ?š”ì²??— ???•œ ?‘?‹µ");
+		logger.info(memberId + " ï¿½? ?ï¿½ï¿½ë¡œìš°?ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½ ëª©ë¡ ì¡°íšŒ ?ï¿½ï¿½ï¿½??ï¿½ï¿½ ???ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½");
 		return memberBeanList;	
 	}
 	
