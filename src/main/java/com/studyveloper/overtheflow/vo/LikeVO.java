@@ -1,26 +1,26 @@
 package com.studyveloper.overtheflow.vo;
 
-public class MemberLikesPlaylistVO {
+public class LikeVO {
+	private String id;
 	private String memberId;
-	private String playlistId;
+	public String getid() {
+		return id;
+	}
+	public void setid(String id) {
+		this.id = id;
+	}
 	public String getMemberId() {
 		return memberId;
 	}
 	public void setMemberId(String memberId) {
 		this.memberId = memberId;
 	}
-	public String getPlaylistId() {
-		return playlistId;
-	}
-	public void setPlaylistId(String playlistId) {
-		this.playlistId = playlistId;
-	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((memberId == null) ? 0 : memberId.hashCode());
-		result = prime * result + ((playlistId == null) ? 0 : playlistId.hashCode());
 		return result;
 	}
 	@Override
@@ -31,22 +31,22 @@ public class MemberLikesPlaylistVO {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		MemberLikesPlaylistVO other = (MemberLikesPlaylistVO) obj;
+		LikeVO other = (LikeVO) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
 		if (memberId == null) {
 			if (other.memberId != null)
 				return false;
 		} else if (!memberId.equals(other.memberId))
 			return false;
-		if (playlistId == null) {
-			if (other.playlistId != null)
-				return false;
-		} else if (!playlistId.equals(other.playlistId))
-			return false;
 		return true;
 	}
 	@Override
 	public String toString() {
-		return "MemberLikesPlaylistVO [memberId=" + memberId + ", playlistId=" + playlistId + "]";
+		return "MemberLikesPlaylistVO [id=" + id + ", memberId=" + memberId + "]";
 	}
 	
 	
