@@ -12,14 +12,14 @@ public class MemberBean {
 	String introduction;
 	Date registerDate;
 	String typeId;
-	Integer followCnt;
-	Integer followerCnt;
+	Integer followingCount;
+	Integer followerCount;
 	public MemberBean() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 	public MemberBean(String id, String email, String password, String nickname, String introduction, Date registerDate,
-			String typeId, Integer followCnt, Integer followerCnt) {
+			String typeId, Integer followingCount, Integer followerCount) {
 		super();
 		this.id = id;
 		this.email = email;
@@ -28,8 +28,8 @@ public class MemberBean {
 		this.introduction = introduction;
 		this.registerDate = registerDate;
 		this.typeId = typeId;
-		this.followCnt = followCnt;
-		this.followerCnt = followerCnt;
+		this.followingCount = followingCount;
+		this.followerCount = followerCount;
 	}
 	
 	public MemberBean(MemberVO memberVO){
@@ -40,6 +40,8 @@ public class MemberBean {
 		this.introduction = memberVO.getIntroduction();
 		this.registerDate = memberVO.getRegisterDate();
 		this.typeId = memberVO.getTypeId();
+		this.followingCount = memberVO.getFollowingCount();
+		this.followerCount = memberVO.getFollowerCount();
 	}
 	public String getId() {
 		return id;
@@ -83,31 +85,37 @@ public class MemberBean {
 	public void setTypeId(String typeId) {
 		this.typeId = typeId;
 	}
-	public Integer getFollowCnt() {
-		return followCnt;
+	public Integer getfollowingCount() {
+		return followingCount;
 	}
-	public void setFollowCnt(Integer followCnt) {
-		this.followCnt = followCnt;
+	public void setfollowingCount(Integer followingCount) {
+		this.followingCount = followingCount;
 	}
-	public Integer getFollowerCnt() {
-		return followerCnt;
+	public Integer getfollowerCount() {
+		return followerCount;
 	}
-	public void setFollowerCnt(Integer followerCnt) {
-		this.followerCnt = followerCnt;
+	public void setfollowerCount(Integer followerCount) {
+		this.followerCount = followerCount;
 	}
+	
+	public MemberVO toVO(){
+		MemberVO memberVO = new MemberVO(id, email, password, nickname, introduction, registerDate, typeId, followingCount, followerCount);
+		return memberVO;
+	}
+	
 	@Override
 	public String toString() {
 		return "MemberBean [id=" + id + ", email=" + email + ", password=" + password + "\n, nickname=" + nickname
 				+ ", introduction=" + introduction + "\n, registerDate=" + registerDate + ", typeId=" + typeId
-				+ ", followCnt=" + followCnt + ", followerCnt=" + followerCnt + "]";
+				+ ", followingCount=" + followingCount + ", followerCount=" + followerCount + "]";
 	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((email == null) ? 0 : email.hashCode());
-		result = prime * result + ((followCnt == null) ? 0 : followCnt.hashCode());
-		result = prime * result + ((followerCnt == null) ? 0 : followerCnt.hashCode());
+		result = prime * result + ((followingCount == null) ? 0 : followingCount.hashCode());
+		result = prime * result + ((followerCount == null) ? 0 : followerCount.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((introduction == null) ? 0 : introduction.hashCode());
 		result = prime * result + ((nickname == null) ? 0 : nickname.hashCode());
@@ -130,15 +138,15 @@ public class MemberBean {
 				return false;
 		} else if (!email.equals(other.email))
 			return false;
-		if (followCnt == null) {
-			if (other.followCnt != null)
+		if (followingCount == null) {
+			if (other.followingCount != null)
 				return false;
-		} else if (!followCnt.equals(other.followCnt))
+		} else if (!followingCount.equals(other.followingCount))
 			return false;
-		if (followerCnt == null) {
-			if (other.followerCnt != null)
+		if (followerCount == null) {
+			if (other.followerCount != null)
 				return false;
-		} else if (!followerCnt.equals(other.followerCnt))
+		} else if (!followerCount.equals(other.followerCount))
 			return false;
 		if (id == null) {
 			if (other.id != null)
@@ -172,7 +180,4 @@ public class MemberBean {
 			return false;
 		return true;
 	}
-	
-	
-	
 }
