@@ -10,12 +10,15 @@ public class MemberVO {
 	String introduction;
 	Date registerDate;
 	String typeId;
+	Integer followingCount;
+	Integer followerCount;
 	public MemberVO() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
+	
 	public MemberVO(String id, String email, String password, String nickname, String introduction, Date registerDate,
-			String typeId) {
+			String typeId, Integer followingCount, Integer followerCount) {
 		super();
 		this.id = id;
 		this.email = email;
@@ -24,7 +27,10 @@ public class MemberVO {
 		this.introduction = introduction;
 		this.registerDate = registerDate;
 		this.typeId = typeId;
+		this.followingCount = followingCount;
+		this.followerCount = followerCount;
 	}
+
 	public String getId() {
 		return id;
 	}
@@ -67,16 +73,37 @@ public class MemberVO {
 	public void setTypeId(String typeId) {
 		this.typeId = typeId;
 	}
+	
+	public Integer getFollowingCount() {
+		return followingCount;
+	}
+
+	public void setFollowingCount(Integer followingCount) {
+		this.followingCount = followingCount;
+	}
+
+	public Integer getFollowerCount() {
+		return followerCount;
+	}
+
+	public void setFollowerCount(Integer followerCount) {
+		this.followerCount = followerCount;
+	}
+
 	@Override
 	public String toString() {
 		return "MemberVO [id=" + id + ", email=" + email + ", password=" + password + ", nickname=" + nickname
-				+ ", introduction=" + introduction + ", registerDate=" + registerDate + ", typeId=" + typeId + "]";
+				+ ", introduction=" + introduction + ", registerDate=" + registerDate + ", typeId=" + typeId
+				+ ", followingCount=" + followingCount + ", followerCount=" + followerCount + "]";
 	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((email == null) ? 0 : email.hashCode());
+		result = prime * result + ((followerCount == null) ? 0 : followerCount.hashCode());
+		result = prime * result + ((followingCount == null) ? 0 : followingCount.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((introduction == null) ? 0 : introduction.hashCode());
 		result = prime * result + ((nickname == null) ? 0 : nickname.hashCode());
@@ -85,6 +112,7 @@ public class MemberVO {
 		result = prime * result + ((typeId == null) ? 0 : typeId.hashCode());
 		return result;
 	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -98,6 +126,16 @@ public class MemberVO {
 			if (other.email != null)
 				return false;
 		} else if (!email.equals(other.email))
+			return false;
+		if (followerCount == null) {
+			if (other.followerCount != null)
+				return false;
+		} else if (!followerCount.equals(other.followerCount))
+			return false;
+		if (followingCount == null) {
+			if (other.followingCount != null)
+				return false;
+		} else if (!followingCount.equals(other.followingCount))
 			return false;
 		if (id == null) {
 			if (other.id != null)
@@ -131,4 +169,6 @@ public class MemberVO {
 			return false;
 		return true;
 	}
+	
+	
 }
