@@ -6,7 +6,7 @@ import java.util.List;
 public class MusicVO {
 	private String id;
 	private String title;
-	private	Integer playTime;
+	private	Integer playtime;
 	private Date registerDate;
 	private String description;
 	private Boolean visibility;
@@ -21,13 +21,13 @@ public class MusicVO {
 		
 	}
 
-	public MusicVO(String id, String title, Integer playTime, Date registerDate, String description, Boolean visibility,
+	public MusicVO(String id, String title, Integer playtime, Date registerDate, String description, Boolean visibility,
 			Boolean downloadable, Integer playCount, String categoryId, String memberId, List<String> tags,
 			String memberNickname) {
 		super();
 		this.id = id;
 		this.title = title;
-		this.playTime = playTime;
+		this.playtime = playtime;
 		this.registerDate = registerDate;
 		this.description = description;
 		this.visibility = visibility;
@@ -55,12 +55,12 @@ public class MusicVO {
 		this.title = title;
 	}
 
-	public Integer getPlayTime() {
-		return playTime;
+	public Integer getPlaytime() {
+		return playtime;
 	}
 
-	public void setPlayTime(Integer playTime) {
-		this.playTime = playTime;
+	public void setPlaytime(Integer playtime) {
+		this.playtime = playtime;
 	}
 
 	public Date getRegisterDate() {
@@ -138,7 +138,7 @@ public class MusicVO {
 
 	@Override
 	public String toString() {
-		return "MusicVO [id=" + id + ", title=" + title + ", playTime=" + playTime + ", registerDate=" + registerDate
+		return "MusicVO [id=" + id + ", title=" + title + ", playtime=" + playtime + ", registerDate=" + registerDate
 				+ ", description=" + description + ", visibility=" + visibility + ", downloadable=" + downloadable
 				+ ", playCount=" + playCount + ", categoryId=" + categoryId + ", memberId=" + memberId + ", tags="
 				+ tags + ", memberNickname=" + memberNickname + "]";
@@ -155,7 +155,7 @@ public class MusicVO {
 		result = prime * result + ((memberId == null) ? 0 : memberId.hashCode());
 		result = prime * result + ((memberNickname == null) ? 0 : memberNickname.hashCode());
 		result = prime * result + ((playCount == null) ? 0 : playCount.hashCode());
-		result = prime * result + ((playTime == null) ? 0 : playTime.hashCode());
+		result = prime * result + ((playtime == null) ? 0 : playtime.hashCode());
 		result = prime * result + ((registerDate == null) ? 0 : registerDate.hashCode());
 		result = prime * result + ((tags == null) ? 0 : tags.hashCode());
 		result = prime * result + ((title == null) ? 0 : title.hashCode());
@@ -207,10 +207,10 @@ public class MusicVO {
 				return false;
 		} else if (!playCount.equals(other.playCount))
 			return false;
-		if (playTime == null) {
-			if (other.playTime != null)
+		if (playtime == null) {
+			if (other.playtime != null)
 				return false;
-		} else if (!playTime.equals(other.playTime))
+		} else if (!playtime.equals(other.playtime))
 			return false;
 		if (registerDate == null) {
 			if (other.registerDate != null)
