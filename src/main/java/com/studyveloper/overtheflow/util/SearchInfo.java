@@ -23,21 +23,23 @@ public class SearchInfo extends PageInfo{
 	@Override
 	public String makeUrl(String path, Integer pageNumber) {
 		// TODO Auto-generated method stub
-		//URL 협의가 이루어지지 않은 관계로 협의후 다시 작업진행
-		/*UriComponents uriComponents =
+		String keyword = this.conditions.get("keyword");
+		String condition = this.conditions.get("condition");
+
+		UriComponents uriComponents =
 				UriComponentsBuilder.newInstance()
 				.path("/{path}")
 				.queryParam("currentPage", this.getCurrentPageNumber())
 				.queryParam("perPageCount", this.getPerPageCount())
-				.queryParam("keyword", this.searchPageInfo.getKeyword())
-				.queryParam("condition", this.searchPageInfo.getCondition())
-				.queryParam("sortOption", this.searchPageInfo.getSortOption())
+				.queryParam("keyword", keyword)
+				.queryParam("condition", condition)
+				.queryParam("sort", this.getSort())
+				.queryParam("orderRuel", this.getOrderRule())
 				.build()
-				.expand(this.url)
+				.expand(path)
 				.encode();
 		
-		return uriComponents.toUriString();*/
-		return null;
+		return uriComponents.toUriString();
 	}
 
 	public Map<String, String> getConditions() {
