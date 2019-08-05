@@ -2,12 +2,16 @@ package com.studyveloper.overtheflow.util;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.LocalDateTime;
 
 public class IdentifierGenerator {
-	public static String generateId(Integer key) {
+	public static String generateId(String key) {
 		try {
+			// 현재 시간을 키 값과 합치기
+			String value = key + DateTimeFormatters.FULL_FORMATTER.format(LocalDateTime.now());
+
 			MessageDigest md = MessageDigest.getInstance("SHA-1");
-			md.update(key.toString().getBytes());
+			md.update(value.getBytes());
 			MessageDigest generator = (MessageDigest)md.clone();
 			byte[] identifier = generator.digest();
 			StringBuffer sb = new StringBuffer(); 

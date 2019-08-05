@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.studyveloper.overtheflow.mapper.MusicTagMapper">
+	<resultMap id="musicTag" type="TagVO">
+		<result property="tagName" column="music_tag_contents"/>
+		<result property="id" column="music_id"/>
+	</resultMap>
+	
+	<insert id="addMusicTag" parameterType="TagVO">
+		INSERT INTO
+			music_tag (music_id, music_tag_contents)
+		VALUES
+			(#{id}, #{tagName})
+	</insert>
+	
+	<delete id="deleteMusicTag" parameterType="String">
+		DELETE FROM
+			music_tag
+		WHERE
+			music_id = #{musicId}
+	</delete>
+	
+	<select id="searchMusicIds" parameterType="String" resultType="String">
+		SELECT music_id
+		FROM music_tag
+		WHERE
+			music_tag_contents = #{tagName}
+	</select>
+	
+	<select id="searchTagNames" parameterType="String" resultMap="String">
+		SELECT
+			music_tag_contents
+		FROM
+			music_tag
+		WHERE
+			music_id = #{musicId}
+	</select>
+</mapper>

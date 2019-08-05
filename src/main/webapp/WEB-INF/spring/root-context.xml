@@ -23,7 +23,7 @@
 	<!-- SqlSessionFactory Bean -->
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="dataSource" ref="testDataSource" />
-		<property name="mapperLocations" value="classpath:mappers/**/*Mapper.xml" />
+		<property name="mapperLocations" value="classpath:mappers/**/*mapper.xml" />
 		<property name="configLocation" value="classpath:mybatis-config.xml" />
 	</bean>
 
@@ -33,31 +33,21 @@
 		<property name="dataSource" ref="testDataSource" />
 	</bean>
 
-	<bean id="testMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+	<bean id="memberMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
 		<property name="mapperInterface"
-			value="com.studyveloper.overtheflow.mapper.TestMapper" />
+			value="com.studyveloper.overtheflow.mapper.MemberMapper" />
 		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
 	</bean>
 	
-	<bean id="memberLikesPlaylistMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+	<bean id="followMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
 		<property name="mapperInterface"
-			value="com.studyveloper.overtheflow.mapper.MemberLikesPlaylistMapper" />
-		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
-	</bean>
-	<bean id="playlistTagMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
-		<property name="mapperInterface"
-			value="com.studyveloper.overtheflow.mapper.PlaylistTagMapper" />
-		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
-	</bean>
-	<bean id="playlistMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
-		<property name="mapperInterface"
-			value="com.studyveloper.overtheflow.mapper.PlaylistMapper" />
+			value="com.studyveloper.overtheflow.mapper.FollowMapper" />
 		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
 	</bean>
 	
-	<bean id="musicTagMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+	<bean id="categoryMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
 		<property name="mapperInterface"
-			value="com.studyveloper.overtheflow.mapper.MusicTagMapper" />
+			value="com.studyveloper.overtheflow.mapper.CategoryMapper" />
 		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
 	</bean>
 	
@@ -67,15 +57,36 @@
 		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
 	</bean>
 	
+	<bean id="musicTagMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+		<property name="mapperInterface"
+			value="com.studyveloper.overtheflow.mapper.MusicTagMapper" />
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
 	<bean id="memberLikesMusicMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
 		<property name="mapperInterface"
 			value="com.studyveloper.overtheflow.mapper.MemberLikesMusicMapper" />
 		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
 	</bean>
 	
+	<bean id="playlistMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+		<property name="mapperInterface"
+			value="com.studyveloper.overtheflow.mapper.PlaylistMapper" />
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+	<bean id="playlistTagMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+		<property name="mapperInterface"
+			value="com.studyveloper.overtheflow.mapper.PlaylistTagMapper" />
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+	<bean id="memberLikesPlaylistMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+		<property name="mapperInterface"
+			value="com.studyveloper.overtheflow.mapper.MemberLikesPlaylistMapper" />
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
 	<context:component-scan base-package="com.studyveloper.overtheflow.mapper"></context:component-scan>
 	<context:component-scan base-package="com.studyveloper.overtheflow.service"></context:component-scan>
-	<!-- Mapper Beans <bean id="folderMapper" class="org.mybatis.spring.mapper.MapperFactoryBean"> 
-		<property name="mapperInterface" value="com.overtheflow.mapper.FolderMapper" 
-		/> <property name="sqlSessionFactory" ref="sqlSessionFactory" /> </bean> -->
 </beans>

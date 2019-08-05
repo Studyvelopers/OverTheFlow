@@ -2,6 +2,8 @@ package com.studyveloper.overtheflow.vo;
 
 import java.util.Date;
 
+import com.studyveloper.overtheflow.util.option.OptionUnit;
+
 public class MemberVO {
 	String id;
 	String email;

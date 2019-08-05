@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.studyveloper.overtheflow.mapper.PlaylistMapper">
+	<resultMap type="PlaylistVO" id="playlist">
+		<id property="id" column="playlist_id"/>
+		<result property="title" column="playlist_title"/>
+		<result property="description" column="playlist_description"/>
+		<result property="registerDate" column="playlist_register_date"/>
+		<result property="visibility" column="playlist_visibility_flag"/>
+		<result property="memberId" column="member_id"/>
+		<result property="memberNickname" column="member_nickname"/>
+	</resultMap>
+
+	<insert id="addPlaylist" parameterType="PlaylistVO">
+		INSERT INTO 
+			playlist (
+				playlist_id, 
+				playlist_title, 
+				playlist_description, 
+				playlist_register_date, 
+				playlist_visibility_flag, 
+				member_id
+			)
+		VALUES (
+			#{id}, 
+			#{title}, 
+			#{description}, 
+			#{registerDate}, 
+			#{visibility}, 
+			#{memberId}
+		)
+	</insert>
+	
+	<select id="searchPlaylist" parameterType="String" resultMap="playlist">
+		SELECT
+			*
+		FROM
+			playlist_view
+		WHERE
+			playlist_id = #{id}
+	</select>
+	
+	<select id="searchPlaylists" parameterType="Map" resultMap="playlist">
+		SELECT
+			*
+		FROM
+			playlist_view
+		<!-- 검색 -->
+		<if test="searchOptions != null">
+		<if test="searchOptions.size gt 0">
+		<where>
+			<foreach collection="searchOptions" item="searchOption" index="index" separator=" ">
+				${searchOption.conjunction}
+				${searchOption.columnName}
+				<if test="searchOption.compareType lt 0">
+				IN
+					<foreach collection="searchOption.keywords" item="keyword" index="index" open="(" separator="," close=")">
+						#{keyword}
+					</foreach>
+				</if>
+				<if test="searchOption.compareType == 0">
+					= #{searchOption.keyword}
+				</if>
+				<if test="searchOption.compareType gt 0">
+					LIKE CONCAT('%', #{searchOption.keyword}, '%')
+				</if>
+			</foreach>
+		</where>
+		</if>
+		</if>
+		
+		<!-- 정렬 -->
+		<if test = "sortingOptions != null">
+			<if test="sortingOptions.size gt 0">
+			ORDER BY 
+			<foreach collection="sortingOptions" item="sortingOption" separator=",">
+				${sortingOption.columnName}
+				<choose>
+					<when test="sortingOption.ordering">
+						DESC
+					</when>
+					<otherwise>
+						ASC
+					</otherwise>
+				</choose> 
+			</foreach>
+			</if>
+		</if>
+		
+		<!-- 페이징 -->
+		<if test="pagingOption != null">
+			<if test="pagingOption.size gt 0">
+				LIMIT
+				<if test="pagingOption.offset gt 0">
+					#{pagingOption.offset},
+				</if>
+				#{pagingOption.size}
+			</if>
+		</if>	
+	</select>
+	
+	<delete id="deletePlaylist" parameterType="String">
+		DELETE FROM 
+			playlist 
+		WHERE 
+			playlist_id = #{id}
+	</delete>
+	
+	<delete id="deletePlaylists" parameterType="Map">
+		DELETE FROM 
+			playlist 
+		<!-- 검색 -->
+		<if test="searchOptions != null">
+		<if test="searchOptions.size gt 0">
+		<where>
+			<foreach collection="searchOptions" item="searchOption" index="index" separator=" ">
+				${searchOption.conjunction}
+				${searchOption.columnName}
+				<if test="searchOption.compareType lt 0">
+				IN
+					<foreach collection="searchOption.keywords" item="keyword" index="index" open="(" separator="," close=")">
+						#{keyword}
+					</foreach>
+				</if>
+				<if test="searchOption.compareType == 0">
+					= #{searchOption.keyword}
+				</if>
+				<if test="searchOption.compareType gt 0">
+					LIKE CONCAT('%', #{searchOption.keyword}, '%')
+				</if>
+			</foreach>
+		</where>
+		</if>
+		</if>
+	</delete>
+	
+	<update id="modifyPlaylist" parameterType="PlaylistVO">
+		UPDATE playlist 
+		SET 
+			playlist_title = #{title},
+			playlist_description = #{description},
+			playlist_register_date = #{registerDate},
+			playlist_visibility_flag = #{visibility},
+			member_id = #{memberId}
+		WHERE playlist_id = #{id}
+	</update>
+	
+	<select id="getPlaylistSize" parameterType="Map" resultType="Integer">
+		SELECT
+			COUNT(*)
+		FROM
+			playlist_view
+		<!-- 검색 -->
+		<if test="searchOptions != null">
+		<if test="searchOptions.size gt 0">
+		<where>
+			<foreach collection="searchOptions" item="searchOption" index="index" separator=" ">
+				${searchOption.conjunction}
+				${searchOption.columnName}
+				<if test="searchOption.compareType lt 0">
+				IN
+					<foreach collection="searchOption.keywords" item="keyword" index="index" open="(" separator="," close=")">
+						#{keyword}
+					</foreach>
+				</if>
+				<if test="searchOption.compareType == 0">
+					= #{searchOption.keyword}
+				</if>
+				<if test="searchOption.compareType gt 0">
+					LIKE CONCAT('%', #{searchOption.keyword}, '%')
+				</if>
+			</foreach>
+		</where>
+		</if>
+		</if>
+	</select>
+</mapper>
