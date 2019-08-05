@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.studyveloper.overtheflow.mapper.FollowMapper">
+	<resultMap type="MemberVO" id="memberVO">
+		<id property="id" column="member_id"/>
+		<result property="email" column="member_email"/>
+		<result property="password" column="member_password"/>
+		<result property="nickname" column="member_nickname"/>
+		<result property="introduction" column="member_introduction"/>
+		<result property="registerDate" column="member_register_date"/>
+		<result property="typeId" column="member_type_id"/>
+		<result property="followingCount" column="member_following_count"/>
+		<result property="followerCount" column="member_follower_count"/>
+	</resultMap>
+	
+	<insert id="addFollow" parameterType="FollowVO" >
+		INSERT INTO 
+			follow (member_id, follow_id)
+		VALUES( #{followerId}, #{followingId})
+	</insert>
+	
+	<delete id="deleteFollow" parameterType="FollowVO">
+		DELETE FROM 
+			follow
+		WHERE
+			member_id = #{followerId} AND follow_id = #{followingId}
+	</delete>
+	
+	<select id="searchFollowingIds" parameterType="String" resultType="String">
+		SELECT 
+			follow_id 
+		FROM
+			follow
+		WHERE
+			member_id = #{followerId}
+	</select>
+	
+	<select id="searchFollowerIds" parameterType="String" resultType="String">
+		SELECT
+			member_id
+		FROM 
+			follow
+		WHERE
+			follow_id = #{followingId}
+	</select>
+</mapper>

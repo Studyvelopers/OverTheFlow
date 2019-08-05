@@ -4,14 +4,13 @@
 <configuration>
 	<!-- Aliasing -->
 	<typeAliases>
-		<typeAlias type="com.studyveloper.overtheflow.vo.MemberLikesPlaylistVO" alias="MemberLikesPlaylistVO"/>
-		<typeAlias type="com.studyveloper.overtheflow.vo.PlaylistTagVO" alias="PlaylistTagVO"/>
 		<typeAlias alias="PlaylistVO" type="com.studyveloper.overtheflow.vo.PlaylistVO"/>
-		<typeAlias alias="memberLikesMusicVO" type="com.studyveloper.overtheflow.vo.MemberLikesMusicVO"/>
-  		<typeAlias alias="musicTagVO" type="com.studyveloper.overtheflow.vo.MusicTagVO"/>
-		<typeAlias alias="categoryVO" type="com.studyveloper.overtheflow.vo.CategoryVO"></typeAlias>
-		<typeAlias alias="musicVO" type="com.studyveloper.overtheflow.vo.MusicVO"/>
-		<typeAlias type="com.studyveloper.overtheflow.vo.MemberVO" alias="MemberVO"/>
+		<typeAlias alias="CategoryVO" type="com.studyveloper.overtheflow.vo.CategoryVO"/>
+		<typeAlias alias="MusicVO" type="com.studyveloper.overtheflow.vo.MusicVO"/>
+		<typeAlias alias="MemberVO" type="com.studyveloper.overtheflow.vo.MemberVO"/>
+		<typeAlias alias="LikeVO" type="com.studyveloper.overtheflow.vo.LikeVO"/>
+		<typeAlias alias="FollowVO" type="com.studyveloper.overtheflow.vo.FollowVO"/>
+		<typeAlias alias="TagVO" type="com.studyveloper.overtheflow.vo.TagVO"/>
 	</typeAliases>
 	<typeHandlers>
 	</typeHandlers>

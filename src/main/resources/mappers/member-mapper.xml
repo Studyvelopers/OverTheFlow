@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.studyveloper.overtheflow.mapper.MemberMapper">
+	<resultMap type="MemberVO" id="memberVO">
+		<id property="id" column="member_id"/>
+		<result property="email" column="member_email"/>
+		<result property="password" column="member_password"/>
+		<result property="nickname" column="member_nickname"/>
+		<result property="introduction" column="member_introduction"/>
+		<result property="registerDate" column="member_register_date"/>
+		<result property="typeId" column="member_type_id"/>
+		<result property="followingCount" column="member_following_count"/>
+		<result property="followerCount" column="member_follower_count"/>
+	</resultMap>
+
+	<insert id="addMember" parameterType="MemberVO">
+		INSERT INTO
+			member (member_id, member_email, member_password, member_nickname, member_introduction, member_register_date, member_type_id)
+		VALUES(#{id}, #{email}, #{password}, #{nickname}, #{introduction}, #{registerDate}, #{typeId})
+	</insert>
+
+	<delete id="deleteMember" parameterType="String">
+		DELETE FROM
+			member
+		WHERE
+			member_id = #{id}
+	</delete>
+	
+	<delete id="deleteMembers" parameterType="Map">
+		DELETE FROM
+			member
+		<!-- 검색 -->
+		<if test="searchOptions != null">
+		<if test="searchOptions.size gt 0">
+		<where>
+			<foreach collection="searchOptions" item="searchOption" index="index" separator=" ">
+				${searchOption.conjunction}
+				${searchOption.columnName}
+				<if test="searchOption.compareType lt 0">
+				IN
+					<foreach collection="searchOption.keywords" item="keyword" index="index" open="(" separator="," close=")">
+						#{keyword}
+					</foreach>
+				</if>
+				<if test="searchOption.compareType == 0">
+					= #{searchOption.keyword}
+				</if>
+				<if test="searchOption.compareType gt 0">
+					LIKE CONCAT('%', #{searchOption.keyword}, '%')
+				</if>
+			</foreach>
+		</where>
+		</if></if>
+	</delete>
+	
+	<update id="modifyMember" parameterType="MemberVO" >
+		UPDATE member
+		SET 
+			member_email = #{email},
+			member_password = #{password},
+			member_nickname = #{nickname}, 
+			member_introduction = #{introduction},
+			member_type_id = #{typeId}
+		WHERE
+			member_id = #{id}  
+	</update>
+	
+	<select id="searchMember" parameterType="String" resultMap="memberVO">
+		SELECT
+			*
+		FROM 
+			member_view
+		WHERE
+			member_id = #{memberId}
+	</select>
+	
+	<select id="searchMembers" parameterType="Map" resultMap="memberVO">
+		SELECT
+			*
+		FROM
+			member_view
+			
+		<!-- 검색 -->
+		<if test="searchOptions != null">
+		<if test="searchOptions.size gt 0">
+		<where>
+			<foreach collection="searchOptions" item="searchOption" index="index" separator=" ">
+				${searchOption.conjunction}
+				${searchOption.columnName}
+				<if test="searchOption.compareType lt 0">
+				IN
+					<foreach collection="searchOption.keywords" item="keyword" index="index" open="(" separator="," close=")">
+						#{keyword}
+					</foreach>
+				</if>
+				<if test="searchOption.compareType == 0">
+					= #{searchOption.keyword}
+				</if>
+				<if test="searchOption.compareType gt 0">
+					LIKE CONCAT('%', #{searchOption.keyword}, '%')
+				</if>
+			</foreach>
+		</where>
+		</if>
+		</if>
+		
+		<!-- 정렬 -->
+		<if test = "sortingOptions != null">
+			<if test="sortingOptions.size gt 0">
+			ORDER BY 
+			<foreach collection="sortingOptions" item="sortingOption" separator=",">
+				${sortingOption.columnName}
+				<choose>
+					<when test="sortingOption.ordering">
+						DESC
+					</when>
+					<otherwise>
+						ASC
+					</otherwise>
+				</choose> 
+			</foreach>
+			</if>
+		</if>
+		
+		<!-- 페이징 -->
+		<if test="pagingOption != null">
+			<if test="pagingOption.size gt 0">
+				LIMIT
+				<if test="pagingOption.offset gt 0">
+					#{pagingOption.offset},
+				</if>
+				#{pagingOption.size}
+			</if>
+		</if>	
+	</select>
+	
+	<select id="getMemberSize" parameterType="Map" resultType="Integer">
+		SELECT
+			COUNT(*)
+		FROM
+			member_view
+		<!-- 검색 -->
+		<if test="searchOptions != null">
+		<if test="searchOptions.size gt 0">
+		<where>
+			<foreach collection="searchOptions" item="searchOption" index="index" separator=" ">
+				${searchOption.conjunction}
+				${searchOption.columnName}
+				<if test="searchOption.compareType lt 0">
+				IN
+					<foreach collection="searchOption.keywords" item="keyword" index="index" open="(" separator="," close=")">
+						#{keyword}
+					</foreach>
+				</if>
+				<if test="searchOption.compareType == 0">
+					= #{searchOption.keyword}
+				</if>
+				<if test="searchOption.compareType gt 0">
+					LIKE CONCAT('%', #{searchOption.keyword}, '%')
+				</if>
+			</foreach>
+		</where>
+		</if>
+		</if>
+	</select>
+</mapper>
