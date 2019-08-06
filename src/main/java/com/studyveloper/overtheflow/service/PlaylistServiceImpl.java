@@ -17,6 +17,7 @@ import com.studyveloper.overtheflow.mapper.PlaylistTagMapper;
 import com.studyveloper.overtheflow.util.IdentifierGenerator;
 import com.studyveloper.overtheflow.vo.PlaylistTagVO;
 import com.studyveloper.overtheflow.vo.PlaylistVO;
+import com.studyveloper.overtheflow.vo.TagVO;
 
 @Service
 public class PlaylistServiceImpl implements PlaylistService {
@@ -30,34 +31,28 @@ public class PlaylistServiceImpl implements PlaylistService {
 	@Autowired
 	private PlaylistTagMapper playlistTagMapper;
 	
-	public PlaylistBean createPlaylist(PlaylistBean playlistBean) {
+	public PlaylistVO createPlaylist(PlaylistVO playlistVO) {
 		// 파라미터 널 체크
-		if (playlistBean == null) {
+		if (playlistVO == null) {
 			logger.error("전달인자 오류.");
 			return null;
 		}
 		
 		// 데이터 검증
-		if (playlistBean.getTitle() == null ||
-				playlistBean.getVisibility() == null ||
-				playlistBean.getDescription() == null ||
-				playlistBean.getMemberId() == null) {
-			
+		if (playlistVO.getTitle() == null 
+			|| playlistVO.getVisibility() == null
+			|| playlistVO.getDescription() == null
+			|| playlistVO.getMemberId() == null) {
 			logger.error("데이터가 비어 있습니다.");
 			return null;
 		}
-		
-		// bean -> vo 전환
-		PlaylistVO playlistVO = new PlaylistVO();
-		playlistVO.setTitle(playlistBean.getTitle());
-		playlistVO.setDescription(playlistBean.getDescription());
-		playlistVO.setMemberId(playlistBean.getMemberId());
-		playlistVO.setRegisterDate(new Date());
-		playlistVO.setVisibility(playlistBean.getVisibility());
-		
+	
 		// 식별키 생성
-		String id = IdentifierGenerator.generateId(playlistBean.getTitle().hashCode() + playlistBean.getMemberId().hashCode());
+		String id = IdentifierGenerator.generateId(playlistVO.getTitle());
 		playlistVO.setId(id);
+		
+		// 날짜 정보 삽입
+		playlistVO.setRegisterDate(new Date());
 		
 		// 플레이리스트 정보 등록
 		try {
@@ -68,13 +63,13 @@ public class PlaylistServiceImpl implements PlaylistService {
 		}
 		
 		// 태그 정보 등록
-		List<String> tags = playlistBean.getTags();
+		List<String> tags = playlistVO.getTags();
 		try {
 			if (tags != null && tags.size() > 0) {
 				for (String tag : tags) {
-					PlaylistTagVO tagVO = new PlaylistTagVO();
-					tagVO.setPlaylistId(id);
-					tagVO.setTag(tag);
+					TagVO tagVO = new TagVO();
+					tagVO.setId(id);
+					tagVO.setTagName(tag);
 					playlistTagMapper.addPlaylistTag(tagVO);
 				}
 			}
@@ -83,14 +78,7 @@ public class PlaylistServiceImpl implements PlaylistService {
 			logger.error(e.getMessage());
 		}
 		
-		// 식별키와 날짜 정보 삽입
-		playlistBean.setId(id);
-		playlistBean.setRegisterDate(playlistVO.getRegisterDate());
-		
-		// 로깅
-		logger.info(playlistBean.toString());
-		
-		return playlistBean;
+		return playlistVO;
 	}
 
 	public Boolean deletePlaylist(String playlistId) {
