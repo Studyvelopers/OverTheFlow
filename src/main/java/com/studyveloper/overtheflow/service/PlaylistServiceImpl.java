@@ -15,6 +15,7 @@ import com.studyveloper.overtheflow.bean.PlaylistBean;
 import com.studyveloper.overtheflow.mapper.PlaylistMapper;
 import com.studyveloper.overtheflow.mapper.PlaylistTagMapper;
 import com.studyveloper.overtheflow.util.IdentifierGenerator;
+import com.studyveloper.overtheflow.util.PageInfo;
 import com.studyveloper.overtheflow.util.option.OptionIntent;
 import com.studyveloper.overtheflow.util.option.PlaylistUnit;
 import com.studyveloper.overtheflow.vo.PlaylistVO;
@@ -172,5 +173,31 @@ public class PlaylistServiceImpl implements PlaylistService {
 		} else {
 			return null;
 		}
+	}
+	
+	public List<PlaylistVO> getAllPlaylists(PageInfo pageInfo) {
+		int size = 0;
+		int offset = 0;
+		if (pageInfo != null) {
+			size = pageInfo.getPerPageCount();
+			offset = (pageInfo.getCurrentPageNumber() - 1) * size;
+		}
+		
+		List<PlaylistVO> playlists = null;
+		
+		try {
+			// 플레이리스트 목록 가져오기
+			playlists = playlistMapper.searchPlaylists(new OptionIntent.Builder()
+					.setPagingOption(size, offset)
+					.build());
+			
+			// 총 목록의 갯수 갱신
+			pageInfo.setMaxCount(playlistMapper.getPlaylistSize(new OptionIntent.Builder().build()));
+		} catch (Exception e) {
+			logger.error(e.toString());
+			return null;
+		}
+		
+		return playlists;
 	}
 }
