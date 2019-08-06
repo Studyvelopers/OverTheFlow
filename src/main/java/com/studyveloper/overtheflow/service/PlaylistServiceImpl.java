@@ -15,7 +15,8 @@ import com.studyveloper.overtheflow.bean.PlaylistBean;
 import com.studyveloper.overtheflow.mapper.PlaylistMapper;
 import com.studyveloper.overtheflow.mapper.PlaylistTagMapper;
 import com.studyveloper.overtheflow.util.IdentifierGenerator;
-import com.studyveloper.overtheflow.vo.PlaylistTagVO;
+import com.studyveloper.overtheflow.util.option.OptionIntent;
+import com.studyveloper.overtheflow.util.option.PlaylistUnit;
 import com.studyveloper.overtheflow.vo.PlaylistVO;
 import com.studyveloper.overtheflow.vo.TagVO;
 
@@ -76,12 +77,13 @@ public class PlaylistServiceImpl implements PlaylistService {
 		}  catch (Exception e) {
 			// 예외 처리
 			logger.error(e.getMessage());
+			return null;
 		}
 		
 		return playlistVO;
 	}
 
-	public Boolean deletePlaylist(String playlistId) {
+	public boolean deletePlaylist(String playlistId, String loginId) {
 		// 전달인자 null 체크
 		if (playlistId == null) {
 			logger.error("삭제할 대상이 없습니다.");
@@ -91,11 +93,11 @@ public class PlaylistServiceImpl implements PlaylistService {
 		logger.info("플레이리스트 삭제 요청 (" + playlistId + ")");
 		
 		try {
-			// 태그 정보 제거
-			playlistTagMapper.deletePlaylistTagsByPlaylistId(playlistId);
-			
 			// 플레이리스트 정보 제거
-			playlistMapper.deletePlaylistById(playlistId);
+			playlistMapper.deletePlaylists(new OptionIntent.Builder()
+					.appendEqualSearchOption(PlaylistUnit.MEMBER_ID, loginId, true)
+					.appendEqualSearchOption(PlaylistUnit.ID, playlistId, true)
+					.build());
 			
 		} catch (Exception e) {
 			// 예외 처리
