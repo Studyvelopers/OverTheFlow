@@ -200,4 +200,24 @@ public class PlaylistServiceImpl implements PlaylistService {
 		
 		return playlists;
 	}
+	
+	public List<PlaylistVO> getPlaylists(List<String> playlistIds) {
+		if (playlistIds == null || playlistIds.isEmpty()) {
+			return null;
+		}
+		
+		List<PlaylistVO> playlists = null;
+		
+		try {
+			playlists = playlistMapper.searchPlaylists(
+					new OptionIntent.Builder()
+					.appendInSearchOption(PlaylistUnit.ID, playlistIds.toArray(), true)
+					.build());
+		} catch (Exception e) {
+			logger.error(e.toString());
+			return null;
+		}
+		
+		return playlists;
+	}
 }
