@@ -106,48 +106,40 @@ public class PlaylistServiceImpl implements PlaylistService {
 		return true;
 	}
 
-	public PlaylistBean modifyPlaylist(PlaylistBean playlistBean) {
+	public PlaylistVO modifyPlaylist(PlaylistVO playlistVO) {
 		// 전달인자 null 체크
-		if (playlistBean == null) {
+		if (playlistVO == null) {
 			logger.error("수정할 대상이 없습니다.");
 			return null;
 		}
 		
-		logger.info("플레이리스트 수정 (" + playlistBean.getId() + ")");
+		logger.info("플레이리스트 수정 (" + playlistVO.getId() + ")");
 		
 		// 데이터 체크
-		if (playlistBean.getVisibility() == null ||
-				playlistBean.getDescription() == null ||
-				playlistBean.getId() == null ||
-				playlistBean.getMemberId() == null ||
-				playlistBean.getRegisterDate() == null ||
-				playlistBean.getTitle() == null) {
+		if (playlistVO.getVisibility() == null 
+			|| playlistVO.getDescription() == null
+			|| playlistVO.getId() == null
+			|| playlistVO.getMemberId() == null
+			|| playlistVO.getRegisterDate() == null
+			|| playlistVO.getTitle() == null) {
 			logger.error("누락된 정보가 있습니다.");
 		}
-		
-		// VO 객체 생성
-		PlaylistVO playlistVO = new PlaylistVO();
-		playlistVO.setId(playlistBean.getId());
-		playlistVO.setDescription(playlistBean.getDescription());
-		playlistVO.setMemberId(playlistBean.getMemberId());
-		playlistVO.setRegisterDate(playlistBean.getRegisterDate());
-		playlistVO.setTitle(playlistBean.getTitle());
-		playlistVO.setVisibility(playlistBean.getVisibility());
 		
 		try {
 			// 플레이리스트 정보 수정
 			playlistMapper.modifyPlaylist(playlistVO);
 			
 			// 태그 정보 수정
-			playlistTagMapper.deletePlaylistTagsByPlaylistId(playlistVO.getId());
+			// 기존 태그 정보 모두 삭제
+			playlistTagMapper.deletePlaylistTag(playlistVO.getId());
 			
 			// 태그 정보 등록
-			List<String> tags = playlistBean.getTags();
+			List<String> tags = playlistVO.getTags();
 			if (tags != null && tags.size() > 0) {
 				for (String tag : tags) {
-					PlaylistTagVO newTag = new PlaylistTagVO();
-					newTag.setPlaylistId(playlistBean.getId());
-					newTag.setTag(tag);
+					TagVO newTag = new TagVO();
+					newTag.setId(playlistVO.getId());
+					newTag.setTagName(tag);
 					playlistTagMapper.addPlaylistTag(newTag);
 				}
 			}
@@ -156,7 +148,7 @@ public class PlaylistServiceImpl implements PlaylistService {
 			return null;
 		}
 		
-		return playlistBean;
+		return playlistVO;
 	}
 	
 	public PlaylistBean searchPlaylistById(String playlistId) {
