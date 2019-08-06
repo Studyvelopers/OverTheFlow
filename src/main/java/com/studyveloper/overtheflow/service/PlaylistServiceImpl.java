@@ -153,83 +153,24 @@ public class PlaylistServiceImpl implements PlaylistService {
 		return playlistVO;
 	}
 	
-	public PlaylistBean searchPlaylistById(String playlistId) {
-		// 전달인자 체크
-		if (playlistId == null) {
-			logger.error("조회할 식별키가 없습니다.");
+	public PlaylistVO getPlaylist(String playlistId, String loginId) {
+		if (playlistId == null || loginId == null) {
 			return null;
 		}
 		
-		PlaylistBean result = null;
-		try {
-			// 플레이리스트 정보 조회
-			PlaylistVO playlistVO = playlistMapper.searchPlaylistById(playlistId);
-			
-			// 정보가 없다면 널 리턴
-			if (playlistVO == null) {
-				return result;
-			}
-			
-			// 정보가 있으면 태그 정보 조회
-			List<String> tags = null;
-			tags = playlistTagMapper.searchTagsByPlaylistId(playlistId);
-			
-			// Bean 객체 생성
-			result = new PlaylistBean();
-			result.setDescription(playlistVO.getDescription());
-			result.setId(playlistVO.getId());
-			result.setMemberId(playlistVO.getMemberId());
-			result.setRegisterDate(playlistVO.getRegisterDate());
-			result.setTags(tags);
-			result.setTitle(playlistVO.getTitle());
-			result.setVisibility(playlistVO.getVisibility());
-		} catch (Exception e) {
-			logger.error(e.getMessage());
-		}
+		PlaylistVO playlistVO = null;
 		
-		return result;
-	}
-
-	public List<PlaylistBean> searchPlaylistsByMemberId(String memberId, Integer pageNumber, Integer perPageCount) {
-		// 전달인자 체크
-		if (memberId == null) {
-			logger.error("전달인자 오류");
+		try {
+			playlistVO = playlistMapper.searchPlaylist(playlistId);
+		} catch (Exception e) {
+			logger.error(e.toString());
 			return null;
 		}
 		
-		List<PlaylistBean> playlists = new ArrayList<PlaylistBean>();
-		
-		// 회원아이디로 플레이리스트 검색
-		try {
-			Map<String, Object> conditions = new HashMap<String, Object>();
-			conditions.put("memberId", memberId);
-			conditions.put("pageNumber", pageNumber);
-			conditions.put("perPageCount", perPageCount);
-			
-			// 정보 조회
-			List<PlaylistVO> data = playlistMapper.searchPlaylistsByMemberId(conditions);
-			
-			// 태그 정보 조회
-			for (PlaylistVO playlist : data) {
-				List<String> tags = playlistTagMapper.searchTagsByPlaylistId(playlist.getId());
-				
-				// 빈 생성
-				PlaylistBean playlistBean = new PlaylistBean();
-				playlistBean.setDescription(playlist.getDescription());
-				playlistBean.setId(playlist.getId());
-				playlistBean.setMemberId(playlist.getMemberId());
-				playlistBean.setRegisterDate(playlist.getRegisterDate());
-				playlistBean.setTitle(playlist.getTitle());
-				playlistBean.setVisibility(playlist.getVisibility());
-				playlistBean.setTags(tags);
-				
-				// 빈 추가
-				playlists.add(playlistBean);
-			}
-		} catch (Exception e) {
-			logger.error(e.getMessage());
+		if (playlistVO.getMemberId().equals(loginId.trim())) {
+			return playlistVO;
+		} else {
+			return null;
 		}
-		
-		return playlists;
 	}
 }
