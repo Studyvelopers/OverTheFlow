@@ -37,12 +37,16 @@ public class MemberServiceImpl implements MemberService {
 	public MemberVO register(MemberVO memberVO) throws Exception {
 		boolean idCheck = false;
 		if (memberVO == null) {
+			logger.error("회원가입 실패! - 회원가입을 위한 MemberVO가 NULL입니다.");
 			return null;
-		} else if (memberVO.getEmail() == null || memberVO.getEmail().trim().length() < 8) {
+		} else if (memberVO.getEmail() == null || memberVO.getEmail().trim().equals("")) {
+			logger.error("회원가입 실패! - 회원가입을 위한 email이 NULL입니다.");
 			return null;
-		} else if (memberVO.getPassword() == null || memberVO.getPassword().trim().length() < 8) {
+		} else if (memberVO.getPassword() == null || memberVO.getPassword().trim().equals("")) {
+			logger.error("회원가입 실패! - 회원가입을 위한 password가 NULL입니다.");
 			return null;
-		} else if (memberVO.getNickname() == null || memberVO.getNickname().trim().length() < 8) {
+		} else if (memberVO.getNickname() == null || memberVO.getNickname().trim().equals("")) {
+			logger.error("회원가입 실패! - 회원가입을 위한 nickname이 NULL입니다.");
 			return null;
 		} // Exception 재정의 후 Exception 처리할 것. 일단 임의로 null return
 		else {
@@ -80,6 +84,13 @@ public class MemberServiceImpl implements MemberService {
 	 */
 	public Boolean unRegister(String memberId, String password) throws Exception {
 		boolean result = false;
+		if(memberId == null || memberId.trim().equals("")){
+			logger.error("회원 탈퇴 실패! - 회원 식별키가 NULL입니다.");
+			return result;
+		}else if(password == null || password.trim().equals("")){
+			logger.error("회원 탈퇴 실패! - 비밀번호가 NULL입니다.");
+			return result;
+		}
 		MemberVO memberVO = memberMapper.searchMember(memberId);
 		if (memberVO == null) {
 			logger.error("회원 탈퇴 실패! - 회원 식별키와 일치하는 회원이 없습니다.");
@@ -99,11 +110,27 @@ public class MemberServiceImpl implements MemberService {
 	/**
 	 * 
 	 * @param memberVO, oldPassword 수정할 회원의 정보들을 담은 MemberVO와 수정할 회원의 기존 패스워드를 전달받습니다.
-	 * @return 회원정보 수정에 성공하면 수정한 회원의 정보를 반환하고, 실패하면 null을 반환합니다.
+	 * @return MemberVO 회원정보 수정에 성공하면 수정한 회원의 정보를 반환하고, 실패하면 null을 반환합니다.
 	 * @throws Exception
 	 *             미정
 	 */
 	public MemberVO modifyMember(MemberVO memberVO, String oldPassword) throws Exception {
+		if (memberVO == null) {
+			logger.error("회원정보 수정 실패! - 회원정보를 수정하기위한 MemberVO가 NULL입니다.");
+			return null;
+		} else if (memberVO.getEmail() == null || memberVO.getEmail().trim().equals("")) {
+			logger.error("회원정보 수정 실패! - 회원 정보를 수정하기 위한 email이 NULL입니다.");
+			return null;
+		} else if (memberVO.getPassword() == null || memberVO.getPassword().trim().equals("")) {
+			logger.error("회원정보 수정 실패! - 회원 정보를 수정하기 위한 password가 NULL입니다.");
+			return null;
+		} else if (memberVO.getNickname() == null || memberVO.getNickname().trim().equals("")) {
+			logger.error("회원정보 수정 실패! - 회원 정보를 수정하기 위한 nickname이 NULL입니다.");
+			return null;
+		}else if(oldPassword == null || oldPassword.trim().equals("")){
+			logger.error("회원정보 수정 실패! - 회원 정보를 수정하기 위한 oldPassword가 NULL입니다.");
+			return null;
+		}
 		MemberVO memberVO2 = memberMapper.searchMember(memberVO.getId());
 		if (memberVO2 == null) {
 			logger.error("회원정보 수정 실패! - 회원 식별키와 일치하는 회원정보가 없습니다.");
@@ -119,9 +146,29 @@ public class MemberServiceImpl implements MemberService {
 		return null;
 	}
 
-	public MemberVO getMember(String memberId) {
-		// TODO Auto-generated method stub
-		return null;
+	/**
+	 * 
+	 * @param memberId 회원 정보를 검색하기 위한 회원의 식별키를 전달받습니다.
+	 * @return MemberVO 전달받은 식별키와 일치하는 회원정보가 있다면 검색한 회원의 정보를 반환하고, 실패하면 null을 반환합니다.
+	 * @throws Exception
+	 *             미정
+	 */
+	public MemberVO getMember(String memberId)throws Exception {
+		if(memberId == null || memberId.trim().equals("")){
+			logger.error("회원 검색 실패! - 회원 검색을 위한 memberId가 NULL입니다.");
+			return null;
+		}
+		
+		MemberVO memberVO = memberMapper.searchMember(memberId);
+		
+		if(memberVO != null){
+			logger.info("회원 검색 성공! - " + memberVO.toString());
+		}else{
+			logger.error("회원 검색 실패! - memberId와 일치하는 회원의 정보가 없습니다.");
+			return null;
+		}
+		
+		return memberVO;
 	}
 
 	public List<MemberVO> getAllMembers(PageInfo pageInfo) {
