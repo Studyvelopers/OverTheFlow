@@ -69,8 +69,29 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	
+    /**
+	 * 
+	 * @param memberId, password 회원 탈퇴를 위한 회원의 식별키와 패스워드입니다.
+	 * @return Boolean 회원 탈퇴를 실패하면 false, 성공하면 true를 반환합니다. 
+	 * @throws Exception 미정
+	 */
 	public Boolean unRegister(String memberId, String password) throws Exception {
-		return null;
+		boolean result = false;
+		MemberVO memberVO = memberMapper.searchMember(memberId);
+		if(memberVO == null){
+			logger.error("회원 탈퇴 실패! - 회원 식별키와 일치하는 회원이 없습니다.");
+		}else{
+			if(memberVO.getPassword().equals(password)){
+				memberMapper.deleteMember(memberId);
+				result = true;
+			}else{
+				logger.error("회원 탈퇴 실패! - 패스워드가 일치하지 않습니다.");
+				
+			}
+		}
+		
+		
+		return result;
 	}
 
 	public MemberVO modifyMember(MemberVO memberVO, String oldPassword) {
