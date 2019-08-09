@@ -6,7 +6,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 public abstract class PageInfo {
 	private Integer currentPageNumber;
 	private Integer perPageCount;
-	private Integer orderRule;
+	private String orderRule;
 	private Integer sort;
 	private Integer maxCount;
 	
@@ -15,7 +15,7 @@ public abstract class PageInfo {
 		// TODO Auto-generated constructor stub
 	}
 
-	public PageInfo(Integer currentPageNumber, Integer perPageCount, Integer orderRule, Integer sort,
+	public PageInfo(Integer currentPageNumber, Integer perPageCount, String orderRule, Integer sort,
 			Integer maxCount) {
 		super();
 		this.currentPageNumber = currentPageNumber;
@@ -39,10 +39,10 @@ public abstract class PageInfo {
 	public void setPerPageCount(Integer perPageCount) {
 		this.perPageCount = perPageCount;
 	}
-	public Integer getOrderRule() {
+	public String getOrderRule() {
 		return orderRule;
 	}
-	public void setOrderRule(Integer orderRule) {
+	public void setOrderRule(String orderRule) {
 		this.orderRule = orderRule;
 	}
 	public Integer getSort() {
