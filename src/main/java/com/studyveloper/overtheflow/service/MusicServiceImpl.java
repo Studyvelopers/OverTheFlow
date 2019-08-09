@@ -1,8 +1,8 @@
 package com.studyveloper.overtheflow.service;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,16 +10,20 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-import com.studyveloper.overtheflow.bean.MusicBean;
 import com.studyveloper.overtheflow.mapper.MusicMapper;
 import com.studyveloper.overtheflow.mapper.MusicTagMapper;
 import com.studyveloper.overtheflow.util.IdentifierGenerator;
-import com.studyveloper.overtheflow.util.SearchUnit;
-import com.studyveloper.overtheflow.vo.MusicTagVO;
+import com.studyveloper.overtheflow.util.PageInfo;
+import com.studyveloper.overtheflow.util.SearchInfo;
+import com.studyveloper.overtheflow.util.option.MusicUnit;
+import com.studyveloper.overtheflow.util.option.OptionIntent;
+import com.studyveloper.overtheflow.util.option.OptionIntent.Builder;
+import com.studyveloper.overtheflow.util.option.SearchOption;
 import com.studyveloper.overtheflow.vo.MusicVO;
+import com.studyveloper.overtheflow.vo.TagVO;
 
 @Service
-public class MusicServiceImpl implements MusicService {
+public class MusicServiceImpl implements MusicService{
 	@Autowired
 	private PlatformTransactionManager transactionManager;
 	@Autowired
@@ -27,94 +31,99 @@ public class MusicServiceImpl implements MusicService {
 	@Autowired
 	private MusicTagMapper musicTagMapper;
 	
-	public MusicBean createMusic(MusicBean musicBean) throws Exception {
+	public MusicVO createMusic(MusicVO musicVO) throws Exception {
 		// TODO Auto-generated method stub
-		if(this.musicBeanNullCheck(musicBean)) throw new Exception();
+		if(this.isMusicNull(musicVO)) throw new Exception();
 		
 		TransactionStatus transactionStatus =
 				this.transactionManager.getTransaction(new DefaultTransactionDefinition());
 		
 		try{
-			MusicVO musicVO = this.beanToVO(musicBean);
+			musicVO.setId(IdentifierGenerator.generateId(musicVO.getTitle()));
 			
-			this.musicMapper.addMusic(musicVO);
+			int addResult = this.musicMapper.addMusic(musicVO);
 			
-			if(musicBean.getMusicTags() != null){
-				List<String> musicTags = musicBean.getMusicTags(); 
+			if(addResult == 0) throw new Exception();
+			
+			List<String> tags = musicVO.getTags();
+			
+			if(tags != null && tags.size() > 0){
+				String musicId = musicVO.getId();
 				
-				for(String musicTag : musicTags){
-					MusicTagVO musicTagVO = new MusicTagVO();
+				for(String tag : tags){
+					TagVO tagVO = new TagVO();
+					tagVO.setId(musicId);
+					tagVO.setTagName(tag);
 					
-					musicTagVO.setMusicId(musicVO.getId());
-					musicTagVO.setContents(musicTag);
-					
-					this.musicTagMapper.addMusicTag(musicTagVO);
+					this.musicTagMapper.addMusicTag(tagVO);
 				}
 			}
-			
-		} catch(RuntimeException e){
+		} catch(RuntimeException exception){
 			this.transactionManager.rollback(transactionStatus);
-			
-			throw new Exception();
+			throw exception;
 		}
 		
 		this.transactionManager.commit(transactionStatus);
 		
-		//그냥 파라미터값을 줄 것인지 키값으로 Search한후 검증해서 줄 것인지
-		return musicBean;
+		return musicVO;
 	}
 
-	public MusicBean modifyMusic(MusicBean musicBean) throws Exception {
+	public MusicVO modifyMusic(String loginId, MusicVO musicVO) throws Exception {
 		// TODO Auto-generated method stub
-		if(this.musicBeanNullCheck(musicBean)) throw new Exception();
+		if(this.isMusicNull(musicVO) || loginId == null) throw new Exception();
+		
+		if(!loginId.equals(musicVO.getMemberId())) throw new Exception();
 		
 		TransactionStatus transactionStatus =
-			this.transactionManager.getTransaction(new DefaultTransactionDefinition());	
-		
-		try{
-			MusicVO musicVO = this.beanToVO(musicBean);
+				this.transactionManager.getTransaction(new DefaultTransactionDefinition());
+		try {
+			String musicId = musicVO.getId();
 			
-			this.musicMapper.modifyMusic(musicVO);
+			int result = this.musicMapper.modifyMusic(musicVO);
 			
-			String musicId = musicBean.getId();
+			if(result == 0) throw new Exception();
 			
-			this.musicTagMapper.deleteMusicTagByMusicId(musicId);
+			this.musicTagMapper.deleteMusicTag(musicId);
 			
-			if(musicBean.getMusicTags() != null){
-				List<String> musicTags = musicBean.getMusicTags();
-				
-				for(String musicTag : musicTags){
-					MusicTagVO musicTagVO = new MusicTagVO();
+			List<String> tags = musicVO.getTags();
+			
+			if(tags != null && tags.size() > 0){
+				for(String tag : tags){
+					TagVO tagVO = new TagVO();
 					
-					musicTagVO.setMusicId(musicId);
-					musicTagVO.setContents(musicTag);
+					tagVO.setId(musicId);
+					tagVO.setTagName(tag);
 					
-					this.musicTagMapper.addMusicTag(musicTagVO);
+					this.musicTagMapper.addMusicTag(tagVO);
 				}
 			}
-			
-		} catch(RuntimeException e){
+		} catch(RuntimeException exception){
 			this.transactionManager.rollback(transactionStatus);
-			
-			throw new Exception();
+			throw exception;
 		}
 		
 		this.transactionManager.commit(transactionStatus);
 		
-		return musicBean;
+		return musicVO;
 	}
 
-	public Boolean deleteMusic(String musicId) throws Exception {
+	public boolean deleteMusic(String musicId, String loginId) throws Exception {
 		// TODO Auto-generated method stub
-		if(musicId == null) throw new Exception();
+		if(musicId == null || loginId == null) throw new Exception();
+		
+		MusicVO target = this.musicMapper.searchMusic(musicId);
+		
+		if(target == null) throw new Exception();
+		
+		if(!target.getMemberId().equals(loginId)) throw new Exception();
 		
 		TransactionStatus transactionStatus =
 				this.transactionManager.getTransaction(new DefaultTransactionDefinition());
 		
 		try{
 			this.musicMapper.deleteMusic(musicId);
-			this.musicTagMapper.deleteMusicTagByMusicId(musicId);
-		} catch(RuntimeException e){
+			this.musicTagMapper.deleteMusicTag(musicId);
+		} catch(RuntimeException exception){
 			this.transactionManager.rollback(transactionStatus);
 			
 			return false;
@@ -125,113 +134,297 @@ public class MusicServiceImpl implements MusicService {
 		return true;
 	}
 
-	public MusicBean getMusicInfo(String musicId) throws Exception {
+	public MusicVO getMusic(String musicId, String loginId) throws Exception {
 		// TODO Auto-generated method stub
-		if(musicId == null) throw new Exception();
+		if(musicId == null || loginId == null) throw new Exception();
 		
-		MusicVO musicVO;
-		List<MusicTagVO> musicTagVOs;
-	
-		musicVO = this.musicMapper.searchMusicByMusicId(musicId);
-		musicTagVOs = this.musicTagMapper.searchMusicTagByMusicId(musicId);
+		MusicVO result = this.musicMapper.searchMusic(musicId);
 		
-		List<String> musicTags = new ArrayList<String>();
+		if(result == null) throw new Exception();
 		
-		for(MusicTagVO musicTagVO : musicTagVOs){
-			musicTags.add(musicTagVO.getContents());
+		return result;
+	}
+
+	public List<MusicVO> getMusicsByTitle(SearchInfo searchInfo) throws Exception {
+		// TODO Auto-generated method stub
+		Map<String,String> conditions = searchInfo.getConditions();
+		
+		String title = conditions.get("title");
+		String compareType = conditions.get("compareType");
+		
+		int currentPageNumber = searchInfo.getCurrentPageNumber();
+		int perPageCount = searchInfo.getPerPageCount();
+		String orderRule = searchInfo.getOrderRule();
+		boolean sort;
+		
+		if(searchInfo.getSort() == 1){
+			sort = true;
+		} else {
+			sort = false;
 		}
 		
-		MusicBean musicBean = this.voToBean(musicVO, musicTags);
+		OptionIntent optionIntent = null;
 		
-		return musicBean;
+		if(SearchOption.CompareType.valueOf(compareType) == SearchOption.CompareType.EQUAL){
+			
+			optionIntent = new Builder()
+				.appendEqualSearchOption(MusicUnit.TITLE, title, true)
+				.setPagingOption(perPageCount, currentPageNumber)
+				.appendSortingOption(MusicUnit.valueOf(orderRule), sort)
+				.build();
+			
+		} else if(SearchOption.CompareType.valueOf(compareType) == SearchOption.CompareType.LIKE){
+			
+			optionIntent = new Builder()
+					.appendLikeSearchOption(MusicUnit.TITLE, title, true)
+					.setPagingOption(perPageCount, currentPageNumber)
+					.appendSortingOption(MusicUnit.valueOf(orderRule), sort)
+					.build();
+			
+		} else {
+			
+		}
+		
+		List<MusicVO> result = this.musicMapper.searchMusics(optionIntent);
+		
+		return result;
 	}
 
-	public List<MusicBean> searchMusic(SearchUnit searchUnit) throws Exception {
+	public List<MusicVO> getMusicsByNickName(SearchInfo searchInfo) throws Exception {
 		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public List<MusicBean> searchMusics(SearchUnit searchUnit) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public List<MusicBean> searchMusics(List<Integer> musicIds) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public void setTransactionManager(PlatformTransactionManager transactionManager) {
-		this.transactionManager = transactionManager;
-	}
-
-	public void setMusicMapper(MusicMapper musicMapper) {
-		this.musicMapper = musicMapper;
-	}
-
-	public void setMusicTagMapper(MusicTagMapper musicTagMapper) {
-		this.musicTagMapper = musicTagMapper;
+		Map<String,String> conditions = searchInfo.getConditions();
+		
+		String nickname = conditions.get("nickname");
+		String compareType = conditions.get("compareType");
+		
+		int currentPageNumber = searchInfo.getCurrentPageNumber();
+		int perPageCount = searchInfo.getPerPageCount();
+		String orderRule = searchInfo.getOrderRule();
+		boolean sort;
+		
+		if(searchInfo.getSort() == 1){
+			sort = true;
+		} else {
+			sort = false;
+		}
+		
+		OptionIntent optionIntent = null;
+		
+		if(SearchOption.CompareType.valueOf(compareType) == SearchOption.CompareType.EQUAL){
+			
+			optionIntent = new Builder()
+				.appendEqualSearchOption(MusicUnit.MEMBER_NICKNAME, nickname, true)
+				.setPagingOption(perPageCount, currentPageNumber)
+				.appendSortingOption(MusicUnit.valueOf(orderRule), sort)
+				.build();
+			
+		} else if(SearchOption.CompareType.valueOf(compareType) == SearchOption.CompareType.LIKE){
+			
+			optionIntent = new Builder()
+					.appendLikeSearchOption(MusicUnit.MEMBER_NICKNAME, nickname, true)
+					.setPagingOption(perPageCount, currentPageNumber)
+					.appendSortingOption(MusicUnit.valueOf(orderRule), sort)
+					.build();
+			
+		} else {
+			
+		}
+		
+		List<MusicVO> result = this.musicMapper.searchMusics(optionIntent);
+		
+		return result;
 	}
 	
-	private boolean musicBeanNullCheck(MusicBean musicBean){
-		if(musicBean.getTitle() == null ||
-				musicBean.getPlayTime() == null ||
-				musicBean.getRegisterDate() == null ||
-				musicBean.getDescription() == null ||
-				musicBean.getVisibilityFlag() == null ||
-				musicBean.getDownloadFlag() == null ||
-				musicBean.getPlayCount() == null ||
-				musicBean.getCategoryId() == null ||
-				musicBean.getMemberId() == null) return true;
+	//태그 처리 어떻게 함?
+	public List<MusicVO> getMusicsByTag(SearchInfo searchInfo) throws Exception {
+		// TODO Auto-generated method stub
+	Map<String,String> conditions = searchInfo.getConditions();
 		
-		List<String> musicTags = musicBean.getMusicTags();
+		String tag = conditions.get("tag");
+		String compareType = conditions.get("compareType");
 		
-		if(musicTags != null){
-			for(String musicTag : musicTags){
-				if(musicTag == null) return true;
+		int currentPageNumber = searchInfo.getCurrentPageNumber();
+		int perPageCount = searchInfo.getPerPageCount();
+		String orderRule = searchInfo.getOrderRule();
+		boolean sort;
+		
+		if(searchInfo.getSort() == 1){
+			sort = true;
+		} else {
+			sort = false;
+		}
+		
+		OptionIntent optionIntent = null;
+		
+		if(SearchOption.CompareType.valueOf(compareType) == SearchOption.CompareType.EQUAL){
+			
+			optionIntent = new Builder()
+				.appendEqualSearchOption(M, tag, true)
+				.setPagingOption(perPageCount, currentPageNumber)
+				.appendSortingOption(MusicUnit.valueOf(orderRule), sort)
+				.build();
+			
+		} else if(SearchOption.CompareType.valueOf(compareType) == SearchOption.CompareType.LIKE){
+			
+			optionIntent = new Builder()
+					.appendLikeSearchOption(MusicUnit.MEMBER_NICKNAME, nickname, true)
+					.setPagingOption(perPageCount, currentPageNumber)
+					.appendSortingOption(MusicUnit.valueOf(orderRule), sort)
+					.build();
+			
+		} else {
+			
+		}
+		
+		List<MusicVO> result = this.musicMapper.searchMusics(optionIntent);
+		
+		return result;
+	}
+
+	public List<MusicVO> getMyMusicsByTitle(SearchInfo searchInfo) throws Exception {
+		// TODO Auto-generated method stub
+	Map<String,String> conditions = searchInfo.getConditions();
+		
+		String title = conditions.get("title");
+		String loginId = conditions.get("loginId");
+		String compareType = conditions.get("compareType");
+		
+		int currentPageNumber = searchInfo.getCurrentPageNumber();
+		int perPageCount = searchInfo.getPerPageCount();
+		String orderRule = searchInfo.getOrderRule();
+		boolean sort;
+		
+		if(searchInfo.getSort() == 1){
+			sort = true;
+		} else {
+			sort = false;
+		}
+		
+		OptionIntent optionIntent = null;
+		
+		if(SearchOption.CompareType.valueOf(compareType) == SearchOption.CompareType.EQUAL){
+			
+			optionIntent = new Builder()
+				.appendEqualSearchOption(MusicUnit.TITLE, title, true)
+				.appendEqualSearchOption(MusicUnit.MEMBER_ID, loginId, true)
+				.setPagingOption(perPageCount, currentPageNumber)
+				.appendSortingOption(MusicUnit.valueOf(orderRule), sort)
+				.build();
+			
+		} else if(SearchOption.CompareType.valueOf(compareType) == SearchOption.CompareType.LIKE){
+			
+			optionIntent = new Builder()
+					.appendLikeSearchOption(MusicUnit.TITLE, title, true)
+					.appendLikeSearchOption(MusicUnit.MEMBER_ID, loginId, true)
+					.setPagingOption(perPageCount, currentPageNumber)
+					.appendSortingOption(MusicUnit.valueOf(orderRule), sort)
+					.build();
+			
+		} else {
+			
+		}
+		
+		List<MusicVO> result = this.musicMapper.searchMusics(optionIntent);
+		
+		return result;
+	}
+
+	public List<MusicVO> getMyMusicsByCategory(SearchInfo searchInfo) throws Exception {
+		// TODO Auto-generated method stub
+		Map<String,String> conditions = searchInfo.getConditions();
+		
+		String categoryId = conditions.get("categoryId");
+		String loginId = conditions.get("loginId");
+		String compareType = conditions.get("compareType");
+		
+		int currentPageNumber = searchInfo.getCurrentPageNumber();
+		int perPageCount = searchInfo.getPerPageCount();
+		String orderRule = searchInfo.getOrderRule();
+		boolean sort;
+		
+		if(searchInfo.getSort() == 1){
+			sort = true;
+		} else {
+			sort = false;
+		}
+		
+		OptionIntent optionIntent = null;
+		
+		if(SearchOption.CompareType.valueOf(compareType) == SearchOption.CompareType.EQUAL){
+			
+			optionIntent = new Builder()
+				.appendEqualSearchOption(MusicUnit.CATEGORY_ID, categoryId, true)
+				.appendEqualSearchOption(MusicUnit.MEMBER_ID, loginId, true)
+				.setPagingOption(perPageCount, currentPageNumber)
+				.appendSortingOption(MusicUnit.valueOf(orderRule), sort)
+				.build();
+			
+		} else if(SearchOption.CompareType.valueOf(compareType) == SearchOption.CompareType.LIKE){
+			
+			optionIntent = new Builder()
+					.appendLikeSearchOption(MusicUnit.CATEGORY_ID, categoryId, true)
+					.appendLikeSearchOption(MusicUnit.MEMBER_ID, loginId, true)
+					.setPagingOption(perPageCount, currentPageNumber)
+					.appendSortingOption(MusicUnit.valueOf(orderRule), sort)
+					.build();
+			
+		} else {
+			
+		}
+		
+		List<MusicVO> result = this.musicMapper.searchMusics(optionIntent);
+		
+		return result;
+	}
+
+	public List<MusicVO> getMusics(List<String> musicIds) throws Exception {
+		// TODO Auto-generated method stub
+		if(musicIds == null) throw new Exception();
+		
+		TransactionStatus transactionStatus =
+				this.transactionManager.getTransaction(new DefaultTransactionDefinition());
+		
+		List<MusicVO> result = new ArrayList<MusicVO>();
+		
+		try{
+			for(String musicId : musicIds){
+				MusicVO musicVO = this.musicMapper.searchMusic(musicId);
+				result.add(musicVO);
 			}
+			
+		} catch(RuntimeException e){
+			this.transactionManager.rollback(transactionStatus);
 		}
+		
+		this.transactionManager.commit(transactionStatus);
+		
+		return result;
+	}
+
+	public List<MusicVO> getAllMusics(PageInfo pageInfo) throws Exception {
+		// TODO Auto-generated method stub
+		List<MusicVO> result = new ArrayList<MusicVO>();
+		
+		result = this.musicMapper.searchMusics(null);
+		
+		return result;
+	}
+	
+	private boolean isMusicNull(MusicVO musicVO){
+		if(musicVO == null || musicVO.getId() == null 
+				|| musicVO.getMemberId() == null
+				|| musicVO.getMemberNickname() == null 
+				|| musicVO.getPlayCount() == null
+				|| musicVO.getPlaytime() == null 
+				|| musicVO.getRegisterDate() == null
+				|| musicVO.getTags() == null 
+				|| musicVO.getTitle() == null
+				|| musicVO.getDownloadable() == null 
+				|| musicVO.getVisibility() == null
+				|| musicVO.getCategoryId() == null 
+				|| musicVO.getDescription() == null)
+			return true;
+		
 		return false;
-	}
-	
-	private MusicVO beanToVO(MusicBean musicBean){
-		MusicVO musicVO = new MusicVO();
-		
-		musicVO.setCategoryId(musicBean.getCategoryId());
-		musicVO.setDescription(musicBean.getDescription());
-		musicVO.setDownloadFlag(musicBean.getDownloadFlag());
-		musicVO.setId(musicBean.getId());
-		
-		if(musicBean.getId() == null){
-			String id = IdentifierGenerator.generateId(musicBean.getTitle().hashCode() + musicBean.getMemberId().hashCode());
-			musicVO.setId(id);
-		}
-		
-		musicVO.setMemberId(musicBean.getMemberId());
-		musicVO.setPlayCount(musicBean.getPlayCount());
-		musicVO.setPlayTime(musicBean.getPlayTime());
-		musicVO.setRegisterDate(musicBean.getRegisterDate());
-		musicVO.setTitle(musicBean.getTitle());
-		musicVO.setVisibilityFlag(musicBean.getVisibilityFlag());
-		
-		return musicVO;
-	}
-	
-	private MusicBean voToBean(MusicVO musicVO, List<String> musicTags){
-		MusicBean musicBean = new MusicBean();
-		
-		musicBean.setCategoryId(musicVO.getCategoryId());
-		musicBean.setDescription(musicVO.getDescription());
-		musicBean.setDownloadFlag(musicVO.getDownloadFlag());
-		musicBean.setId(musicVO.getId());
-		musicBean.setMemberId(musicVO.getMemberId());
-		musicBean.setPlayCount(musicVO.getPlayCount());
-		musicBean.setPlayTime(musicVO.getPlayTime());
-		musicBean.setRegisterDate(musicVO.getRegisterDate());
-		musicBean.setTitle(musicVO.getTitle());
-		musicBean.setVisibilityFlag(musicVO.getVisibilityFlag());
-		musicBean.setMusicTags(musicTags);
-		
-		return musicBean;
 	}
 }
