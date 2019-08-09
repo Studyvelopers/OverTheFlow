@@ -23,79 +23,99 @@ public class MemberServiceImpl implements MemberService {
 
 	@Autowired
 	private MemberMapper memberMapper;
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(MemberServiceImpl.class);
 
 	/**
 	 * 
-	 * @param MemberVO 회원 가입을 하기 위한 회원의 정보를 담고있습니다.
-	 * @return MemberVO 회원가입에 성공한 회원의 정보를 반환합니다. 
-	 * @throws Exception 미정
+	 * @param MemberVO
+	 *            회원 가입을 하기 위한 회원의 정보를 담고있습니다.
+	 * @return MemberVO 회원가입에 성공한 회원의 정보를 반환합니다.
+	 * @throws Exception
+	 *             미정
 	 */
-	public MemberVO register(MemberVO memberVO)throws Exception {
-		boolean idCheck = false; 
-		if(memberVO == null){
+	public MemberVO register(MemberVO memberVO) throws Exception {
+		boolean idCheck = false;
+		if (memberVO == null) {
 			return null;
-		}else if(memberVO.getEmail() == null || memberVO.getEmail().trim().length() < 8){
+		} else if (memberVO.getEmail() == null || memberVO.getEmail().trim().length() < 8) {
 			return null;
-		}else if(memberVO.getPassword() == null || memberVO.getPassword().trim().length() < 8){
+		} else if (memberVO.getPassword() == null || memberVO.getPassword().trim().length() < 8) {
 			return null;
-		}else if(memberVO.getNickname() == null || memberVO.getNickname().trim().length() <8){
+		} else if (memberVO.getNickname() == null || memberVO.getNickname().trim().length() < 8) {
 			return null;
-		}//Exception 재정의 후 Exception 처리할 것. 일단 임의로 null return
-		else{
-			String id = IdentifierGenerator.generateId(""+memberVO.getEmail());
+		} // Exception 재정의 후 Exception 처리할 것. 일단 임의로 null return
+		else {
+			String id = IdentifierGenerator.generateId("" + memberVO.getEmail());
 			id = "8a738f7521318301d8bdb8040758f78d63ad42d6";
-			
-			while(!idCheck){
-				if(memberMapper.searchMember(id) != null){
-					//식별키가 중복된 경우 식별키를 재생성 하기 위한 조건문
+
+			while (!idCheck) {
+				if (memberMapper.searchMember(id) != null) {
+					// 식별키가 중복된 경우 식별키를 재생성 하기 위한 조건문
 					logger.error("식별키 중복으로 재생성.");
-					id = IdentifierGenerator.generateId(""+memberVO.getEmail());
-				}else{
+					id = IdentifierGenerator.generateId("" + memberVO.getEmail());
+				} else {
 					idCheck = true;
 				}
 			}
-			
+
 			memberVO.setId(id);
 			int addMemberResult = memberMapper.addMember(memberVO);
-			if(addMemberResult > 0){
+			if (addMemberResult > 0) {
 				return memberVO;
-			}else{
-				//이메일 중복이나 닉네임 중복 등등의 가입 오류가 생기는 이유를 어떻게 알지? 오류 처리 
+			} else {
+				// 이메일 중복이나 닉네임 중복 등등의 가입 오류가 생기는 이유를 어떻게 알지? 오류 처리
 			}
 		}
 		return null;
 	}
 
-	
-    /**
+	/**
 	 * 
-	 * @param memberId, password 회원 탈퇴를 위한 회원의 식별키와 패스워드입니다.
-	 * @return Boolean 회원 탈퇴를 실패하면 false, 성공하면 true를 반환합니다. 
-	 * @throws Exception 미정
+	 * @param memberId,
+	 *            password 회원 탈퇴를 위한 회원의 식별키와 패스워드입니다.
+	 * @return Boolean 회원 탈퇴를 실패하면 false, 성공하면 true를 반환합니다.
+	 * @throws Exception
+	 *             미정
 	 */
 	public Boolean unRegister(String memberId, String password) throws Exception {
 		boolean result = false;
 		MemberVO memberVO = memberMapper.searchMember(memberId);
-		if(memberVO == null){
+		if (memberVO == null) {
 			logger.error("회원 탈퇴 실패! - 회원 식별키와 일치하는 회원이 없습니다.");
-		}else{
-			if(memberVO.getPassword().equals(password)){
+		} else {
+			if (memberVO.getPassword().equals(password)) {
 				memberMapper.deleteMember(memberId);
 				result = true;
-			}else{
+			} else {
 				logger.error("회원 탈퇴 실패! - 패스워드가 일치하지 않습니다.");
-				
+
 			}
 		}
-		
-		
+
 		return result;
 	}
 
-	public MemberVO modifyMember(MemberVO memberVO, String oldPassword) {
-		
+	/**
+	 * 
+	 * @param memberVO, oldPassword 수정할 회원의 정보들을 담은 MemberVO와 수정할 회원의 기존 패스워드를 전달받습니다.
+	 * @return 회원정보 수정에 성공하면 수정한 회원의 정보를 반환하고, 실패하면 null을 반환합니다.
+	 * @throws Exception
+	 *             미정
+	 */
+	public MemberVO modifyMember(MemberVO memberVO, String oldPassword) throws Exception {
+		MemberVO memberVO2 = memberMapper.searchMember(memberVO.getId());
+		if (memberVO2 == null) {
+			logger.error("회원정보 수정 실패! - 회원 식별키와 일치하는 회원정보가 없습니다.");
+		} else {
+			if (memberVO2.getPassword().equals(oldPassword)) {
+				memberMapper.modifyMember(memberVO);
+				logger.info("회원정보 수정 성공!");
+				return memberVO;
+			} else {
+				logger.error("회원정보 수정 실패! - 비밀번호가 일치하지 않습니다.");
+			}
+		}
 		return null;
 	}
 
@@ -123,7 +143,5 @@ public class MemberServiceImpl implements MemberService {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
-	
-	
+
 }
