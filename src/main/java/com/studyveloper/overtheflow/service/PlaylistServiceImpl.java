@@ -351,4 +351,34 @@ public class PlaylistServiceImpl implements PlaylistService {
 		
 		return playlists;
 	}
+	
+	public List<PlaylistVO> getMyPlaylists(SearchInfo searchInfo) {
+		if (searchInfo == null) {
+			return null;
+		}
+		
+		// 논의를 해야할것같습니다.
+		OptionIntent.Builder builder = new OptionIntent.Builder();
+		String memberId = searchInfo.getConditions().get(PlaylistUnit.MEMBER_ID);
+		int size = searchInfo.getPerPageCount() != null ? searchInfo.getPerPageCount() : 0;
+		int offset = (searchInfo.getCurrentPageNumber() != null ? (searchInfo.getCurrentPageNumber() - 1) * size: 0);
+		String orderRule = searchInfo.getOrderRule();
+		String[] orderList = orderRule.trim().split("+");
+		for (int i = 0; i < orderList.length; i++) {
+			builder.appendSortingOption(PlaylistUnit.valueOf(orderList[i]), true);
+		}
+		builder.appendEqualSearchOption(PlaylistUnit.MEMBER_ID, memberId, true)
+			   .setPagingOption(size, offset);
+		
+		List<PlaylistVO> playlists = null;
+		
+		try {
+			playlists = playlistMapper.searchPlaylists(builder.build());
+		} catch (Exception e) {
+			logger.error(e.toString());
+			return null;
+		}
+		
+		return playlists;
+	}
 }
