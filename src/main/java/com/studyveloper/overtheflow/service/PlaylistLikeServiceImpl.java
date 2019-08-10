@@ -34,6 +34,14 @@ public class PlaylistLikeServiceImpl implements PlaylistLikeService {
 	}
 	
 	public boolean cancelLikePlaylist(LikeVO likeVO) {
+		try {
+			int result = likeMapper.deleteMemberLikesPlaylist(likeVO);
+			if (result > 0) {
+				return true;
+			}
+		} catch (Exception e) {
+			logger.error(e.toString());			
+		}
 		return false;
 	}
 
