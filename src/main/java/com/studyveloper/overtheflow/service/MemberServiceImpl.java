@@ -1,21 +1,19 @@
 package com.studyveloper.overtheflow.service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import com.studyveloper.overtheflow.mapper.MemberMapper;
 import com.studyveloper.overtheflow.util.IdentifierGenerator;
 import com.studyveloper.overtheflow.util.PageInfo;
 import com.studyveloper.overtheflow.util.SearchInfo;
+import com.studyveloper.overtheflow.util.option.MemberUnit;
+import com.studyveloper.overtheflow.util.option.OptionIntent;
+import com.studyveloper.overtheflow.util.option.OptionUnit;
 import com.studyveloper.overtheflow.vo.MemberVO;
 
 @Service
@@ -171,8 +169,76 @@ public class MemberServiceImpl implements MemberService {
 		return memberVO;
 	}
 
-	public List<MemberVO> getAllMembers(PageInfo pageInfo) {
-		// TODO Auto-generated method stub
+	/**
+	 * 
+	 * @param PageInfo 요청한 페이지에 대한 정보를 담고있습니다. 
+	 * @return List<MemberVO> 페이지 정보에 부합하는 전체 회원의 정보를 List로 반환합니다. List의 사이즈는 PageInfo의 perpageCount와 같습니다.
+	 * @throws Exception 미정
+	 */
+	public List<MemberVO> getAllMembers(PageInfo pageInfo)throws Exception {
+		if(pageInfo == null){
+			
+		}else{
+			OptionIntent.Builder builder = new OptionIntent.Builder();
+			OptionIntent optionIntent= builder.build();
+			int maxCount = memberMapper.getMemberSize(optionIntent);
+			pageInfo.setMaxCount(maxCount);
+			//페이징
+			int offset = (pageInfo.getCurrentPageNumber()-1) * pageInfo.getPerPageCount();
+			int size = pageInfo.getPerPageCount();
+			builder.setOffset(offset);
+			builder.setSize(size);
+			
+			//정렬
+			boolean isDescending = false;//false일때 오름차순 true일때 내림차순
+			if(pageInfo.getOrderRule() != 0){
+				isDescending = true;
+			}
+			OptionUnit optionUnit = null;
+			
+			switch(pageInfo.getSort()){
+				case 0:
+					optionUnit = MemberUnit.ID;
+					break;
+				case 1:
+					optionUnit = MemberUnit.EMAIL;
+					break;
+				case 2:
+					optionUnit = MemberUnit.PASSWORD;
+					break;
+				case 3:
+					optionUnit = MemberUnit.NICKNAME;
+					break;
+				case 4:
+					optionUnit = MemberUnit.INTRODUCTION;
+					break;
+				case 5:
+					optionUnit = MemberUnit.REGISTER_DATE;
+					break;
+				case 6:
+					optionUnit = MemberUnit.FOLLOWING_COUNT;
+					break;
+				case 7:
+					optionUnit = MemberUnit.FOLLOWER_COUNT;
+					break;
+				case 8:
+					optionUnit = MemberUnit.TYPE_ID;
+					break;
+			}
+			
+			builder.appendSortingOption(optionUnit, isDescending);
+			
+			List<MemberVO> members = memberMapper.searchMembers(optionIntent);
+			if(members.size() == 0){
+				logger.info("검색된 회원이 없습니다.");
+			}else{
+				logger.info("모든 회원 검색 성공!");
+				for(int i=0; i<members.size(); i++){
+					logger.info((i+1)+" - " + members.get(i).toString());
+				}
+				return members;
+			}
+		}
 		return null;
 	}
 
