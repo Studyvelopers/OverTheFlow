@@ -1,12 +1,17 @@
 package com.studyveloper.overtheflow.service;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.studyveloper.overtheflow.mapper.MemberLikesPlaylistMapper;
+import com.studyveloper.overtheflow.util.SearchInfo;
+import com.studyveloper.overtheflow.vo.LikeVO;
 import com.studyveloper.overtheflow.vo.MemberLikesPlaylistVO;
+import com.studyveloper.overtheflow.vo.PlaylistVO;
 
 @Service
 public class PlaylistLikeServiceImpl implements PlaylistLikeService {
@@ -16,46 +21,24 @@ public class PlaylistLikeServiceImpl implements PlaylistLikeService {
 	
 	private Logger logger = LoggerFactory.getLogger(PlaylistLikeServiceImpl.class);
 
-	public Boolean likePlaylist(String playlistId, String memberId) {
-		// 전달인자 체크
-		if (playlistId == null || memberId == null) {
-			logger.error("전달인자 오류");
-			return false;
-		}
-		
+	public boolean likePlaylist(LikeVO likeVO) {
 		try {
-			MemberLikesPlaylistVO like = new MemberLikesPlaylistVO();
-			like.setMemberId(memberId);
-			like.setPlaylistId(playlistId);
-			
-			likeMapper.likesPlaylist(like);
+			int result = likeMapper.addMemberLikesPlaylist(likeVO);
+			if (result > 0) {
+				return true;
+			}
 		} catch (Exception e) {
-			logger.error(e.getMessage());
-			return false;
+			logger.error(e.toString());			
 		}
-		
-		return true;
+		return false;
+	}
+	
+	public boolean cancelLikePlaylist(LikeVO likeVO) {
+		return false;
 	}
 
-	public Boolean cancelLikePlaylist(String playlistId, String memberId) {
-		// 전달인자 체크
-		if (playlistId == null || memberId == null) {
-			logger.error("전달인자 오류");
-			return false;
-		}
-		
-		try {
-			MemberLikesPlaylistVO like = new MemberLikesPlaylistVO();
-			like.setMemberId(memberId);
-			like.setPlaylistId(playlistId);
-			
-			likeMapper.noLikesPlaylist(like);
-		} catch (Exception e) {
-			logger.error(e.getMessage());
-			return false;
-		}
-		
-		return true;
-	}
 
+	public List<PlaylistVO> getMyLikedPlaylists(SearchInfo searchInfo) {
+		return null;
+	}
 }
