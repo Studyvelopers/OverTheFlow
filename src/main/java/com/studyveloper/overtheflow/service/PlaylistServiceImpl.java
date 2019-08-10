@@ -1,17 +1,13 @@
 package com.studyveloper.overtheflow.service;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.studyveloper.overtheflow.bean.PlaylistBean;
 import com.studyveloper.overtheflow.mapper.PlaylistMapper;
 import com.studyveloper.overtheflow.mapper.PlaylistTagMapper;
 import com.studyveloper.overtheflow.util.IdentifierGenerator;
@@ -238,6 +234,39 @@ public class PlaylistServiceImpl implements PlaylistService {
 			builder.appendSortingOption(PlaylistUnit.valueOf(orderList[i]), true);
 		}
 		builder.appendLikeSearchOption(PlaylistUnit.TITLE, title, true)
+			   .setPagingOption(size, offset);
+		
+		
+		List<PlaylistVO> playlists = null;
+		
+		try {
+			playlists = playlistMapper.searchPlaylists(builder.build());
+		} catch (Exception e) {
+			logger.error(e.toString());
+			return null;
+		}
+		
+		return playlists;
+		
+	}
+	
+	
+	public List<PlaylistVO> getPlaylistByNickname(SearchInfo searchInfo) {
+		if (searchInfo == null) {
+			return null;
+		}
+		
+		// 논의를 해야할것같습니다.
+		OptionIntent.Builder builder = new OptionIntent.Builder();
+		String nickname = searchInfo.getConditions().get(PlaylistUnit.MEMBER_NICKNAME);
+		int size = searchInfo.getPerPageCount() != null ? searchInfo.getPerPageCount() : 0;
+		int offset = (searchInfo.getCurrentPageNumber() != null ? (searchInfo.getCurrentPageNumber() - 1) * size: 0);
+		String orderRule = searchInfo.getOrderRule();
+		String[] orderList = orderRule.trim().split("+");
+		for (int i = 0; i < orderList.length; i++) {
+			builder.appendSortingOption(PlaylistUnit.valueOf(orderList[i]), true);
+		}
+		builder.appendLikeSearchOption(PlaylistUnit.MEMBER_NICKNAME, nickname, true)
 			   .setPagingOption(size, offset);
 		
 		
