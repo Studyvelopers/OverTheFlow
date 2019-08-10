@@ -16,6 +16,7 @@ import com.studyveloper.overtheflow.mapper.PlaylistMapper;
 import com.studyveloper.overtheflow.mapper.PlaylistTagMapper;
 import com.studyveloper.overtheflow.util.IdentifierGenerator;
 import com.studyveloper.overtheflow.util.PageInfo;
+import com.studyveloper.overtheflow.util.SearchInfo;
 import com.studyveloper.overtheflow.util.option.OptionIntent;
 import com.studyveloper.overtheflow.util.option.PlaylistUnit;
 import com.studyveloper.overtheflow.vo.PlaylistVO;
@@ -219,5 +220,37 @@ public class PlaylistServiceImpl implements PlaylistService {
 		}
 		
 		return playlists;
+	}
+	
+	public List<PlaylistVO> getPlaylistsByTitle(SearchInfo searchInfo) {
+		if (searchInfo == null) {
+			return null;
+		}
+		
+		// 논의를 해야할것같습니다.
+		OptionIntent.Builder builder = new OptionIntent.Builder();
+		String title = searchInfo.getConditions().get(PlaylistUnit.TITLE);
+		int size = searchInfo.getPerPageCount() != null ? searchInfo.getPerPageCount() : 0;
+		int offset = (searchInfo.getCurrentPageNumber() != null ? (searchInfo.getCurrentPageNumber() - 1) * size: 0);
+		String orderRule = searchInfo.getOrderRule();
+		String[] orderList = orderRule.trim().split("+");
+		for (int i = 0; i < orderList.length; i++) {
+			builder.appendSortingOption(PlaylistUnit.valueOf(orderList[i]), true);
+		}
+		builder.appendLikeSearchOption(PlaylistUnit.TITLE, title, true)
+			   .setPagingOption(size, offset);
+		
+		
+		List<PlaylistVO> playlists = null;
+		
+		try {
+			playlists = playlistMapper.searchPlaylists(builder.build());
+		} catch (Exception e) {
+			logger.error(e.toString());
+			return null;
+		}
+		
+		return playlists;
+		
 	}
 }
