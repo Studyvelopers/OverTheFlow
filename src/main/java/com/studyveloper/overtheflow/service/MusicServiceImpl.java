@@ -18,6 +18,7 @@ import com.studyveloper.overtheflow.util.SearchInfo;
 import com.studyveloper.overtheflow.util.option.MusicUnit;
 import com.studyveloper.overtheflow.util.option.OptionIntent;
 import com.studyveloper.overtheflow.util.option.OptionIntent.Builder;
+import com.studyveloper.overtheflow.util.option.OptionUnit;
 import com.studyveloper.overtheflow.util.option.SearchOption;
 import com.studyveloper.overtheflow.vo.MusicVO;
 import com.studyveloper.overtheflow.vo.TagVO;
@@ -147,43 +148,21 @@ public class MusicServiceImpl implements MusicService{
 
 	public List<MusicVO> getMusicsByTitle(SearchInfo searchInfo) throws Exception {
 		// TODO Auto-generated method stub
-		Map<String,String> conditions = searchInfo.getConditions();
+		Integer currentPageNumber = searchInfo.getCurrentPageNumber();
+		Integer perPageCount = searchInfo.getPerPageCount();
+		MusicUnit sortingOption = MusicUnit.valueOf(searchInfo.getSortionOption());
+		Boolean ordering = searchInfo.getOrdering();
 		
-		String title = conditions.get("title");
-		String compareType = conditions.get("compareType");
+		String keyword = searchInfo.getKeyword();
+		MusicUnit searchOption = MusicUnit.valueOf(searchInfo.getSearchOption());
+		String conjunction = searchInfo.getConjunction();
 		
-		int currentPageNumber = searchInfo.getCurrentPageNumber();
-		int perPageCount = searchInfo.getPerPageCount();
-		String orderRule = searchInfo.getOrderRule();
-		boolean sort;
-		
-		if(searchInfo.getSort() == 1){
-			sort = true;
-		} else {
-			sort = false;
-		}
-		
-		OptionIntent optionIntent = null;
-		
-		if(SearchOption.CompareType.valueOf(compareType) == SearchOption.CompareType.EQUAL){
-			
-			optionIntent = new Builder()
-				.appendEqualSearchOption(MusicUnit.TITLE, title, true)
+		 OptionIntent optionIntent = new Builder()
+				.appendLikeSearchOption(searchOption, keyword, true)
+				.appendEqualSearchOption(MusicUnit.VISIBILITY, "true", true)
 				.setPagingOption(perPageCount, currentPageNumber)
-				.appendSortingOption(MusicUnit.valueOf(orderRule), sort)
+				.appendSortingOption(sortingOption, ordering)
 				.build();
-			
-		} else if(SearchOption.CompareType.valueOf(compareType) == SearchOption.CompareType.LIKE){
-			
-			optionIntent = new Builder()
-					.appendLikeSearchOption(MusicUnit.TITLE, title, true)
-					.setPagingOption(perPageCount, currentPageNumber)
-					.appendSortingOption(MusicUnit.valueOf(orderRule), sort)
-					.build();
-			
-		} else {
-			
-		}
 		
 		List<MusicVO> result = this.musicMapper.searchMusics(optionIntent);
 		
@@ -192,89 +171,44 @@ public class MusicServiceImpl implements MusicService{
 
 	public List<MusicVO> getMusicsByNickName(SearchInfo searchInfo) throws Exception {
 		// TODO Auto-generated method stub
-		Map<String,String> conditions = searchInfo.getConditions();
+		Integer currentPageNumber = searchInfo.getCurrentPageNumber();
+		Integer perPageCount = searchInfo.getPerPageCount();
+		MusicUnit sortingOption = MusicUnit.valueOf(searchInfo.getSortionOption());
+		Boolean ordering = searchInfo.getOrdering();
 		
-		String nickname = conditions.get("nickname");
-		String compareType = conditions.get("compareType");
+		String keyword = searchInfo.getKeyword();
+		MusicUnit searchOption = MusicUnit.valueOf(searchInfo.getSearchOption());
+		String conjunction = searchInfo.getConjunction();
 		
-		int currentPageNumber = searchInfo.getCurrentPageNumber();
-		int perPageCount = searchInfo.getPerPageCount();
-		String orderRule = searchInfo.getOrderRule();
-		boolean sort;
-		
-		if(searchInfo.getSort() == 1){
-			sort = true;
-		} else {
-			sort = false;
-		}
-		
-		OptionIntent optionIntent = null;
-		
-		if(SearchOption.CompareType.valueOf(compareType) == SearchOption.CompareType.EQUAL){
-			
-			optionIntent = new Builder()
-				.appendEqualSearchOption(MusicUnit.MEMBER_NICKNAME, nickname, true)
+		 OptionIntent optionIntent = new Builder()
+				.appendLikeSearchOption(searchOption, keyword, true)
+				.appendEqualSearchOption(MusicUnit.VISIBILITY, "true", true)
 				.setPagingOption(perPageCount, currentPageNumber)
-				.appendSortingOption(MusicUnit.valueOf(orderRule), sort)
+				.appendSortingOption(sortingOption, ordering)
 				.build();
-			
-		} else if(SearchOption.CompareType.valueOf(compareType) == SearchOption.CompareType.LIKE){
-			
-			optionIntent = new Builder()
-					.appendLikeSearchOption(MusicUnit.MEMBER_NICKNAME, nickname, true)
-					.setPagingOption(perPageCount, currentPageNumber)
-					.appendSortingOption(MusicUnit.valueOf(orderRule), sort)
-					.build();
-			
-		} else {
-			
-		}
 		
 		List<MusicVO> result = this.musicMapper.searchMusics(optionIntent);
 		
 		return result;
 	}
 	
-	//태그 처리 어떻게 함?
 	public List<MusicVO> getMusicsByTag(SearchInfo searchInfo) throws Exception {
 		// TODO Auto-generated method stub
-	Map<String,String> conditions = searchInfo.getConditions();
+		Integer currentPageNumber = searchInfo.getCurrentPageNumber();
+		Integer perPageCount = searchInfo.getPerPageCount();
+		MusicUnit sortingOption = MusicUnit.valueOf(searchInfo.getSortionOption());
+		Boolean ordering = searchInfo.getOrdering();
 		
-		String tag = conditions.get("tag");
-		String compareType = conditions.get("compareType");
+		String keyword = searchInfo.getKeyword();
+		MusicUnit searchOption = MusicUnit.valueOf(searchInfo.getSearchOption());
+		String conjunction = searchInfo.getConjunction();
 		
-		int currentPageNumber = searchInfo.getCurrentPageNumber();
-		int perPageCount = searchInfo.getPerPageCount();
-		String orderRule = searchInfo.getOrderRule();
-		boolean sort;
-		
-		if(searchInfo.getSort() == 1){
-			sort = true;
-		} else {
-			sort = false;
-		}
-		
-		OptionIntent optionIntent = null;
-		
-		if(SearchOption.CompareType.valueOf(compareType) == SearchOption.CompareType.EQUAL){
-			
-			optionIntent = new Builder()
-				.appendEqualSearchOption(M, tag, true)
+		 OptionIntent optionIntent = new Builder()
+				.appendLikeSearchOption(searchOption, keyword, true)
+				.appendEqualSearchOption(MusicUnit.VISIBILITY, "true", true)
 				.setPagingOption(perPageCount, currentPageNumber)
-				.appendSortingOption(MusicUnit.valueOf(orderRule), sort)
+				.appendSortingOption(sortingOption, ordering)
 				.build();
-			
-		} else if(SearchOption.CompareType.valueOf(compareType) == SearchOption.CompareType.LIKE){
-			
-			optionIntent = new Builder()
-					.appendLikeSearchOption(MusicUnit.MEMBER_NICKNAME, nickname, true)
-					.setPagingOption(perPageCount, currentPageNumber)
-					.appendSortingOption(MusicUnit.valueOf(orderRule), sort)
-					.build();
-			
-		} else {
-			
-		}
 		
 		List<MusicVO> result = this.musicMapper.searchMusics(optionIntent);
 		
@@ -283,46 +217,23 @@ public class MusicServiceImpl implements MusicService{
 
 	public List<MusicVO> getMyMusicsByTitle(SearchInfo searchInfo) throws Exception {
 		// TODO Auto-generated method stub
-	Map<String,String> conditions = searchInfo.getConditions();
+		Integer currentPageNumber = searchInfo.getCurrentPageNumber();
+		Integer perPageCount = searchInfo.getPerPageCount();
+		MusicUnit sortingOption = MusicUnit.valueOf(searchInfo.getSortionOption());
+		Boolean ordering = searchInfo.getOrdering();
 		
-		String title = conditions.get("title");
-		String loginId = conditions.get("loginId");
-		String compareType = conditions.get("compareType");
+		String keyword = searchInfo.getKeyword();
+		MusicUnit searchOption = MusicUnit.valueOf(searchInfo.getSearchOption());
+		String conjunction = searchInfo.getConjunction();
 		
-		int currentPageNumber = searchInfo.getCurrentPageNumber();
-		int perPageCount = searchInfo.getPerPageCount();
-		String orderRule = searchInfo.getOrderRule();
-		boolean sort;
+		String loginId = null;
 		
-		if(searchInfo.getSort() == 1){
-			sort = true;
-		} else {
-			sort = false;
-		}
-		
-		OptionIntent optionIntent = null;
-		
-		if(SearchOption.CompareType.valueOf(compareType) == SearchOption.CompareType.EQUAL){
-			
-			optionIntent = new Builder()
-				.appendEqualSearchOption(MusicUnit.TITLE, title, true)
+		 OptionIntent optionIntent = new Builder()
+				.appendLikeSearchOption(searchOption, keyword, true)
 				.appendEqualSearchOption(MusicUnit.MEMBER_ID, loginId, true)
 				.setPagingOption(perPageCount, currentPageNumber)
-				.appendSortingOption(MusicUnit.valueOf(orderRule), sort)
+				.appendSortingOption(sortingOption, ordering)
 				.build();
-			
-		} else if(SearchOption.CompareType.valueOf(compareType) == SearchOption.CompareType.LIKE){
-			
-			optionIntent = new Builder()
-					.appendLikeSearchOption(MusicUnit.TITLE, title, true)
-					.appendLikeSearchOption(MusicUnit.MEMBER_ID, loginId, true)
-					.setPagingOption(perPageCount, currentPageNumber)
-					.appendSortingOption(MusicUnit.valueOf(orderRule), sort)
-					.build();
-			
-		} else {
-			
-		}
 		
 		List<MusicVO> result = this.musicMapper.searchMusics(optionIntent);
 		
@@ -331,46 +242,23 @@ public class MusicServiceImpl implements MusicService{
 
 	public List<MusicVO> getMyMusicsByCategory(SearchInfo searchInfo) throws Exception {
 		// TODO Auto-generated method stub
-		Map<String,String> conditions = searchInfo.getConditions();
+		Integer currentPageNumber = searchInfo.getCurrentPageNumber();
+		Integer perPageCount = searchInfo.getPerPageCount();
+		MusicUnit sortingOption = MusicUnit.valueOf(searchInfo.getSortionOption());
+		Boolean ordering = searchInfo.getOrdering();
 		
-		String categoryId = conditions.get("categoryId");
-		String loginId = conditions.get("loginId");
-		String compareType = conditions.get("compareType");
+		String keyword = searchInfo.getKeyword();
+		MusicUnit searchOption = MusicUnit.valueOf(searchInfo.getSearchOption());
+		String conjunction = searchInfo.getConjunction();
 		
-		int currentPageNumber = searchInfo.getCurrentPageNumber();
-		int perPageCount = searchInfo.getPerPageCount();
-		String orderRule = searchInfo.getOrderRule();
-		boolean sort;
+		String loginId = null;
 		
-		if(searchInfo.getSort() == 1){
-			sort = true;
-		} else {
-			sort = false;
-		}
-		
-		OptionIntent optionIntent = null;
-		
-		if(SearchOption.CompareType.valueOf(compareType) == SearchOption.CompareType.EQUAL){
-			
-			optionIntent = new Builder()
-				.appendEqualSearchOption(MusicUnit.CATEGORY_ID, categoryId, true)
+		 OptionIntent optionIntent = new Builder()
+				.appendEqualSearchOption(searchOption, keyword, true)
 				.appendEqualSearchOption(MusicUnit.MEMBER_ID, loginId, true)
 				.setPagingOption(perPageCount, currentPageNumber)
-				.appendSortingOption(MusicUnit.valueOf(orderRule), sort)
+				.appendSortingOption(sortingOption, ordering)
 				.build();
-			
-		} else if(SearchOption.CompareType.valueOf(compareType) == SearchOption.CompareType.LIKE){
-			
-			optionIntent = new Builder()
-					.appendLikeSearchOption(MusicUnit.CATEGORY_ID, categoryId, true)
-					.appendLikeSearchOption(MusicUnit.MEMBER_ID, loginId, true)
-					.setPagingOption(perPageCount, currentPageNumber)
-					.appendSortingOption(MusicUnit.valueOf(orderRule), sort)
-					.build();
-			
-		} else {
-			
-		}
 		
 		List<MusicVO> result = this.musicMapper.searchMusics(optionIntent);
 		
