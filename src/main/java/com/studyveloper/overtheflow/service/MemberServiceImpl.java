@@ -192,43 +192,7 @@ public class MemberServiceImpl implements MemberService {
 			builder.setSize(size);
 			
 			//정렬
-			boolean isDescending = false;//false일때 오름차순 true일때 내림차순
-			if(pageInfo.getSort()){
-				isDescending = true;
-			}
-			OptionUnit optionUnit = null;
-			
-			switch(pageInfo.getOrderRule()){
-			case "id":
-				optionUnit = MemberUnit.ID;
-				break;
-			case "email":
-				optionUnit = MemberUnit.EMAIL;
-				break;
-			case "password":
-				optionUnit = MemberUnit.PASSWORD;
-				break;
-			case "nickname":
-				optionUnit = MemberUnit.NICKNAME;
-				break;
-			case "introduction":
-				optionUnit = MemberUnit.INTRODUCTION;
-				break;
-			case "registerDate":
-				optionUnit = MemberUnit.REGISTER_DATE;
-				break;
-			case "followingCount":
-				optionUnit = MemberUnit.FOLLOWING_COUNT;
-				break;
-			case "FollowerCount":
-				optionUnit = MemberUnit.FOLLOWER_COUNT;
-				break;
-			case "type":
-				optionUnit = MemberUnit.TYPE_ID;
-				break;
-			}
-			
-			builder.appendSortingOption(optionUnit, isDescending);
+			builder.appendSortingOption(MemberUnit.valueOf(pageInfo.getOrderRule()), pageInfo.getSort());
 			
 			List<MemberVO> members = memberMapper.searchMembers(optionIntent);
 			if(members.size() == 0){
@@ -246,7 +210,7 @@ public class MemberServiceImpl implements MemberService {
 
 	/**
 	 * 
-	 * @param SerachInfo 닉네임을 검색하기위한 keyword와 조건, page정보들을 담고있습니다.
+	 * @param SerachInfo 닉네임으로 회원을 검색하기위한 keyword와 조건, page정보들을 담고있습니다.
 	 * @return List<MemberVO> 검색된 회원의 객체를 List로 반환합니다.
 	 * @throws Exception 미정
 	 */
@@ -289,13 +253,51 @@ public class MemberServiceImpl implements MemberService {
 		return searchMembers;
 	}
 
-	public List<MemberVO> getMembersByEmail(SearchInfo searchInfo) {
-		// TODO Auto-generated method stub
-		return null;
+	/**
+	 * 
+	 * @param SerachInfo 이메일로 회원을 검색하기위한 keyword와 조건, page정보들을 담고있습니다.
+	 * @return List<MemberVO> 검색된 회원의 객체를 List로 반환합니다.
+	 * @throws Exception 미정
+	 */
+	public List<MemberVO> getMembersByEmail(SearchInfo searchInfo) throws Exception {
+		if(searchInfo == null){
+			return null;
+		}
+		String keyword = searchInfo.getKeyword();
+		String searchOption = searchInfo.getSearchOption();
+		String conjunction = searchInfo.getConjunction();
+		boolean isAnd = false;
+		if(conjunction.equals("AND")){
+			isAnd = true;
+		}
+		OptionIntent.Builder builder = new OptionIntent.Builder();
+		OptionIntent optionIntent= builder.build();
+		
+		//검색
+		if(searchOption.equals("LIKE")){
+			builder.appendLikeSearchOption(MemberUnit.EMAIL, keyword, isAnd);
+		}else if(searchOption.equals("EQUAL")){
+			builder.appendEqualSearchOption(MemberUnit.EMAIL, keyword, isAnd);
+		}
+		
+		//정렬
+		builder.appendSortingOption(MemberUnit.valueOf(searchInfo.getOrderRule()), searchInfo.getSort());
+		
+		//페이징
+		int offset = (searchInfo.getCurrentPageNumber()-1) * searchInfo.getPerPageCount();
+		int size = searchInfo.getPerPageCount();
+		builder.setOffset(offset);
+		builder.setSize(size);
+		int maxCount = memberMapper.getMemberSize(optionIntent);
+		searchInfo.setMaxCount(maxCount);
+		
+		List<MemberVO> searchMembers = memberMapper.searchMembers(optionIntent);
+		
+		return searchMembers;
 	}
 
 	public List<MemberVO> getMembers(List<String> memberIds) {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
