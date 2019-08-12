@@ -1,6 +1,7 @@
 package com.studyveloper.overtheflow.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +15,7 @@ import com.studyveloper.overtheflow.util.SearchInfo;
 import com.studyveloper.overtheflow.util.option.MemberUnit;
 import com.studyveloper.overtheflow.util.option.OptionIntent;
 import com.studyveloper.overtheflow.util.option.OptionUnit;
+import com.studyveloper.overtheflow.util.option.SearchOption;
 import com.studyveloper.overtheflow.vo.MemberVO;
 
 @Service
@@ -191,39 +193,39 @@ public class MemberServiceImpl implements MemberService {
 			
 			//정렬
 			boolean isDescending = false;//false일때 오름차순 true일때 내림차순
-			if(pageInfo.getOrderRule() != 0){
+			if(pageInfo.getSort()){
 				isDescending = true;
 			}
 			OptionUnit optionUnit = null;
 			
-			switch(pageInfo.getSort()){
-				case 0:
-					optionUnit = MemberUnit.ID;
-					break;
-				case 1:
-					optionUnit = MemberUnit.EMAIL;
-					break;
-				case 2:
-					optionUnit = MemberUnit.PASSWORD;
-					break;
-				case 3:
-					optionUnit = MemberUnit.NICKNAME;
-					break;
-				case 4:
-					optionUnit = MemberUnit.INTRODUCTION;
-					break;
-				case 5:
-					optionUnit = MemberUnit.REGISTER_DATE;
-					break;
-				case 6:
-					optionUnit = MemberUnit.FOLLOWING_COUNT;
-					break;
-				case 7:
-					optionUnit = MemberUnit.FOLLOWER_COUNT;
-					break;
-				case 8:
-					optionUnit = MemberUnit.TYPE_ID;
-					break;
+			switch(pageInfo.getOrderRule()){
+			case "id":
+				optionUnit = MemberUnit.ID;
+				break;
+			case "email":
+				optionUnit = MemberUnit.EMAIL;
+				break;
+			case "password":
+				optionUnit = MemberUnit.PASSWORD;
+				break;
+			case "nickname":
+				optionUnit = MemberUnit.NICKNAME;
+				break;
+			case "introduction":
+				optionUnit = MemberUnit.INTRODUCTION;
+				break;
+			case "registerDate":
+				optionUnit = MemberUnit.REGISTER_DATE;
+				break;
+			case "followingCount":
+				optionUnit = MemberUnit.FOLLOWING_COUNT;
+				break;
+			case "FollowerCount":
+				optionUnit = MemberUnit.FOLLOWER_COUNT;
+				break;
+			case "type":
+				optionUnit = MemberUnit.TYPE_ID;
+				break;
 			}
 			
 			builder.appendSortingOption(optionUnit, isDescending);
@@ -242,9 +244,49 @@ public class MemberServiceImpl implements MemberService {
 		return null;
 	}
 
-	public List<MemberVO> getMembersByNickName(SearchInfo searchInfo) {
-		// TODO Auto-generated method stub
-		return null;
+	/**
+	 * 
+	 * @param SerachInfo 닉네임을 검색하기위한 keyword와 조건, page정보들을 담고있습니다.
+	 * @return List<MemberVO> 검색된 회원의 객체를 List로 반환합니다.
+	 * @throws Exception 미정
+	 */
+	public List<MemberVO> getMembersByNickName(SearchInfo searchInfo) throws Exception {
+		if(searchInfo == null){
+			return null;
+		}
+		String keyword = searchInfo.getKeyword();
+		String searchOption = searchInfo.getSearchOption();
+		String conjunction = searchInfo.getConjunction();
+		boolean isAnd = false;
+		if(conjunction.equals("AND")){
+			isAnd = true;
+		}
+		OptionIntent.Builder builder = new OptionIntent.Builder();
+		OptionIntent optionIntent= builder.build();
+		
+		//검색
+		if(searchOption.equals("IN")){
+			//닉네임 검색인데 LIKE면 될거같은데?
+		}else if(searchOption.equals("LIKE")){
+			builder.appendLikeSearchOption(MemberUnit.NICKNAME, keyword, isAnd);
+		}else{
+			
+		}
+		
+		//정렬
+		builder.appendSortingOption(MemberUnit.valueOf(searchInfo.getOrderRule()), searchInfo.getSort());
+		
+		//페이징
+		int offset = (searchInfo.getCurrentPageNumber()-1) * searchInfo.getPerPageCount();
+		int size = searchInfo.getPerPageCount();
+		builder.setOffset(offset);
+		builder.setSize(size);
+		int maxCount = memberMapper.getMemberSize(optionIntent);
+		searchInfo.setMaxCount(maxCount);
+		
+		List<MemberVO> searchMembers = memberMapper.searchMembers(optionIntent);
+		
+		return searchMembers;
 	}
 
 	public List<MemberVO> getMembersByEmail(SearchInfo searchInfo) {
