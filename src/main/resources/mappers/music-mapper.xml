@@ -5,7 +5,7 @@
 	<resultMap type="MusicVO" id="music">
 		<result property="id" column="music_id"/>
 		<result property="title" column="music_title"/>
-		<result property="playTime" column="music_play_time"/>
+		<result property="playtime" column="music_play_time"/>
 		<result property="registerDate" column="music_register_date"/>
 		<result property="description" column="music_description"/>
 		<result property="visibilityFlag" column="music_visibility_flag"/>
