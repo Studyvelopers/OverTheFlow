@@ -149,7 +149,7 @@ public class MusicServiceImpl implements MusicService{
 
 	public List<MusicVO> getMusicsByTitle(SearchInfo searchInfo) throws Exception {
 		// TODO Auto-generated method stub
-		Integer currentPageNumber = searchInfo.getCurrentPageNumber();
+		Integer currentPageNumber = searchInfo.getCurrentPageNumber()-1;
 		Integer perPageCount = searchInfo.getPerPageCount();
 		MusicUnit sortingOption = MusicUnit.valueOf(searchInfo.getSortionOption());
 		Boolean ordering = searchInfo.getOrdering();
@@ -160,7 +160,7 @@ public class MusicServiceImpl implements MusicService{
 		
 		 OptionIntent optionIntent = new Builder()
 				.appendLikeSearchOption(searchOption, keyword, true)
-				.appendEqualSearchOption(MusicUnit.VISIBILITY, "true", true)
+				.appendEqualSearchOption(MusicUnit.VISIBILITY, 1, true)
 				.setPagingOption(perPageCount, currentPageNumber)
 				.appendSortingOption(sortingOption, ordering)
 				.build();
@@ -172,7 +172,7 @@ public class MusicServiceImpl implements MusicService{
 
 	public List<MusicVO> getMusicsByNickName(SearchInfo searchInfo) throws Exception {
 		// TODO Auto-generated method stub
-		Integer currentPageNumber = searchInfo.getCurrentPageNumber();
+		Integer currentPageNumber = searchInfo.getCurrentPageNumber()-1;
 		Integer perPageCount = searchInfo.getPerPageCount();
 		MusicUnit sortingOption = MusicUnit.valueOf(searchInfo.getSortionOption());
 		Boolean ordering = searchInfo.getOrdering();
@@ -183,7 +183,7 @@ public class MusicServiceImpl implements MusicService{
 		
 		 OptionIntent optionIntent = new Builder()
 				.appendLikeSearchOption(searchOption, keyword, true)
-				.appendEqualSearchOption(MusicUnit.VISIBILITY, "true", true)
+				.appendEqualSearchOption(MusicUnit.VISIBILITY, 1, true)
 				.setPagingOption(perPageCount, currentPageNumber)
 				.appendSortingOption(sortingOption, ordering)
 				.build();
@@ -195,7 +195,7 @@ public class MusicServiceImpl implements MusicService{
 	
 	public List<MusicVO> getMusicsByTag(SearchInfo searchInfo) throws Exception {
 		// TODO Auto-generated method stub
-		Integer currentPageNumber = searchInfo.getCurrentPageNumber();
+		Integer currentPageNumber = searchInfo.getCurrentPageNumber()-1;
 		Integer perPageCount = searchInfo.getPerPageCount();
 		MusicUnit sortingOption = MusicUnit.valueOf(searchInfo.getSortionOption());
 		Boolean ordering = searchInfo.getOrdering();
@@ -206,7 +206,7 @@ public class MusicServiceImpl implements MusicService{
 		
 		 OptionIntent optionIntent = new Builder()
 				.appendLikeSearchOption(searchOption, keyword, true)
-				.appendEqualSearchOption(MusicUnit.VISIBILITY, "true", true)
+				.appendEqualSearchOption(MusicUnit.VISIBILITY, 1, true)
 				.setPagingOption(perPageCount, currentPageNumber)
 				.appendSortingOption(sortingOption, ordering)
 				.build();
@@ -218,7 +218,7 @@ public class MusicServiceImpl implements MusicService{
 
 	public List<MusicVO> getMyMusicsByTitle(SearchInfo searchInfo) throws Exception {
 		// TODO Auto-generated method stub
-		Integer currentPageNumber = searchInfo.getCurrentPageNumber();
+		Integer currentPageNumber = searchInfo.getCurrentPageNumber()-1;
 		Integer perPageCount = searchInfo.getPerPageCount();
 		MusicUnit sortingOption = MusicUnit.valueOf(searchInfo.getSortionOption());
 		Boolean ordering = searchInfo.getOrdering();
@@ -243,7 +243,7 @@ public class MusicServiceImpl implements MusicService{
 
 	public List<MusicVO> getMyMusicsByCategory(SearchInfo searchInfo) throws Exception {
 		// TODO Auto-generated method stub
-		Integer currentPageNumber = searchInfo.getCurrentPageNumber();
+		Integer currentPageNumber = searchInfo.getCurrentPageNumber()-1;
 		Integer perPageCount = searchInfo.getPerPageCount();
 		MusicUnit sortingOption = MusicUnit.valueOf(searchInfo.getSortionOption());
 		Boolean ordering = searchInfo.getOrdering();
