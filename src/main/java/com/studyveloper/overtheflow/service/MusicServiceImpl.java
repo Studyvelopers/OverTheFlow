@@ -201,11 +201,14 @@ public class MusicServiceImpl implements MusicService{
 		Boolean ordering = searchInfo.getOrdering();
 		
 		String keyword = searchInfo.getKeyword();
-		MusicUnit searchOption = MusicUnit.valueOf(searchInfo.getSearchOption());
 		String conjunction = searchInfo.getConjunction();
 		
+		List<String> idList = this.musicTagMapper.searchMusicIds(keyword);
+		
+		if(idList == null || idList.size() == 0) return new ArrayList<MusicVO>(); 
+		
 		 OptionIntent optionIntent = new Builder()
-				.appendLikeSearchOption(searchOption, keyword, true)
+				 .appendInSearchOption(MusicUnit.ID, idList.toArray(), true)
 				.appendEqualSearchOption(MusicUnit.VISIBILITY, 1, true)
 				.setPagingOption(perPageCount, currentPageNumber)
 				.appendSortingOption(sortingOption, ordering)
