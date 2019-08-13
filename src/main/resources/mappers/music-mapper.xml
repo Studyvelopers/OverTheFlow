@@ -8,8 +8,8 @@
 		<result property="playtime" column="music_play_time"/>
 		<result property="registerDate" column="music_register_date"/>
 		<result property="description" column="music_description"/>
-		<result property="visibilityFlag" column="music_visibility_flag"/>
-		<result property="downloadFlag" column="music_download_flag"/>
+		<result property="visibility" column="music_visibility_flag"/>
+		<result property="downloadable" column="music_download_flag"/>
 		<result property="playCount" column="music_play_count"/>
 		<result property="categoryId" column="category_id"/>
 		<result property="memberId" column="member_id"/>
@@ -28,7 +28,7 @@
 		VALUES
 			(	#{id}, 
 				#{title}, 
-				#{playTime}, 
+				#{playtime}, 
 				#{description}, 
 				#{playCount},
 				#{categoryId}, 
@@ -40,10 +40,10 @@
 			music
 		SET
 			music_title = #{title},
-			music_play_time = #{playTime},
+			music_play_time = #{playtime},
 			music_description = #{description},
-			music_download_flag = #{downloadFlag},
-			music_visibility_flag = #{visibilityFlag},
+			music_download_flag = #{downloadable},
+			music_visibility_flag = #{visibility},
 			music_play_count = #{playCount},
 			category_id = #{categoryId},
 			member_id = #{memberId}
