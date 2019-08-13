@@ -60,6 +60,7 @@ public class MusicServiceImpl implements MusicService{
 				}
 			}
 		} catch(RuntimeException exception){
+			exception.printStackTrace();
 			this.transactionManager.rollback(transactionStatus);
 			throw exception;
 		}
@@ -299,13 +300,12 @@ public class MusicServiceImpl implements MusicService{
 	}
 	
 	private boolean isMusicNull(MusicVO musicVO){
-		if(musicVO == null || musicVO.getId() == null 
+		if(musicVO == null
 				|| musicVO.getMemberId() == null
 				|| musicVO.getMemberNickname() == null 
 				|| musicVO.getPlayCount() == null
 				|| musicVO.getPlaytime() == null 
 				|| musicVO.getRegisterDate() == null
-				|| musicVO.getTags() == null 
 				|| musicVO.getTitle() == null
 				|| musicVO.getDownloadable() == null 
 				|| musicVO.getVisibility() == null
