@@ -93,7 +93,7 @@
 	</select>
 	
 	<select id="searchMusics" parameterType="String" resultMap="music">
-		SELECT COUNT(*) FROM
+		SELECT * FROM
 			music_view
 		<!-- 검색 -->
 		<if test="searchOptions != null">
