@@ -33,7 +33,11 @@ public class FollowServiceImpl implements FollowService {
 
 	@Override
 	public List<MemberVO> getFollowers(String memberId) throws Exception {
-		// TODO Auto-generated method stub
+		List<String> memberIds = followMapper.searchFollowerIds(memberId);
+		if(memberIds != null || memberIds.size() > 0){
+			List<MemberVO> members = memberService.getMembers(memberIds);
+			return members;
+		}
 		return null;
 	}
 
