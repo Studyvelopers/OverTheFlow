@@ -10,6 +10,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.studyveloper.overtheflow.mapper.MemberLikesMusicMapper;
+import com.studyveloper.overtheflow.vo.LikeVO;
 import com.studyveloper.overtheflow.vo.MemberLikesMusicVO;
 
 @Service
@@ -19,20 +20,16 @@ public class MusicLikeServiceImpl implements MusicLikeService {
 	@Autowired
 	private MemberLikesMusicMapper memberLikesMusicMapper;
 	
-	public Boolean likeMusic(String memberId, String musicId) throws Exception {
+	public Boolean likeMusic(LikeVO likeVO) throws Exception {
 		// TODO Auto-generated method stub
-		if(memberId == null || musicId == null) throw new Exception();
+		if(this.isLikeVoNull(likeVO)) throw new Exception();
 		
 		TransactionStatus transactionStatus = 
 				this.transactionManager.getTransaction(new DefaultTransactionDefinition());
 		
 		try{
-			MemberLikesMusicVO memberLikesMusicVO = new MemberLikesMusicVO();
 			
-			memberLikesMusicVO.setMemberId(memberId);
-			memberLikesMusicVO.setMusicId(musicId);
-			
-			this.memberLikesMusicMapper.addMemberLikesMusic(memberLikesMusicVO);
+			this.memberLikesMusicMapper.addMemberLikesMusic(likeVO);
 			
 		} catch(RuntimeException e){
 			this.transactionManager.rollback(transactionStatus);
@@ -47,20 +44,16 @@ public class MusicLikeServiceImpl implements MusicLikeService {
 		return true;
 	}
 
-	public Boolean cancelLikeMuisc(String memberId, String musicId) throws Exception {
+	public Boolean cancelLikeMuisc(LikeVO likeVO) throws Exception {
 		// TODO Auto-generated method stub
-		if(memberId == null || musicId == null) throw new Exception();
+		if(this.isLikeVoNull(likeVO)) throw new Exception();
 		
 		TransactionStatus transactionStatus = 
 				this.transactionManager.getTransaction(new DefaultTransactionDefinition());
 		
 		try{
-			MemberLikesMusicVO memberLikesMusicVO = new MemberLikesMusicVO();
 			
-			memberLikesMusicVO.setMemberId(memberId);
-			memberLikesMusicVO.setMusicId(musicId);
-			
-			this.memberLikesMusicMapper.deleteMemberLikesMusic(memberLikesMusicVO);
+			this.memberLikesMusicMapper.deleteMemberLikesMusic(likeVO);
 			
 		} catch(RuntimeException e){
 			this.transactionManager.rollback(transactionStatus);
@@ -81,8 +74,7 @@ public class MusicLikeServiceImpl implements MusicLikeService {
 		
 		List<String> result = new ArrayList<String>();
 		
-		List<MemberLikesMusicVO> memberLikesMusicVOs = 
-				this.memberLikesMusicMapper.searchMemberLikesMusicByMemberId(memberId);
+		this.memberLikesMusicMapper.searchMemberIds(memberId);
 		
 		if(memberLikesMusicVOs != null){
 			for(MemberLikesMusicVO memberLikesMusicVO : memberLikesMusicVOs){
@@ -93,11 +85,15 @@ public class MusicLikeServiceImpl implements MusicLikeService {
 		return result;
 	}
 
-	public Boolean isLike(String memberId, String musicId) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+	private boolean isLikeVoNull(LikeVO likeVO){
+		if(likeVO == null
+				|| likeVO.getid() == null
+				|| likeVO.getMemberId() == null)
+			return true;
+		
+		return false;
 	}
-
+	
 	public void setTransactionManager(PlatformTransactionManager transactionManager) {
 		this.transactionManager = transactionManager;
 	}

@@ -201,7 +201,7 @@ public class MusicServiceImpl implements MusicService{
 		Boolean ordering = searchInfo.getOrdering();
 		
 		String keyword = searchInfo.getKeyword();
-		String conjunction = searchInfo.getConjunction();
+		String conjunction = searchInfo.getConjunction(); 
 		
 		List<String> idList = this.musicTagMapper.searchMusicIds(keyword);
 		
