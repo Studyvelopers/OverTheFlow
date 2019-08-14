@@ -11,6 +11,10 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.studyveloper.overtheflow.mapper.MemberLikesMusicMapper;
 import com.studyveloper.overtheflow.mapper.MusicMapper;
+import com.studyveloper.overtheflow.util.SearchInfo;
+import com.studyveloper.overtheflow.util.option.MusicUnit;
+import com.studyveloper.overtheflow.util.option.OptionIntent;
+import com.studyveloper.overtheflow.util.option.OptionIntent.Builder;
 import com.studyveloper.overtheflow.vo.LikeVO;
 import com.studyveloper.overtheflow.vo.MusicVO;
 
@@ -32,7 +36,7 @@ public class MusicLikeServiceImpl implements MusicLikeService {
 		
 		try{
 			
-			this.memberLikesMusicMapper.addMemberLikesMusic(likeVO);
+			int result = this.memberLikesMusicMapper.addMemberLikesMusic(likeVO);
 			
 		} catch(RuntimeException e){
 			this.transactionManager.rollback(transactionStatus);
@@ -71,8 +75,15 @@ public class MusicLikeServiceImpl implements MusicLikeService {
 		return true;
 	}
  
-	public List<MusicVO> getLikeMusics(String memberId) throws Exception {
+	public List<MusicVO> getLikeMusics(SearchInfo searchInfo) throws Exception {
 		// TODO Auto-generated method stub
+		Integer currentPageNumber = searchInfo.getCurrentPageNumber()-1;
+		Integer perPageCount = searchInfo.getPerPageCount();
+		MusicUnit sortingOption = MusicUnit.valueOf(searchInfo.getSortionOption());
+		Boolean ordering = searchInfo.getOrdering();
+		
+		String memberId = searchInfo.getKeyword();
+
 		if(memberId == null) throw new Exception();
 		
 		List<MusicVO> result;
@@ -89,15 +100,14 @@ public class MusicLikeServiceImpl implements MusicLikeService {
 				return new ArrayList<MusicVO>();
 			}
 			
-			result = new ArrayList<MusicVO>();
+			 OptionIntent optionIntent = new Builder()
+					 .appendInSearchOption(MusicUnit.ID, idList.toArray(), true)
+					.appendEqualSearchOption(MusicUnit.VISIBILITY, 1, true)
+					.setPagingOption(perPageCount, currentPageNumber)
+					.appendSortingOption(sortingOption, ordering)
+					.build();
 			
-			for(String id : idList){
-				MusicVO music = this.musicMapper.searchMusic(id);
-				
-				if(music != null){
-					result.add(music);
-				}
-			}
+			result = this.musicMapper.searchMusics(optionIntent);
 		
 		} catch(RuntimeException exception){
 			exception.printStackTrace();
