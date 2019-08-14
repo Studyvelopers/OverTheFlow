@@ -11,5 +11,5 @@ public interface PlaylistLikeService {
 	
 	public boolean cancelLikePlaylist(LikeVO likeVO);
 	
-	public List<PlaylistVO> getMyLikedPlaylists(SearchInfo searchInfo);
+	public List<PlaylistVO> getMyLikedPlaylists(SearchInfo searchInfo, String loginId);
 }

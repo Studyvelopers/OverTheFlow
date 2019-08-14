@@ -51,7 +51,7 @@ public class PlaylistLikeServiceImpl implements PlaylistLikeService {
 	}
 
 
-	public List<PlaylistVO> getMyLikedPlaylists(SearchInfo searchInfo) {
+	public List<PlaylistVO> getMyLikedPlaylists(SearchInfo searchInfo, String loginId) {
 		if (searchInfo == null) {
 			return null;
 		}
@@ -59,7 +59,7 @@ public class PlaylistLikeServiceImpl implements PlaylistLikeService {
 		List<String> myLikedPlaylistIdList = null;
 		
 		try {
-			myLikedPlaylistIdList = this.likeMapper.searchPlaylistIds(searchInfo.getConditions().get(PlaylistUnit.MEMBER_ID));
+			myLikedPlaylistIdList = this.likeMapper.searchPlaylistIds(loginId);
 			if (myLikedPlaylistIdList == null) {
 				return null;
 			}
@@ -72,7 +72,7 @@ public class PlaylistLikeServiceImpl implements PlaylistLikeService {
 		OptionIntent.Builder builder = new OptionIntent.Builder();
 		int size = searchInfo.getPerPageCount() != null ? searchInfo.getPerPageCount() : 0;
 		int offset = (searchInfo.getCurrentPageNumber() != null ? (searchInfo.getCurrentPageNumber() - 1) * size: 0);
-		String orderRule = searchInfo.getOrderRule();
+		String orderRule = searchInfo.getSortionOption();
 		String[] orderList = orderRule.trim().split("+");
 		for (int i = 0; i < orderList.length; i++) {
 			builder.appendSortingOption(PlaylistUnit.valueOf(orderList[i]), true);
