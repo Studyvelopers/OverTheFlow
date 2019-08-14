@@ -43,8 +43,13 @@ public class FollowServiceImpl implements FollowService {
 
 	@Override
 	public boolean follow(FollowVO followVO) throws Exception {
-		// TODO Auto-generated method stub
-		return false;
+		Integer result = followMapper.addFollow(followVO);
+		if(result == null){
+			return false;
+		}else{
+			System.out.println(result);
+			return true;
+		}
 	}
 
 	@Override
