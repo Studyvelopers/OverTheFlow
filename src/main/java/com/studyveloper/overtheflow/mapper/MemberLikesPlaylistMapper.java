@@ -36,5 +36,5 @@ public interface MemberLikesPlaylistMapper {
 	 * @return 전달인자로 준 회원 아이디에 해당하는 회원이 좋아요한 플레이리스트 아이디 목록을 반환합니다.
 	 * @throws Exception 미정
 	 */
-	public List<String> searchMusicIds(String memberId) throws Exception;
+	public List<String> searchPlaylistIds(String memberId) throws Exception;
 }
