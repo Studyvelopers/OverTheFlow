@@ -54,8 +54,13 @@ public class FollowServiceImpl implements FollowService {
 
 	@Override
 	public boolean unFollow(FollowVO followVO) throws Exception {
-		// TODO Auto-generated method stub
-		return false;
+		Integer result = followMapper.deleteFollow(followVO);
+		if(result == null){
+			return false;
+		}else{
+			System.out.println(result);
+			return true;
+		}
 	}
 
 }
