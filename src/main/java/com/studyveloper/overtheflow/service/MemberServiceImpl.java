@@ -296,9 +296,11 @@ public class MemberServiceImpl implements MemberService {
 		return searchMembers;
 	}
 
-	public List<MemberVO> getMembers(List<String> memberIds) {
-		
-		return null;
+	public List<MemberVO> getMembers(List<String> memberIds) throws Exception {
+		OptionIntent.Builder builder = new OptionIntent.Builder();
+		builder.appendInSearchOption(MemberUnit.ID, memberIds.toArray(), true);
+		List<MemberVO> members = memberMapper.searchMembers(builder.build());
+		return members;
 	}
 
 }
