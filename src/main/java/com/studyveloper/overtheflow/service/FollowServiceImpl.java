@@ -46,7 +46,19 @@ public class FollowServiceImpl implements FollowService {
 
 	@Override
 	public List<MemberVO> getFollowers(SearchInfo searchInfo) throws Exception {
+		List<String> memberIds = followMapper.searchFollowerIds(searchInfo.getKeyword());
+		Builder builder = new OptionIntent.Builder();
+		OptionIntent optionIntent = builder.build();
+		int offSet = (searchInfo.getCurrentPageNumber()-1)*searchInfo.getPerPageCount(); 
+		builder.setOffset(offSet);
+		builder.setSize(searchInfo.getPerPageCount());
+		builder.appendInSearchOption(MemberUnit.ID, memberIds.toArray(), true);
+		builder.appendSortingOption(MemberUnit.valueOf(searchInfo.getOrderRule()), searchInfo.getSort());
 		
+		if(memberIds != null || memberIds.size() > 0){
+			List<MemberVO> members = memberMapper.searchMembers(optionIntent);
+			return members;
+		}
 		return null;
 	}
 
