@@ -27,7 +27,7 @@ public interface PlaylistService {
 
 	public List<PlaylistVO> getPlaylistsByMember(SearchInfo searchInfo);
 
-	public List<PlaylistVO> getMyPlaylists(SearchInfo searchInfo);
+	public List<PlaylistVO> getMyPlaylists(SearchInfo searchInfo, String loginId);
 
-	public List<PlaylistVO> getMyPlaylistsByTitle(SearchInfo searchInfo);
+	public List<PlaylistVO> getMyPlaylistsByTitle(SearchInfo searchInfo, String loginId);
 }

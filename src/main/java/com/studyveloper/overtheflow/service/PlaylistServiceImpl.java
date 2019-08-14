@@ -225,10 +225,10 @@ public class PlaylistServiceImpl implements PlaylistService {
 		
 		// 논의를 해야할것같습니다.
 		OptionIntent.Builder builder = new OptionIntent.Builder();
-		String title = searchInfo.getConditions().get(PlaylistUnit.TITLE);
+		String title = searchInfo.getKeyword();
 		int size = searchInfo.getPerPageCount() != null ? searchInfo.getPerPageCount() : 0;
 		int offset = (searchInfo.getCurrentPageNumber() != null ? (searchInfo.getCurrentPageNumber() - 1) * size: 0);
-		String orderRule = searchInfo.getOrderRule();
+		String orderRule = searchInfo.getSortionOption();
 		String[] orderList = orderRule.trim().split("+");
 		for (int i = 0; i < orderList.length; i++) {
 			builder.appendSortingOption(PlaylistUnit.valueOf(orderList[i]), true);
@@ -258,10 +258,10 @@ public class PlaylistServiceImpl implements PlaylistService {
 		
 		// 논의를 해야할것같습니다.
 		OptionIntent.Builder builder = new OptionIntent.Builder();
-		String nickname = searchInfo.getConditions().get(PlaylistUnit.MEMBER_NICKNAME);
+		String nickname = searchInfo.getKeyword();
 		int size = searchInfo.getPerPageCount() != null ? searchInfo.getPerPageCount() : 0;
 		int offset = (searchInfo.getCurrentPageNumber() != null ? (searchInfo.getCurrentPageNumber() - 1) * size: 0);
-		String orderRule = searchInfo.getOrderRule();
+		String orderRule = searchInfo.getSortionOption();
 		String[] orderList = orderRule.trim().split("+");
 		for (int i = 0; i < orderList.length; i++) {
 			builder.appendSortingOption(PlaylistUnit.valueOf(orderList[i]), true);
@@ -290,10 +290,10 @@ public class PlaylistServiceImpl implements PlaylistService {
 		
 		// 논의를 해야할것같습니다.
 		OptionIntent.Builder builder = new OptionIntent.Builder();
-		String memberId = searchInfo.getConditions().get(PlaylistUnit.MEMBER_ID);
+		String memberId = searchInfo.getKeyword();
 		int size = searchInfo.getPerPageCount() != null ? searchInfo.getPerPageCount() : 0;
 		int offset = (searchInfo.getCurrentPageNumber() != null ? (searchInfo.getCurrentPageNumber() - 1) * size: 0);
-		String orderRule = searchInfo.getOrderRule();
+		String orderRule = searchInfo.getSortionOption();
 		String[] orderList = orderRule.trim().split("+");
 		for (int i = 0; i < orderList.length; i++) {
 			builder.appendSortingOption(PlaylistUnit.valueOf(orderList[i]), true);
@@ -322,7 +322,7 @@ public class PlaylistServiceImpl implements PlaylistService {
 		
 		List<String> idList = null;
 		try {
-			idList = this.playlistTagMapper.searchPlaylistIds(searchInfo.getConditions().get("tag"));
+			idList = this.playlistTagMapper.searchPlaylistIds(searchInfo.getKeyword());
 		} catch (Exception e) {
 			logger.error(e.toString());
 			return null;
@@ -332,7 +332,7 @@ public class PlaylistServiceImpl implements PlaylistService {
 		OptionIntent.Builder builder = new OptionIntent.Builder();
 		int size = searchInfo.getPerPageCount() != null ? searchInfo.getPerPageCount() : 0;
 		int offset = (searchInfo.getCurrentPageNumber() != null ? (searchInfo.getCurrentPageNumber() - 1) * size: 0);
-		String orderRule = searchInfo.getOrderRule();
+		String orderRule = searchInfo.getSortionOption();
 		String[] orderList = orderRule.trim().split("+");
 		for (int i = 0; i < orderList.length; i++) {
 			builder.appendSortingOption(PlaylistUnit.valueOf(orderList[i]), true);
@@ -352,22 +352,21 @@ public class PlaylistServiceImpl implements PlaylistService {
 		return playlists;
 	}
 	
-	public List<PlaylistVO> getMyPlaylists(SearchInfo searchInfo) {
+	public List<PlaylistVO> getMyPlaylists(SearchInfo searchInfo, String loginId) {
 		if (searchInfo == null) {
 			return null;
 		}
 		
 		// 논의를 해야할것같습니다.
 		OptionIntent.Builder builder = new OptionIntent.Builder();
-		String memberId = searchInfo.getConditions().get(PlaylistUnit.MEMBER_ID);
 		int size = searchInfo.getPerPageCount() != null ? searchInfo.getPerPageCount() : 0;
 		int offset = (searchInfo.getCurrentPageNumber() != null ? (searchInfo.getCurrentPageNumber() - 1) * size: 0);
-		String orderRule = searchInfo.getOrderRule();
+		String orderRule = searchInfo.getSortionOption();
 		String[] orderList = orderRule.trim().split("+");
 		for (int i = 0; i < orderList.length; i++) {
 			builder.appendSortingOption(PlaylistUnit.valueOf(orderList[i]), true);
 		}
-		builder.appendEqualSearchOption(PlaylistUnit.MEMBER_ID, memberId, true)
+		builder.appendEqualSearchOption(PlaylistUnit.MEMBER_ID, loginId, true)
 			   .setPagingOption(size, offset);
 		
 		List<PlaylistVO> playlists = null;
@@ -382,23 +381,22 @@ public class PlaylistServiceImpl implements PlaylistService {
 		return playlists;
 	}
 	
-	public List<PlaylistVO> getMyPlaylistsByTitle(SearchInfo searchInfo) {
+	public List<PlaylistVO> getMyPlaylistsByTitle(SearchInfo searchInfo, String loginId) {
 		if (searchInfo == null) {
 			return null;
 		}
 		
 		// 논의를 해야할것같습니다.
 		OptionIntent.Builder builder = new OptionIntent.Builder();
-		String memberId = searchInfo.getConditions().get(PlaylistUnit.MEMBER_ID);
-		String title = searchInfo.getConditions().get(PlaylistUnit.TITLE);
+		String title = searchInfo.getKeyword();
 		int size = searchInfo.getPerPageCount() != null ? searchInfo.getPerPageCount() : 0;
 		int offset = (searchInfo.getCurrentPageNumber() != null ? (searchInfo.getCurrentPageNumber() - 1) * size: 0);
-		String orderRule = searchInfo.getOrderRule();
+		String orderRule = searchInfo.getSortionOption();
 		String[] orderList = orderRule.trim().split("+");
 		for (int i = 0; i < orderList.length; i++) {
 			builder.appendSortingOption(PlaylistUnit.valueOf(orderList[i]), true);
 		}
-		builder.appendEqualSearchOption(PlaylistUnit.MEMBER_ID, memberId, true)
+		builder.appendEqualSearchOption(PlaylistUnit.MEMBER_ID, loginId, true)
 			   .appendEqualSearchOption(PlaylistUnit.TITLE, title, true)
 			   .setPagingOption(size, offset);
 		
