@@ -10,15 +10,18 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.studyveloper.overtheflow.mapper.MemberLikesMusicMapper;
+import com.studyveloper.overtheflow.mapper.MusicMapper;
 import com.studyveloper.overtheflow.vo.LikeVO;
-import com.studyveloper.overtheflow.vo.MemberLikesMusicVO;
+import com.studyveloper.overtheflow.vo.MusicVO;
 
 @Service
 public class MusicLikeServiceImpl implements MusicLikeService {
 	@Autowired
 	private PlatformTransactionManager transactionManager;
 	@Autowired
-	private MemberLikesMusicMapper memberLikesMusicMapper;
+	private MemberLikesMusicMapper memberLikesMusicMapper; 
+	@Autowired
+	private MusicMapper musicMapper;
 	
 	public Boolean likeMusic(LikeVO likeVO) throws Exception {
 		// TODO Auto-generated method stub
@@ -68,19 +71,41 @@ public class MusicLikeServiceImpl implements MusicLikeService {
 		return true;
 	}
  
-	public List<String> getLikeMusics(String memberId) throws Exception {
+	public List<MusicVO> getLikeMusics(String memberId) throws Exception {
 		// TODO Auto-generated method stub
 		if(memberId == null) throw new Exception();
 		
-		List<String> result = new ArrayList<String>();
+		List<MusicVO> result;
 		
-		this.memberLikesMusicMapper.searchMemberIds(memberId);
+		TransactionStatus transactionStatus = 
+				this.transactionManager.getTransaction(new DefaultTransactionDefinition());
 		
-		if(memberLikesMusicVOs != null){
-			for(MemberLikesMusicVO memberLikesMusicVO : memberLikesMusicVOs){
-				result.add(memberLikesMusicVO.getMusicId()); 
+		try{
+			List<String> idList;
+			
+			idList = this.memberLikesMusicMapper.searchMemberIds(memberId);
+			
+			if(idList == null){
+				return new ArrayList<MusicVO>();
 			}
+			
+			result = new ArrayList<MusicVO>();
+			
+			for(String id : idList){
+				MusicVO music = this.musicMapper.searchMusic(id);
+				
+				if(music != null){
+					result.add(music);
+				}
+			}
+		
+		} catch(RuntimeException exception){
+			exception.printStackTrace();
+			this.transactionManager.rollback(transactionStatus);
+			throw new Exception();
 		}
+		
+		this.transactionManager.commit(transactionStatus);
 		
 		return result;
 	}
