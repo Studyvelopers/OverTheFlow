@@ -219,7 +219,8 @@ public class MusicServiceImpl implements MusicService{
 		return result;
 	}
 
-	public List<MusicVO> getMyMusicsByTitle(SearchInfo searchInfo) throws Exception {
+	public List<MusicVO> getMyMusicsByTitle(SearchInfo searchInfo, String loginId)
+			throws Exception {
 		// TODO Auto-generated method stub
 		Integer currentPageNumber = searchInfo.getCurrentPageNumber()-1;
 		Integer perPageCount = searchInfo.getPerPageCount();
@@ -229,8 +230,6 @@ public class MusicServiceImpl implements MusicService{
 		String keyword = searchInfo.getKeyword();
 		MusicUnit searchOption = MusicUnit.valueOf(searchInfo.getSearchOption());
 		String conjunction = searchInfo.getConjunction();
-		
-		String loginId = null;
 		
 		 OptionIntent optionIntent = new Builder()
 				.appendLikeSearchOption(searchOption, keyword, true)
@@ -244,7 +243,8 @@ public class MusicServiceImpl implements MusicService{
 		return result;
 	}
 
-	public List<MusicVO> getMyMusicsByCategory(SearchInfo searchInfo) throws Exception {
+	public List<MusicVO> getMyMusicsByCategory(SearchInfo searchInfo, String loginId) 
+			throws Exception {
 		// TODO Auto-generated method stub
 		Integer currentPageNumber = searchInfo.getCurrentPageNumber()-1;
 		Integer perPageCount = searchInfo.getPerPageCount();
@@ -254,8 +254,6 @@ public class MusicServiceImpl implements MusicService{
 		String keyword = searchInfo.getKeyword();
 		MusicUnit searchOption = MusicUnit.valueOf(searchInfo.getSearchOption());
 		String conjunction = searchInfo.getConjunction();
-		
-		String loginId = null;
 		
 		 OptionIntent optionIntent = new Builder()
 				.appendEqualSearchOption(searchOption, keyword, true)

@@ -51,8 +51,8 @@ public interface MusicService {
 	public List<MusicVO> getMusicsByTitle(SearchInfo searchInfo) throws Exception;
 	public List<MusicVO> getMusicsByNickName(SearchInfo searchInfo) throws Exception;
 	public List<MusicVO> getMusicsByTag(SearchInfo searchInfo) throws Exception;
-	public List<MusicVO> getMyMusicsByTitle(SearchInfo searchInfo) throws Exception;
-	public List<MusicVO> getMyMusicsByCategory(SearchInfo searchInfo) throws Exception;
+	public List<MusicVO> getMyMusicsByTitle(SearchInfo searchInfo, String loginId) throws Exception;
+	public List<MusicVO> getMyMusicsByCategory(SearchInfo searchInfo, String loginId) throws Exception;
 	public List<MusicVO> getMusics(List<String> musicIds) throws Exception;
 	public List<MusicVO> getAllMusics(PageInfo pageInfo) throws Exception;
 }
