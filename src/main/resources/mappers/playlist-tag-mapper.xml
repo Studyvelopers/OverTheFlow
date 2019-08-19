@@ -27,7 +27,7 @@
 			playlist_tag_contents = #{tagName}
 	</select>
 	
-	<select id="searchTagNames" parameterType="String" resultMap="String">
+	<select id="searchTagNames" parameterType="String" resultType="String">
 		SELECT
 			playlist_tag_contents
 		FROM
