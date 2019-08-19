@@ -3,7 +3,7 @@ package com.studyveloper.overtheflow.util.option;
 public enum MusicUnit implements OptionUnit {
 	ID("music_id"),
 	TITLE("music_title"),
-	PLAY_TIME("music_play_tiem"),
+	PLAY_TIME("music_play_time"),
 	REGISTER_DATE("music_register_date"),
 	DESCRIPTION("music_description"),
 	VISIBILITY("music_visibility_flag"),

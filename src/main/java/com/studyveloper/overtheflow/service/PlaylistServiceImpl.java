@@ -1,22 +1,22 @@
 package com.studyveloper.overtheflow.service;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.studyveloper.overtheflow.bean.PlaylistBean;
 import com.studyveloper.overtheflow.mapper.PlaylistMapper;
 import com.studyveloper.overtheflow.mapper.PlaylistTagMapper;
 import com.studyveloper.overtheflow.util.IdentifierGenerator;
-import com.studyveloper.overtheflow.vo.PlaylistTagVO;
+import com.studyveloper.overtheflow.util.PageInfo;
+import com.studyveloper.overtheflow.util.SearchInfo;
+import com.studyveloper.overtheflow.util.option.OptionIntent;
+import com.studyveloper.overtheflow.util.option.PlaylistUnit;
 import com.studyveloper.overtheflow.vo.PlaylistVO;
+import com.studyveloper.overtheflow.vo.TagVO;
 
 @Service
 public class PlaylistServiceImpl implements PlaylistService {
@@ -30,34 +30,28 @@ public class PlaylistServiceImpl implements PlaylistService {
 	@Autowired
 	private PlaylistTagMapper playlistTagMapper;
 	
-	public PlaylistBean createPlaylist(PlaylistBean playlistBean) {
+	public PlaylistVO createPlaylist(PlaylistVO playlistVO) {
 		// 파라미터 널 체크
-		if (playlistBean == null) {
+		if (playlistVO == null) {
 			logger.error("전달인자 오류.");
 			return null;
 		}
 		
 		// 데이터 검증
-		if (playlistBean.getTitle() == null ||
-				playlistBean.getVisibility() == null ||
-				playlistBean.getDescription() == null ||
-				playlistBean.getMemberId() == null) {
-			
+		if (playlistVO.getTitle() == null 
+			|| playlistVO.getVisibility() == null
+			|| playlistVO.getDescription() == null
+			|| playlistVO.getMemberId() == null) {
 			logger.error("데이터가 비어 있습니다.");
 			return null;
 		}
-		
-		// bean -> vo 전환
-		PlaylistVO playlistVO = new PlaylistVO();
-		playlistVO.setTitle(playlistBean.getTitle());
-		playlistVO.setDescription(playlistBean.getDescription());
-		playlistVO.setMemberId(playlistBean.getMemberId());
-		playlistVO.setRegisterDate(new Date());
-		playlistVO.setVisibility(playlistBean.getVisibility());
-		
+	
 		// 식별키 생성
-		String id = IdentifierGenerator.generateId(playlistBean.getTitle().hashCode() + playlistBean.getMemberId().hashCode());
+		String id = IdentifierGenerator.generateId(playlistVO.getTitle());
 		playlistVO.setId(id);
+		
+		// 날짜 정보 삽입
+		playlistVO.setRegisterDate(new Date());
 		
 		// 플레이리스트 정보 등록
 		try {
@@ -68,32 +62,26 @@ public class PlaylistServiceImpl implements PlaylistService {
 		}
 		
 		// 태그 정보 등록
-		List<String> tags = playlistBean.getTags();
+		List<String> tags = playlistVO.getTags();
 		try {
 			if (tags != null && tags.size() > 0) {
 				for (String tag : tags) {
-					PlaylistTagVO tagVO = new PlaylistTagVO();
-					tagVO.setPlaylistId(id);
-					tagVO.setTag(tag);
+					TagVO tagVO = new TagVO();
+					tagVO.setId(id);
+					tagVO.setTagName(tag);
 					playlistTagMapper.addPlaylistTag(tagVO);
 				}
 			}
 		}  catch (Exception e) {
 			// 예외 처리
 			logger.error(e.getMessage());
+			return null;
 		}
 		
-		// 식별키와 날짜 정보 삽입
-		playlistBean.setId(id);
-		playlistBean.setRegisterDate(playlistVO.getRegisterDate());
-		
-		// 로깅
-		logger.info(playlistBean.toString());
-		
-		return playlistBean;
+		return playlistVO;
 	}
 
-	public Boolean deletePlaylist(String playlistId) {
+	public boolean deletePlaylist(String playlistId, String loginId) {
 		// 전달인자 null 체크
 		if (playlistId == null) {
 			logger.error("삭제할 대상이 없습니다.");
@@ -103,11 +91,11 @@ public class PlaylistServiceImpl implements PlaylistService {
 		logger.info("플레이리스트 삭제 요청 (" + playlistId + ")");
 		
 		try {
-			// 태그 정보 제거
-			playlistTagMapper.deletePlaylistTagsByPlaylistId(playlistId);
-			
 			// 플레이리스트 정보 제거
-			playlistMapper.deletePlaylistById(playlistId);
+			playlistMapper.deletePlaylists(new OptionIntent.Builder()
+					.appendEqualSearchOption(PlaylistUnit.MEMBER_ID, loginId, true)
+					.appendEqualSearchOption(PlaylistUnit.ID, playlistId, true)
+					.build());
 			
 		} catch (Exception e) {
 			// 예외 처리
@@ -118,48 +106,40 @@ public class PlaylistServiceImpl implements PlaylistService {
 		return true;
 	}
 
-	public PlaylistBean modifyPlaylist(PlaylistBean playlistBean) {
+	public PlaylistVO modifyPlaylist(PlaylistVO playlistVO) {
 		// 전달인자 null 체크
-		if (playlistBean == null) {
+		if (playlistVO == null) {
 			logger.error("수정할 대상이 없습니다.");
 			return null;
 		}
 		
-		logger.info("플레이리스트 수정 (" + playlistBean.getId() + ")");
+		logger.info("플레이리스트 수정 (" + playlistVO.getId() + ")");
 		
 		// 데이터 체크
-		if (playlistBean.getVisibility() == null ||
-				playlistBean.getDescription() == null ||
-				playlistBean.getId() == null ||
-				playlistBean.getMemberId() == null ||
-				playlistBean.getRegisterDate() == null ||
-				playlistBean.getTitle() == null) {
+		if (playlistVO.getVisibility() == null 
+			|| playlistVO.getDescription() == null
+			|| playlistVO.getId() == null
+			|| playlistVO.getMemberId() == null
+			|| playlistVO.getRegisterDate() == null
+			|| playlistVO.getTitle() == null) {
 			logger.error("누락된 정보가 있습니다.");
 		}
-		
-		// VO 객체 생성
-		PlaylistVO playlistVO = new PlaylistVO();
-		playlistVO.setId(playlistBean.getId());
-		playlistVO.setDescription(playlistBean.getDescription());
-		playlistVO.setMemberId(playlistBean.getMemberId());
-		playlistVO.setRegisterDate(playlistBean.getRegisterDate());
-		playlistVO.setTitle(playlistBean.getTitle());
-		playlistVO.setVisibility(playlistBean.getVisibility());
 		
 		try {
 			// 플레이리스트 정보 수정
 			playlistMapper.modifyPlaylist(playlistVO);
 			
 			// 태그 정보 수정
-			playlistTagMapper.deletePlaylistTagsByPlaylistId(playlistVO.getId());
+			// 기존 태그 정보 모두 삭제
+			playlistTagMapper.deletePlaylistTag(playlistVO.getId());
 			
 			// 태그 정보 등록
-			List<String> tags = playlistBean.getTags();
+			List<String> tags = playlistVO.getTags();
 			if (tags != null && tags.size() > 0) {
 				for (String tag : tags) {
-					PlaylistTagVO newTag = new PlaylistTagVO();
-					newTag.setPlaylistId(playlistBean.getId());
-					newTag.setTag(tag);
+					TagVO newTag = new TagVO();
+					newTag.setId(playlistVO.getId());
+					newTag.setTagName(tag);
 					playlistTagMapper.addPlaylistTag(newTag);
 				}
 			}
@@ -168,84 +148,265 @@ public class PlaylistServiceImpl implements PlaylistService {
 			return null;
 		}
 		
-		return playlistBean;
+		return playlistVO;
 	}
 	
-	public PlaylistBean searchPlaylistById(String playlistId) {
-		// 전달인자 체크
-		if (playlistId == null) {
-			logger.error("조회할 식별키가 없습니다.");
+	public PlaylistVO getPlaylist(String playlistId, String loginId) {
+		if (playlistId == null || loginId == null) {
 			return null;
 		}
 		
-		PlaylistBean result = null;
+		PlaylistVO playlistVO = null;
+		
 		try {
-			// 플레이리스트 정보 조회
-			PlaylistVO playlistVO = playlistMapper.searchPlaylistById(playlistId);
-			
-			// 정보가 없다면 널 리턴
-			if (playlistVO == null) {
-				return result;
-			}
-			
-			// 정보가 있으면 태그 정보 조회
-			List<String> tags = null;
-			tags = playlistTagMapper.searchTagsByPlaylistId(playlistId);
-			
-			// Bean 객체 생성
-			result = new PlaylistBean();
-			result.setDescription(playlistVO.getDescription());
-			result.setId(playlistVO.getId());
-			result.setMemberId(playlistVO.getMemberId());
-			result.setRegisterDate(playlistVO.getRegisterDate());
-			result.setTags(tags);
-			result.setTitle(playlistVO.getTitle());
-			result.setVisibility(playlistVO.getVisibility());
+			playlistVO = playlistMapper.searchPlaylist(playlistId);
 		} catch (Exception e) {
-			logger.error(e.getMessage());
+			logger.error(e.toString());
+			return null;
 		}
 		
-		return result;
+		if (playlistVO.getMemberId().equals(loginId.trim())) {
+			return playlistVO;
+		} else {
+			return null;
+		}
 	}
-
-	public List<PlaylistBean> searchPlaylistsByMemberId(String memberId, Integer pageNumber, Integer perPageCount) {
-		// 전달인자 체크
-		if (memberId == null) {
-			logger.error("전달인자 오류");
+	
+	public List<PlaylistVO> getAllPlaylists(PageInfo pageInfo) {
+		int size = 0;
+		int offset = 0;
+		if (pageInfo != null) {
+			size = pageInfo.getPerPageCount();
+			offset = (pageInfo.getCurrentPageNumber() - 1) * size;
+		}
+		
+		List<PlaylistVO> playlists = null;
+		
+		try {
+			// 플레이리스트 목록 가져오기
+			playlists = playlistMapper.searchPlaylists(new OptionIntent.Builder()
+					.setPagingOption(size, offset)
+					.build());
+			
+			// 총 목록의 갯수 갱신
+			pageInfo.setMaxCount(playlistMapper.getPlaylistSize(new OptionIntent.Builder().build()));
+		} catch (Exception e) {
+			logger.error(e.toString());
 			return null;
 		}
 		
-		List<PlaylistBean> playlists = new ArrayList<PlaylistBean>();
+		return playlists;
+	}
+	
+	public List<PlaylistVO> getPlaylists(List<String> playlistIds) {
+		if (playlistIds == null || playlistIds.isEmpty()) {
+			return null;
+		}
 		
-		// 회원아이디로 플레이리스트 검색
+		List<PlaylistVO> playlists = null;
+		
 		try {
-			Map<String, Object> conditions = new HashMap<String, Object>();
-			conditions.put("memberId", memberId);
-			conditions.put("pageNumber", pageNumber);
-			conditions.put("perPageCount", perPageCount);
-			
-			// 정보 조회
-			List<PlaylistVO> data = playlistMapper.searchPlaylistsByMemberId(conditions);
-			
-			// 태그 정보 조회
-			for (PlaylistVO playlist : data) {
-				List<String> tags = playlistTagMapper.searchTagsByPlaylistId(playlist.getId());
-				
-				// 빈 생성
-				PlaylistBean playlistBean = new PlaylistBean();
-				playlistBean.setDescription(playlist.getDescription());
-				playlistBean.setId(playlist.getId());
-				playlistBean.setMemberId(playlist.getMemberId());
-				playlistBean.setRegisterDate(playlist.getRegisterDate());
-				playlistBean.setTitle(playlist.getTitle());
-				playlistBean.setVisibility(playlist.getVisibility());
-				playlistBean.setTags(tags);
-				
-				// 빈 추가
-				playlists.add(playlistBean);
-			}
+			playlists = playlistMapper.searchPlaylists(
+					new OptionIntent.Builder()
+					.appendInSearchOption(PlaylistUnit.ID, playlistIds.toArray(), true)
+					.build());
 		} catch (Exception e) {
-			logger.error(e.getMessage());
+			logger.error(e.toString());
+			return null;
+		}
+		
+		return playlists;
+	}
+	
+	public List<PlaylistVO> getPlaylistsByTitle(SearchInfo searchInfo) {
+		if (searchInfo == null) {
+			return null;
+		}
+		
+		// 논의를 해야할것같습니다.
+		OptionIntent.Builder builder = new OptionIntent.Builder();
+		String title = searchInfo.getKeyword();
+		int size = searchInfo.getPerPageCount() != null ? searchInfo.getPerPageCount() : 0;
+		int offset = (searchInfo.getCurrentPageNumber() != null ? (searchInfo.getCurrentPageNumber() - 1) * size: 0);
+		String orderRule = searchInfo.getSortionOption();
+		String[] orderList = orderRule.trim().split("+");
+		for (int i = 0; i < orderList.length; i++) {
+			builder.appendSortingOption(PlaylistUnit.valueOf(orderList[i]), true);
+		}
+		builder.appendLikeSearchOption(PlaylistUnit.TITLE, title, true)
+			   .setPagingOption(size, offset);
+		
+		
+		List<PlaylistVO> playlists = null;
+		
+		try {
+			playlists = playlistMapper.searchPlaylists(builder.build());
+		} catch (Exception e) {
+			logger.error(e.toString());
+			return null;
+		}
+		
+		return playlists;
+		
+	}
+	
+	
+	public List<PlaylistVO> getPlaylistByNickname(SearchInfo searchInfo) {
+		if (searchInfo == null) {
+			return null;
+		}
+		
+		// 논의를 해야할것같습니다.
+		OptionIntent.Builder builder = new OptionIntent.Builder();
+		String nickname = searchInfo.getKeyword();
+		int size = searchInfo.getPerPageCount() != null ? searchInfo.getPerPageCount() : 0;
+		int offset = (searchInfo.getCurrentPageNumber() != null ? (searchInfo.getCurrentPageNumber() - 1) * size: 0);
+		String orderRule = searchInfo.getSortionOption();
+		String[] orderList = orderRule.trim().split("+");
+		for (int i = 0; i < orderList.length; i++) {
+			builder.appendSortingOption(PlaylistUnit.valueOf(orderList[i]), true);
+		}
+		builder.appendLikeSearchOption(PlaylistUnit.MEMBER_NICKNAME, nickname, true)
+			   .setPagingOption(size, offset);
+		
+		
+		List<PlaylistVO> playlists = null;
+		
+		try {
+			playlists = playlistMapper.searchPlaylists(builder.build());
+		} catch (Exception e) {
+			logger.error(e.toString());
+			return null;
+		}
+		
+		return playlists;
+		
+	}
+	
+	public List<PlaylistVO> getPlaylistsByMember(SearchInfo searchInfo) {
+		if (searchInfo == null) {
+			return null;
+		}
+		
+		// 논의를 해야할것같습니다.
+		OptionIntent.Builder builder = new OptionIntent.Builder();
+		String memberId = searchInfo.getKeyword();
+		int size = searchInfo.getPerPageCount() != null ? searchInfo.getPerPageCount() : 0;
+		int offset = (searchInfo.getCurrentPageNumber() != null ? (searchInfo.getCurrentPageNumber() - 1) * size: 0);
+		String orderRule = searchInfo.getSortionOption();
+		String[] orderList = orderRule.trim().split("+");
+		for (int i = 0; i < orderList.length; i++) {
+			builder.appendSortingOption(PlaylistUnit.valueOf(orderList[i]), true);
+		}
+		builder.appendEqualSearchOption(PlaylistUnit.MEMBER_ID, memberId, true)
+			   .setPagingOption(size, offset);
+		
+		
+		List<PlaylistVO> playlists = null;
+		
+		try {
+			playlists = playlistMapper.searchPlaylists(builder.build());
+		} catch (Exception e) {
+			logger.error(e.toString());
+			return null;
+		}
+		
+		return playlists;
+		
+	}
+	
+	public List<PlaylistVO> getPlaylistsByTag(SearchInfo searchInfo) {
+		if (searchInfo == null) {
+			return null;
+		}
+		
+		List<String> idList = null;
+		try {
+			idList = this.playlistTagMapper.searchPlaylistIds(searchInfo.getKeyword());
+		} catch (Exception e) {
+			logger.error(e.toString());
+			return null;
+		}
+		
+		// 논의를 해야할것같습니다.
+		OptionIntent.Builder builder = new OptionIntent.Builder();
+		int size = searchInfo.getPerPageCount() != null ? searchInfo.getPerPageCount() : 0;
+		int offset = (searchInfo.getCurrentPageNumber() != null ? (searchInfo.getCurrentPageNumber() - 1) * size: 0);
+		String orderRule = searchInfo.getSortionOption();
+		String[] orderList = orderRule.trim().split("+");
+		for (int i = 0; i < orderList.length; i++) {
+			builder.appendSortingOption(PlaylistUnit.valueOf(orderList[i]), true);
+		}
+		builder.appendInSearchOption(PlaylistUnit.ID, idList.toArray(), true)
+			   .setPagingOption(size, offset);
+		
+		List<PlaylistVO> playlists = null;
+		
+		try {
+			playlists = playlistMapper.searchPlaylists(builder.build());
+		} catch (Exception e) {
+			logger.error(e.toString());
+			return null;
+		}
+		
+		return playlists;
+	}
+	
+	public List<PlaylistVO> getMyPlaylists(SearchInfo searchInfo, String loginId) {
+		if (searchInfo == null) {
+			return null;
+		}
+		
+		// 논의를 해야할것같습니다.
+		OptionIntent.Builder builder = new OptionIntent.Builder();
+		int size = searchInfo.getPerPageCount() != null ? searchInfo.getPerPageCount() : 0;
+		int offset = (searchInfo.getCurrentPageNumber() != null ? (searchInfo.getCurrentPageNumber() - 1) * size: 0);
+		String orderRule = searchInfo.getSortionOption();
+		String[] orderList = orderRule.trim().split("+");
+		for (int i = 0; i < orderList.length; i++) {
+			builder.appendSortingOption(PlaylistUnit.valueOf(orderList[i]), true);
+		}
+		builder.appendEqualSearchOption(PlaylistUnit.MEMBER_ID, loginId, true)
+			   .setPagingOption(size, offset);
+		
+		List<PlaylistVO> playlists = null;
+		
+		try {
+			playlists = playlistMapper.searchPlaylists(builder.build());
+		} catch (Exception e) {
+			logger.error(e.toString());
+			return null;
+		}
+		
+		return playlists;
+	}
+	
+	public List<PlaylistVO> getMyPlaylistsByTitle(SearchInfo searchInfo, String loginId) {
+		if (searchInfo == null) {
+			return null;
+		}
+		
+		// 논의를 해야할것같습니다.
+		OptionIntent.Builder builder = new OptionIntent.Builder();
+		String title = searchInfo.getKeyword();
+		int size = searchInfo.getPerPageCount() != null ? searchInfo.getPerPageCount() : 0;
+		int offset = (searchInfo.getCurrentPageNumber() != null ? (searchInfo.getCurrentPageNumber() - 1) * size: 0);
+		String orderRule = searchInfo.getSortionOption();
+		String[] orderList = orderRule.trim().split("+");
+		for (int i = 0; i < orderList.length; i++) {
+			builder.appendSortingOption(PlaylistUnit.valueOf(orderList[i]), true);
+		}
+		builder.appendEqualSearchOption(PlaylistUnit.MEMBER_ID, loginId, true)
+			   .appendEqualSearchOption(PlaylistUnit.TITLE, title, true)
+			   .setPagingOption(size, offset);
+		
+		List<PlaylistVO> playlists = null;
+		
+		try {
+			playlists = playlistMapper.searchPlaylists(builder.build());
+		} catch (Exception e) {
+			logger.error(e.toString());
+			return null;
 		}
 		
 		return playlists;

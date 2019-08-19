@@ -10,29 +10,33 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.studyveloper.overtheflow.mapper.MemberLikesMusicMapper;
-import com.studyveloper.overtheflow.vo.MemberLikesMusicVO;
+import com.studyveloper.overtheflow.mapper.MusicMapper;
+import com.studyveloper.overtheflow.util.SearchInfo;
+import com.studyveloper.overtheflow.util.option.MusicUnit;
+import com.studyveloper.overtheflow.util.option.OptionIntent;
+import com.studyveloper.overtheflow.util.option.OptionIntent.Builder;
+import com.studyveloper.overtheflow.vo.LikeVO;
+import com.studyveloper.overtheflow.vo.MusicVO;
 
 @Service
 public class MusicLikeServiceImpl implements MusicLikeService {
 	@Autowired
 	private PlatformTransactionManager transactionManager;
 	@Autowired
-	private MemberLikesMusicMapper memberLikesMusicMapper;
+	private MemberLikesMusicMapper memberLikesMusicMapper; 
+	@Autowired
+	private MusicMapper musicMapper;
 	
-	public Boolean likeMusic(String memberId, String musicId) throws Exception {
+	public Boolean likeMusic(LikeVO likeVO) throws Exception {
 		// TODO Auto-generated method stub
-		if(memberId == null || musicId == null) throw new Exception();
+		if(this.isLikeVoNull(likeVO)) throw new Exception();
 		
 		TransactionStatus transactionStatus = 
 				this.transactionManager.getTransaction(new DefaultTransactionDefinition());
 		
 		try{
-			MemberLikesMusicVO memberLikesMusicVO = new MemberLikesMusicVO();
 			
-			memberLikesMusicVO.setMemberId(memberId);
-			memberLikesMusicVO.setMusicId(musicId);
-			
-			this.memberLikesMusicMapper.addMemberLikesMusic(memberLikesMusicVO);
+			int result = this.memberLikesMusicMapper.addMemberLikesMusic(likeVO);
 			
 		} catch(RuntimeException e){
 			this.transactionManager.rollback(transactionStatus);
@@ -47,20 +51,16 @@ public class MusicLikeServiceImpl implements MusicLikeService {
 		return true;
 	}
 
-	public Boolean cancelLikeMuisc(String memberId, String musicId) throws Exception {
+	public Boolean cancelLikeMuisc(LikeVO likeVO) throws Exception {
 		// TODO Auto-generated method stub
-		if(memberId == null || musicId == null) throw new Exception();
+		if(this.isLikeVoNull(likeVO)) throw new Exception();
 		
 		TransactionStatus transactionStatus = 
 				this.transactionManager.getTransaction(new DefaultTransactionDefinition());
 		
 		try{
-			MemberLikesMusicVO memberLikesMusicVO = new MemberLikesMusicVO();
 			
-			memberLikesMusicVO.setMemberId(memberId);
-			memberLikesMusicVO.setMusicId(musicId);
-			
-			this.memberLikesMusicMapper.deleteMemberLikesMusic(memberLikesMusicVO);
+			this.memberLikesMusicMapper.deleteMemberLikesMusic(likeVO);
 			
 		} catch(RuntimeException e){
 			this.transactionManager.rollback(transactionStatus);
@@ -75,29 +75,60 @@ public class MusicLikeServiceImpl implements MusicLikeService {
 		return true;
 	}
  
-	public List<String> getLikeMusics(String memberId) throws Exception {
+	public List<MusicVO> getLikeMusics(SearchInfo searchInfo) throws Exception {
 		// TODO Auto-generated method stub
+		Integer currentPageNumber = searchInfo.getCurrentPageNumber()-1;
+		Integer perPageCount = searchInfo.getPerPageCount();
+		MusicUnit sortingOption = MusicUnit.valueOf(searchInfo.getSortionOption());
+		Boolean ordering = searchInfo.getOrdering();
+		
+		String memberId = searchInfo.getKeyword();
+
 		if(memberId == null) throw new Exception();
 		
-		List<String> result = new ArrayList<String>();
+		List<MusicVO> result;
 		
-		List<MemberLikesMusicVO> memberLikesMusicVOs = 
-				this.memberLikesMusicMapper.searchMemberLikesMusicByMemberId(memberId);
+		TransactionStatus transactionStatus = 
+				this.transactionManager.getTransaction(new DefaultTransactionDefinition());
 		
-		if(memberLikesMusicVOs != null){
-			for(MemberLikesMusicVO memberLikesMusicVO : memberLikesMusicVOs){
-				result.add(memberLikesMusicVO.getMusicId()); 
+		try{
+			List<String> idList;
+			
+			idList = this.memberLikesMusicMapper.searchMemberIds(memberId);
+			
+			if(idList == null){
+				return new ArrayList<MusicVO>();
 			}
+			
+			 OptionIntent optionIntent = new Builder()
+					 .appendInSearchOption(MusicUnit.ID, idList.toArray(), true)
+					.appendEqualSearchOption(MusicUnit.VISIBILITY, 1, true)
+					.setPagingOption(perPageCount, currentPageNumber)
+					.appendSortingOption(sortingOption, ordering)
+					.build();
+			
+			result = this.musicMapper.searchMusics(optionIntent);
+		
+		} catch(RuntimeException exception){
+			exception.printStackTrace();
+			this.transactionManager.rollback(transactionStatus);
+			throw new Exception();
 		}
+		
+		this.transactionManager.commit(transactionStatus);
 		
 		return result;
 	}
 
-	public Boolean isLike(String memberId, String musicId) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+	private boolean isLikeVoNull(LikeVO likeVO){
+		if(likeVO == null
+				|| likeVO.getid() == null
+				|| likeVO.getMemberId() == null)
+			return true;
+		
+		return false;
 	}
-
+	
 	public void setTransactionManager(PlatformTransactionManager transactionManager) {
 		this.transactionManager = transactionManager;
 	}

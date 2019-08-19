@@ -2,16 +2,32 @@ package com.studyveloper.overtheflow.service;
 
 import java.util.List;
 
-import com.studyveloper.overtheflow.bean.PlaylistBean;
+import com.studyveloper.overtheflow.util.PageInfo;
+import com.studyveloper.overtheflow.util.SearchInfo;
+import com.studyveloper.overtheflow.vo.PlaylistVO;
 
 public interface PlaylistService {
-	public PlaylistBean createPlaylist(PlaylistBean playlistBean);
+	public PlaylistVO createPlaylist(PlaylistVO playlistVO);
+
+	public PlaylistVO modifyPlaylist(PlaylistVO playlistVO);
+
+	public boolean deletePlaylist(String playlistId, String loginId);
 	
-	public Boolean deletePlaylist(String playlistId);
-	
-	public PlaylistBean modifyPlaylist(PlaylistBean playlistBean);
-	
-	public PlaylistBean searchPlaylistById(String playlistId);
-	
-	public List<PlaylistBean> searchPlaylistsByMemberId(String memberId, Integer pageNumber, Integer perPageCount);
+	public PlaylistVO getPlaylist(String playlistId, String loginId);
+
+	public List<PlaylistVO> getAllPlaylists(PageInfo pageInfo);
+
+	public List<PlaylistVO> getPlaylists(List<String> playlistIds);
+
+	public List<PlaylistVO> getPlaylistsByTitle(SearchInfo searchInfo);
+
+	public List<PlaylistVO> getPlaylistByNickname(SearchInfo searchInfo);
+
+	public List<PlaylistVO> getPlaylistsByTag(SearchInfo searchInfo);
+
+	public List<PlaylistVO> getPlaylistsByMember(SearchInfo searchInfo);
+
+	public List<PlaylistVO> getMyPlaylists(SearchInfo searchInfo, String loginId);
+
+	public List<PlaylistVO> getMyPlaylistsByTitle(SearchInfo searchInfo, String loginId);
 }
