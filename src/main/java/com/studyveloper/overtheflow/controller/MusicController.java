@@ -1,5 +1,7 @@
 package com.studyveloper.overtheflow.controller;
 
+import java.util.List;
+
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.studyveloper.overtheflow.service.MusicLikeService;
 import com.studyveloper.overtheflow.service.MusicService;
+import com.studyveloper.overtheflow.util.SearchInfo;
 import com.studyveloper.overtheflow.vo.MusicVO;
 
 @Controller
@@ -18,6 +22,8 @@ import com.studyveloper.overtheflow.vo.MusicVO;
 public class MusicController {
 	@Autowired
 	private MusicService musicService;
+	@Autowired
+	private MusicLikeService musicLikeService;
 	
 	@RequestMapping(value="/modify/{musicNo}", method=RequestMethod.GET)
 	public String displayModifyMusic(HttpSession session, 
@@ -66,5 +72,25 @@ public class MusicController {
 		//목록 어디있음?
 		
 		return true;
+	}
+	
+	@RequestMapping(value="/like/list", method=RequestMethod.GET)
+	public String getLikeMusics(HttpSession session, SearchInfo searchInfo, Model model) {
+		String loginId = (String)session.getAttribute("loginId");
+		
+		searchInfo.setKeyword(loginId);
+		
+		List<MusicVO> result = null;
+		
+		try {
+			result = this.musicLikeService.getLikeMusics(searchInfo);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		model.addAttribute("musicList", result);
+		model.addAttribute("page", searchInfo.getCurrentPageNumber() + 1);
+		
+		return "likeMusic";
 	}
 }
