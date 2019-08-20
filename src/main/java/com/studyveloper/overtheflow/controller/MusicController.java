@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.studyveloper.overtheflow.service.MusicLikeService;
 import com.studyveloper.overtheflow.service.MusicService;
 import com.studyveloper.overtheflow.util.SearchInfo;
+import com.studyveloper.overtheflow.vo.LikeVO;
 import com.studyveloper.overtheflow.vo.MusicVO;
 
 @Controller
@@ -62,16 +63,54 @@ public class MusicController {
 	}
 	
 	@ResponseBody
+	@RequestMapping(value="/delete", method=RequestMethod.DELETE)
+	public boolean deleteMusic(HttpSession session, MusicVO music){
+		String loginId = (String)session.getAttribute("loginId");
+		
+		if(!loginId.equals(music.getMemberId())) return false;
+		
+		try{
+			if(this.musicService.deleteMusic(music.getId(), loginId)) return true;
+		} catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return false;
+	}
+	
+	@ResponseBody
 	@RequestMapping(value="/like", method=RequestMethod.POST)
 	public boolean toggleLikeMusic(HttpSession session, String musicNo, boolean isLike) {
 		String loginId = (String)session.getAttribute("loginId");
 		
 		boolean result = false;
 		
-		//좋아요한 목록 비교해서 캔슬 시킬지, 좋아요 등록할 지 결정해야함 
-		//목록 어디있음?
+		if(isLike){
+			LikeVO likeVO = new LikeVO();
+			likeVO.setid(musicNo);
+			likeVO.setMemberId(loginId);
+			try {
+				if(this.musicLikeService.likeMusic(likeVO)) return true;
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			return false;
+		} 
 		
-		return true;
+		LikeVO likeVO = new LikeVO();
+		likeVO.setid(musicNo);
+		likeVO.setMemberId(loginId);
+		
+		try {
+			this.musicLikeService.cancelLikeMuisc(likeVO);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return false;
 	}
 	
 	@RequestMapping(value="/like/list/{page}", method=RequestMethod.GET)
