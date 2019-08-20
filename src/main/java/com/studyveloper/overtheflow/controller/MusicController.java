@@ -26,6 +26,29 @@ public class MusicController {
 	@Autowired
 	private MusicLikeService musicLikeService;
 	
+	@RequestMapping(value="/create", method=RequestMethod.GET)
+	public String displayCreateMusic(HttpSession session) {
+	
+		return "createMusic";
+	}
+	
+	@RequestMapping(value="/create", method=RequestMethod.POST)
+	public String createMusic(HttpSession session, MusicVO music, Model model) {
+		
+		MusicVO result = null;
+		
+		try {
+			result = this.musicService.createMusic(music);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		model.addAttribute("music", result);		
+		
+		return "musicdetail";
+	}
+	
 	@RequestMapping(value="/modify/{musicNo}", method=RequestMethod.GET)
 	public String displayModifyMusic(HttpSession session, 
 			@PathVariable("musicNo") String musicNo, Model model) {
