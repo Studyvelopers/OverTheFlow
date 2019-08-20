@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.studyveloper.overtheflow.service.MusicService;
 import com.studyveloper.overtheflow.vo.MusicVO;
@@ -52,5 +53,18 @@ public class MusicController {
 		model.addAttribute("music", music);
 		
 		return "musicdetail";
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="/like", method=RequestMethod.POST)
+	public boolean toggleLikeMusic(HttpSession session, String musicNo, boolean isLike) {
+		String loginId = (String)session.getAttribute("loginId");
+		
+		boolean result = false;
+		
+		//좋아요한 목록 비교해서 캔슬 시킬지, 좋아요 등록할 지 결정해야함 
+		//목록 어디있음?
+		
+		return true;
 	}
 }
