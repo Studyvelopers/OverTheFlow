@@ -114,5 +114,10 @@ public class MusicController {
 		return "musicdetail";
 	}
 	
-	@RequestMapping(value="")
+	@RequestMapping(value="/list/{page}", method=RequestMethod.GET)
+	public String displayMusics(HttpSession session,
+			@PathVariable("page") int page, SearchInfo searchInfo) {
+		//얘 어떻게 분기처리 할거냐;
+		return null;
+	}
 }
