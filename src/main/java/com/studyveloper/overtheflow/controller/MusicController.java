@@ -93,4 +93,22 @@ public class MusicController {
 		
 		return "likeMusic";
 	}
+	
+	@RequestMapping(value="/detail/{musicNo}", method=RequestMethod.GET)
+	public String getMusicInfo(HttpSession session, 
+			@PathVariable("musicNo") String musicNo, Model model) {
+		String loginId = (String)session.getAttribute("loginId");
+		
+		MusicVO result = null;
+		
+		try{
+			result = this.musicService.getMusic(musicNo, loginId);
+		} catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		model.addAttribute("music", result);
+		
+		return "musicdetail";
+	}
 }
