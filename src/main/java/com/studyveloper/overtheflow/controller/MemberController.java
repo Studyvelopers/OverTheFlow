@@ -70,4 +70,27 @@ public class MemberController {
 		return "register";
 	}
 	
+	@RequestMapping(value="/unregister", method=RequestMethod.GET)
+	public String displayUnregister(){
+		logger.info("회원탈퇴 화면으로 이동.");
+		return "unregister";
+	}
+	
+	@RequestMapping(value="/unregister", method=RequestMethod.POST)
+	public String unregister(HttpSession session, String password) throws Exception{
+		logger.info("회원탈퇴 요청");
+		String memberId = (String) session.getAttribute("loginId");
+		if(memberId == null){
+			memberId = "";
+		}
+		logger.info("로그인 아이디 = "+memberId);
+		
+		boolean result = memberService.unRegister(memberId, password);
+		if(result){
+			logger.info("회원탈퇴 성공");
+		}else{
+			logger.info("회원 탈퇴 실패.");
+		}
+		return "test";
+	}
 }
