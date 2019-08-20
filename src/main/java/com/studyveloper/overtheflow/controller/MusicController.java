@@ -74,11 +74,13 @@ public class MusicController {
 		return true;
 	}
 	
-	@RequestMapping(value="/like/list", method=RequestMethod.GET)
-	public String getLikeMusics(HttpSession session, SearchInfo searchInfo, Model model) {
+	@RequestMapping(value="/like/list/{page}", method=RequestMethod.GET)
+	public String getLikeMusics(HttpSession session, SearchInfo searchInfo, 
+			@PathVariable("page") int page, Model model) {
 		String loginId = (String)session.getAttribute("loginId");
 		
 		searchInfo.setKeyword(loginId);
+		searchInfo.setCurrentPageNumber(page);
 		
 		List<MusicVO> result = null;
 		
@@ -89,7 +91,7 @@ public class MusicController {
 		}
 		
 		model.addAttribute("musicList", result);
-		model.addAttribute("page", searchInfo.getCurrentPageNumber() + 1);
+		model.addAttribute("page", page + 1);
 		
 		return "likeMusic";
 	}
@@ -111,4 +113,6 @@ public class MusicController {
 		
 		return "musicdetail";
 	}
+	
+	@RequestMapping(value="")
 }
