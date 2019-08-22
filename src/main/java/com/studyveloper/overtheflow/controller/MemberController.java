@@ -109,6 +109,42 @@ public class MemberController {
 		return "test";
 	}
 	
+	@RequestMapping(value="/modify", method=RequestMethod.GET)
+	public String displayModify(HttpSession session, Model model) throws Exception{
+		logger.info("회원정보 수정 페이지로 이동.");
+		if(session.getAttribute("loginId") == null){
+			logger.info("로그인을 안했습니다.");
+			return "error";
+		}else{
+			MemberVO memberVO = memberService.getMember((String)session.getAttribute("loginId"));
+			MemberBean memberBean = new MemberBean(memberVO);
+			model.addAttribute("memberBean", memberBean);
+			return "modify";
+		}
+	}
+	
+	@RequestMapping(value="/modify", method=RequestMethod.POST)
+	public String modify(HttpSession session, MemberBean memberBean, String oldPassword) throws Exception{
+		logger.info("회원정보 수정 페이지로 요청");
+		String id = (String)session.getAttribute("loginId");
+		if(id == null){
+			logger.info("로그인을 안했습니다.");
+			return "error";
+		}else{
+			
+			MemberVO memberVO = memberBean.toVO();
+			memberVO.setId(id);
+			memberVO = memberService.modifyMember(memberVO, oldPassword);
+			if(memberVO == null){
+				logger.info("회원정보 수정 실패");
+				return "error";
+			}else{
+				logger.info("회원정보 수정 성공");
+			}
+			return "modify";
+		}
+	}
+	
 	@RequestMapping(value="/detail", method=RequestMethod.GET)
 	public String displayMemberInfo(HttpSession session, Model model) throws Exception{
 		logger.info("내정보 조회 요청");
