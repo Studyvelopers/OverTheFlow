@@ -49,7 +49,7 @@ public class PlaylistController {
 			return ERROR_PAGE;
 		}
 		
-		model.addAttribute("playlist", playlist);
+		model.addAttribute("playlist", new PlaylistBean(playlist));
 		
 		return "playlist/detail/";
 	}
@@ -72,7 +72,7 @@ public class PlaylistController {
 			return ERROR_PAGE;
 		}
 		
-		model.addAttribute("playlist", playlist);
+		model.addAttribute("playlist", new PlaylistBean(playlist));
 		return "playlist/modify";
 	}
 	
@@ -96,7 +96,7 @@ public class PlaylistController {
 			return ERROR_PAGE;
 		}
 		
-		model.addAttribute("playlist", playlist);
+		model.addAttribute("playlist", new PlaylistBean(playlist));
 		return "playlist/detail";
 	}
 	
@@ -116,5 +116,30 @@ public class PlaylistController {
 		}
 		
 		return "redirect:/playlist/list";
+	}
+	
+	@GetMapping("/{id}")
+	public String displayPlaylistDetial(HttpSession session, @PathVariable("id") String playlistId, Model model) {
+		if (playlistId == null || playlistId.isEmpty()) {
+			return ERROR_PAGE;
+		}
+		
+		String loginId = TEST_LOGIN_ID;
+		
+		PlaylistVO playlist = null;
+		
+		try {
+			playlist = playlistService.getPlaylist(playlistId, loginId);
+		} catch (Exception e) {
+			e.printStackTrace();
+			playlist = null;
+		}
+		
+		if (playlist == null) {
+			return ERROR_PAGE;
+		}
+		
+		model.addAttribute("playlist", new PlaylistBean(playlist));
+		return "playlist/detail";
 	}
 }
