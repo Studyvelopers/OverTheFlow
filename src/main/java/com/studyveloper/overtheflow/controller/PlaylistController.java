@@ -4,7 +4,9 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -19,15 +21,21 @@ public class PlaylistController {
 	@Autowired
 	private PlaylistService playlistService;
 	
-	@GetMapping
+	private static final String ERROR_PAGE;
+	private static final String TEST_LOGIN_ID;
+	static {
+		ERROR_PAGE = "playlist/error";
+		TEST_LOGIN_ID = "1";
+	}
+	
+	@GetMapping("/create")
 	public String displayCreatePlaylist() {
 		return "playlist/create";
 	}
 	
-	@PostMapping
+	@PostMapping("/create")
 	public String createPlaylist(HttpSession session, String imageName, PlaylistBean playlistBean) {
-		String testId = "1"; // test용
-		String loginId = testId;
+		String loginId = TEST_LOGIN_ID;
 		
 		PlaylistVO playlist = playlistBean.toVO();
 		try {
@@ -37,12 +45,32 @@ public class PlaylistController {
 			playlist = null;
 		}
 		
-		String resultPage = "playlist/error";
-		
-		if (playlist != null) {
-			resultPage = "playlist/detail/" + playlist.getId();
+		if (playlist == null) {
+			return ERROR_PAGE;
 		}
 		
-		return resultPage;
+		return "playlist/detail/" + playlist.getId();
+	}
+	
+	@GetMapping("/modify/{id}")
+	public String displayModifyPlaylist(@PathVariable("id")String playlistId, Model model) {
+		if (playlistId == null || playlistId.isEmpty()) {
+			return ERROR_PAGE;
+		}
+		
+		PlaylistVO playlist = null;
+		try {
+			playlist = playlistService.getPlaylist(playlistId, TEST_LOGIN_ID);
+		} catch(Exception e) {
+			e.printStackTrace();
+			playlist = null;
+		}
+		
+		if (playlist == null) {
+			return ERROR_PAGE;
+		}
+		
+		model.addAttribute("playlist", playlist);
+		return "playlist/modify/" + playlist.getId();
 	}
 }
