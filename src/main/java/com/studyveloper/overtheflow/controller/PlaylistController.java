@@ -13,10 +13,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.studyveloper.overtheflow.bean.PlaylistBean;
+import com.studyveloper.overtheflow.service.PlaylistLikeService;
 import com.studyveloper.overtheflow.service.PlaylistService;
 import com.studyveloper.overtheflow.util.PageInfo;
+import com.studyveloper.overtheflow.vo.LikeVO;
 import com.studyveloper.overtheflow.vo.PlaylistVO;
 
 @Controller
@@ -25,6 +28,9 @@ public class PlaylistController {
 	
 	@Autowired
 	private PlaylistService playlistService;
+	
+	@Autowired
+	private PlaylistLikeService playlistLikeService;
 	
 	private static final String ERROR_PAGE;
 	private static final String TEST_LOGIN_ID;
@@ -173,5 +179,31 @@ public class PlaylistController {
 		model.addAttribute("pageInfo", pageInfo);
 		
 		return "playlist/list";
+	}
+	
+	@PostMapping("/like")
+	@ResponseBody
+	public boolean toggleLikePlaylist(HttpSession session, String playlistId, boolean isLike) {
+		if (playlistId == null || playlistId.isEmpty()) {
+			return isLike;
+		}
+		
+		String loginId = TEST_LOGIN_ID;
+		
+		try {
+			LikeVO like = new LikeVO();
+			like.setid(playlistId);
+			like.setMemberId(loginId);
+			if (isLike) {
+				playlistLikeService.cancelLikePlaylist(like);
+			} else {
+				playlistLikeService.likePlaylist(like);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return isLike;
+		}
+		
+		return !isLike;
 	}
 }
