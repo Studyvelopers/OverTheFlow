@@ -1,5 +1,9 @@
 package com.studyveloper.overtheflow.controller;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.studyveloper.overtheflow.bean.PlaylistBean;
 import com.studyveloper.overtheflow.service.PlaylistService;
+import com.studyveloper.overtheflow.util.PageInfo;
 import com.studyveloper.overtheflow.vo.PlaylistVO;
 
 @Controller
@@ -118,7 +123,7 @@ public class PlaylistController {
 		return "redirect:/playlist/list";
 	}
 	
-	@GetMapping("/{id}")
+	@GetMapping("/detail/{id}")
 	public String displayPlaylistDetial(HttpSession session, @PathVariable("id") String playlistId, Model model) {
 		if (playlistId == null || playlistId.isEmpty()) {
 			return ERROR_PAGE;
@@ -141,5 +146,32 @@ public class PlaylistController {
 		
 		model.addAttribute("playlist", new PlaylistBean(playlist));
 		return "playlist/detail";
+	}
+	
+	@GetMapping("/list")
+	public String displayPlaylists(HttpSession session, PageInfo pageInfo, Model model) {
+		List<PlaylistVO> playlists = null;
+		try {
+			playlists = playlistService.getAllPlaylists(pageInfo);
+		} catch (Exception e) {
+			e.printStackTrace();
+			playlists = null;
+		}
+		
+		if (playlists == null) {
+			return ERROR_PAGE;
+		}
+	
+		List<PlaylistBean> playlistBeans = new ArrayList<PlaylistBean>();
+		
+		Iterator<PlaylistVO> iterator = playlists.iterator();
+		while (iterator.hasNext()) {
+			playlistBeans.add(new PlaylistBean(iterator.next()));
+		}
+		
+		model.addAttribute("playlists", playlistBeans);
+		model.addAttribute("pageInfo", pageInfo);
+		
+		return "playlist/list";
 	}
 }
