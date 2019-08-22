@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -45,10 +46,10 @@ public class MemberController {
 		
 		if(member.size() == 0){
 			logger.info("로그인 실패.");
+			return "error";
 		}else{
 			logger.info("로그인 성공.");
 			session.setAttribute("loginId", member.get(0).getId());
-			session.setAttribute("loginEmail", member.get(0).getEmail());
 		}
 		
 		return "test";
@@ -58,7 +59,7 @@ public class MemberController {
 		logger.info("로그아웃 요청");
 		if(session.getAttribute("loginId") == null){
 			logger.info("로그인을 해야합니다.");
-			return "fail-logout";
+			return "error";
 		}else{
 			session.removeAttribute("loginId");
 			logger.info("로그아웃 성공!");
@@ -103,7 +104,24 @@ public class MemberController {
 			logger.info("회원탈퇴 성공");
 		}else{
 			logger.info("회원 탈퇴 실패.");
+			return "error";
 		}
 		return "test";
-	}	
+	}
+	
+	@RequestMapping(value="/detail", method=RequestMethod.GET)
+	public String displayMemberInfo(HttpSession session, Model model) throws Exception{
+		logger.info("내정보 조회 요청");
+		String loginId = (String) session.getAttribute("loginId");
+		if(loginId == null){
+			logger.info("로그인을 안했습니다.");
+			return "error";
+		}else{
+			MemberVO memberVO = memberService.getMember(loginId);
+			MemberBean memberBean = new MemberBean(memberVO);
+			model.addAttribute("memberBean", memberBean);
+			return "memberinfo";
+		}
+	}
+
 }
