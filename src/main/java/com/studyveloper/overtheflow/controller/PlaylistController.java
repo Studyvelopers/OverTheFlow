@@ -34,7 +34,7 @@ public class PlaylistController {
 	}
 	
 	@PostMapping("/create")
-	public String createPlaylist(HttpSession session, String imageName, PlaylistBean playlistBean) {
+	public String createPlaylist(HttpSession session, String imageName, PlaylistBean playlistBean, Model model) {
 		String loginId = TEST_LOGIN_ID;
 		
 		PlaylistVO playlist = playlistBean.toVO();
@@ -49,11 +49,13 @@ public class PlaylistController {
 			return ERROR_PAGE;
 		}
 		
-		return "playlist/detail/" + playlist.getId();
+		model.addAttribute("playlist", playlist);
+		
+		return "playlist/detail/";
 	}
 	
 	@GetMapping("/modify/{id}")
-	public String displayModifyPlaylist(@PathVariable("id")String playlistId, Model model) {
+	public String displayModifyPlaylist(HttpSession session, @PathVariable("id")String playlistId, Model model) {
 		if (playlistId == null || playlistId.isEmpty()) {
 			return ERROR_PAGE;
 		}
@@ -71,6 +73,30 @@ public class PlaylistController {
 		}
 		
 		model.addAttribute("playlist", playlist);
-		return "playlist/modify/" + playlist.getId();
+		return "playlist/modify";
+	}
+	
+	@PostMapping("/modify")
+	public String modifyPlaylist(HttpSession session, String imageName, PlaylistBean playlistBean, Model model) {
+		// 전달인자 확인
+		if (session == null || imageName == null || imageName.isEmpty() || playlistBean == null) {
+			return ERROR_PAGE;
+		}
+		
+		PlaylistVO playlist = playlistBean.toVO();
+		
+		try {
+			playlist = playlistService.modifyPlaylist(playlist);
+		} catch (Exception e) {
+			e.printStackTrace();
+			playlist = null;
+		}
+		
+		if (playlist == null) {
+			return ERROR_PAGE;
+		}
+		
+		model.addAttribute("playlist", playlist);
+		return "playlist/detail";
 	}
 }
