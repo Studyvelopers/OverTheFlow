@@ -48,9 +48,22 @@ public class MemberController {
 		}else{
 			logger.info("로그인 성공.");
 			session.setAttribute("loginId", member.get(0).getId());
+			session.setAttribute("loginEmail", member.get(0).getEmail());
 		}
 		
 		return "test";
+	}
+	@RequestMapping(value="/logout", method=RequestMethod.POST)
+	public String logout(HttpSession session) throws Exception{
+		logger.info("로그아웃 요청");
+		if(session.getAttribute("loginId") == null){
+			logger.info("로그인을 해야합니다.");
+			return "fail-logout";
+		}else{
+			session.removeAttribute("loginId");
+			logger.info("로그아웃 성공!");
+			return "login";
+		}
 	}
 	
 	@RequestMapping(value="/register", method=RequestMethod.GET)
@@ -92,5 +105,5 @@ public class MemberController {
 			logger.info("회원 탈퇴 실패.");
 		}
 		return "test";
-	}
+	}	
 }
