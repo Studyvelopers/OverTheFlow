@@ -99,4 +99,22 @@ public class PlaylistController {
 		model.addAttribute("playlist", playlist);
 		return "playlist/detail";
 	}
+	
+	@PostMapping("/delete")
+	public String deletePlaylist(HttpSession session, String playlistId) {
+		String loginId = TEST_LOGIN_ID;
+		
+		boolean result = false;
+		try {
+			result = playlistService.deletePlaylist(playlistId, loginId);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		if (result) {
+			return ERROR_PAGE;
+		}
+		
+		return "redirect:/playlist/list";
+	}
 }
