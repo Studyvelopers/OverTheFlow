@@ -1,5 +1,6 @@
 package com.studyveloper.overtheflow.controller;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
@@ -29,7 +30,7 @@ public class MusicController {
 	@RequestMapping(value="/create", method=RequestMethod.GET)
 	public String displayCreateMusic(HttpSession session) {
 	
-		return "createMusic";
+		return "createmusic";
 	}
 	
 	@RequestMapping(value="/create", method=RequestMethod.POST)
@@ -37,6 +38,9 @@ public class MusicController {
 		
 		MusicVO result = null;
 		
+		System.out.println(music);
+		//date 부분 musicserviceImpl에서 nullcheck 빼주고 등록시에 new Date해주어야 함
+		music.setRegisterDate(new Date());
 		try {
 			result = this.musicService.createMusic(music);
 		} catch (Exception e) {
@@ -155,7 +159,7 @@ public class MusicController {
 		model.addAttribute("musicList", result);
 		model.addAttribute("page", page + 1);
 		
-		return "likeMusic";
+		return "likemusic";
 	}
 	
 	@RequestMapping(value="/detail/{musicNo}", method=RequestMethod.GET)
@@ -166,7 +170,7 @@ public class MusicController {
 		MusicVO result = null;
 		
 		try{
-			result = this.musicService.getMusic(musicNo, loginId);
+			result = this.musicService.getMusic(musicNo, "1234");
 		} catch(Exception e){
 			e.printStackTrace();
 		}
