@@ -61,7 +61,7 @@ public class MusicController {
 		MusicVO music = null;
 		
 		try {
-			music = this.musicService.getMusic(musicNo, loginId);
+			music = this.musicService.getMusic(musicNo, "default");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -79,7 +79,7 @@ public class MusicController {
 		MusicVO result = null;
 		
 		try {
-			result = this.musicService.modifyMusic(loginId, music);
+			result = this.musicService.modifyMusic("0", music);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -90,14 +90,14 @@ public class MusicController {
 	}
 	
 	@ResponseBody
-	@RequestMapping(value="/delete", method=RequestMethod.DELETE)
+	@RequestMapping(value="/delete", method=RequestMethod.POST)
 	public boolean deleteMusic(HttpSession session, MusicVO music){
 		String loginId = (String)session.getAttribute("loginId");
 		
 		if(!loginId.equals(music.getMemberId())) return false;
 		
 		try{
-			if(this.musicService.deleteMusic(music.getId(), loginId)) return true;
+			if(this.musicService.deleteMusic(music.getId(), "0")) return true;
 		} catch(Exception e){
 			e.printStackTrace();
 		}
