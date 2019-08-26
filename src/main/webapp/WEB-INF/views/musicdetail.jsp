@@ -7,6 +7,17 @@
 <meta http-equiv="Content-Type" content="text/html; charset=EUC-KR">
 <title>Insert title here</title>
 </head>
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script>
+	$(document).ready(function(){
+		$("#delete-btn").click(function(){
+			alert('!!!');
+			$('#data').attr('action','/music/delete');
+			$('#data').attr('method','post');
+			$('#data').submit();
+		});
+	});
+</script>
 <body>
 	<h2>ID : ${music.id}</h2>
 	<h2>TITLE : ${music.title}</h2>
@@ -23,9 +34,22 @@
 		<h2>TAG : ${tag}</h2>
 	</c:forEach>
 	
+	<form id="data" action="" method="post" accept-charset="utf-8">
+		<input type="text" name="id" value="${music.id}"/> <br>
+		<input type="text" name="title" value="${music.title}"/><br>
+		<input type="text" name="playtime" value="${music.playtime}"/><br>
+		<input type="text" name="description" value="${music.description}"/><br>
+		<input type="text" name="visibility" value="${music.visibility}"/><br>
+		<input type="text" name="downloadable" value="${music.downloadable}"/><br>
+		<input type="text" name="playCount" value="${music.playCount}"/><br>
+		<input type="text" name="categoryId" value="${music.categoryId}"/><br>
+		<input type="text" name="memberId" value="${music.memberId}"/><br>
+		<input type="text" name="memberNickname" value="${music.memberNickname}"/><br>	
+	</form>
+	
 	<button onClick="location.href='/music/create'">음악 정보 추가</button>
-	<button>음악 정보 수정</button>
-	<button>음악 정보 삭제</button>
+	<button onClick="location.href='/music/modify/${music.id}'">음악 정보 수정</button>
+	<button id="delete-btn" type="button">음악 정보 삭제</button>
 	<button>좋아요 목록 보기</button>
 </body>
 </html>
