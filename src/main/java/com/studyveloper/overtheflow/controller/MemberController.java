@@ -1,6 +1,7 @@
 package com.studyveloper.overtheflow.controller;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
@@ -15,7 +16,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.studyveloper.overtheflow.bean.MemberBean;
 import com.studyveloper.overtheflow.service.MemberService;
+import com.studyveloper.overtheflow.util.PageInfo;
 import com.studyveloper.overtheflow.util.SearchInfo;
+import com.studyveloper.overtheflow.util.option.MemberUnit;
 import com.studyveloper.overtheflow.vo.MemberVO;
 
 @Controller
@@ -158,6 +161,19 @@ public class MemberController {
 			model.addAttribute("memberBean", memberBean);
 			return "memberinfo";
 		}
+	}
+	
+	@RequestMapping(value="/list", method=RequestMethod.GET)
+	public String displayMembers(HttpSession session, SearchInfo searchInfo, Model model) throws Exception{
+		List<MemberVO> memberVOs = memberService.getAllMembers(searchInfo);
+		List<MemberBean> memberBeans = new ArrayList<>();
+		
+		for(int i=0; i<memberVOs.size(); i++){
+			memberBeans.add(new MemberBean(memberVOs.get(i)));
+			logger.info(memberVOs.get(i).toString());
+		}
+		model.addAttribute("members", memberBeans);
+		return "members";
 	}
 
 }
