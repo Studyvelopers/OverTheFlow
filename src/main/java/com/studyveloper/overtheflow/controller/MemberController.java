@@ -16,8 +16,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.studyveloper.overtheflow.bean.MemberBean;
+import com.studyveloper.overtheflow.service.FollowService;
 import com.studyveloper.overtheflow.service.MemberService;
+import com.studyveloper.overtheflow.util.PageInfo;
 import com.studyveloper.overtheflow.util.SearchInfo;
+import com.studyveloper.overtheflow.vo.FollowVO;
 import com.studyveloper.overtheflow.vo.MemberVO;
 
 @Controller
@@ -28,6 +31,8 @@ public class MemberController {
 	
 	@Autowired
 	MemberService memberService;
+	@Autowired
+	FollowService followService;
 	
 	@RequestMapping(value="/login", method=RequestMethod.GET)
 	public String displayLogin() {
@@ -195,4 +200,41 @@ public class MemberController {
 		model.addAttribute("members", members);
 		return "members";
 	}
+	
+	@RequestMapping(value="/follow")
+	public String toggleFollow(HttpSession session, int memberNo, boolean isFollowed, Model model)throws Exception{
+		FollowVO followVO = new FollowVO();
+		followVO.setFollowerId((String)session.getAttribute("loginId"));
+		followVO.setFollowingId(""+memberNo);
+		boolean result = false;
+		if(isFollowed){
+			result = followService.unFollow(followVO);
+			if(result){
+				model.addAttribute("message","unfollow성공");
+			}else{
+				model.addAttribute("message","unfollow실패");
+			}
+		}else{
+			result = followService.follow(followVO);
+			if(result){
+				model.addAttribute("message","follow성공");
+			}else{
+				model.addAttribute("message","follow실패");
+			}
+		}
+		return "follow";
+	}
+	
+	@RequestMapping(value="/following/list")
+	public String displayFollowings(HttpSession session,SearchInfo searchInfo, Model model)throws Exception{
+		List<MemberVO> memberVOs = followService.getFollows(searchInfo);
+		List<MemberBean> members = new ArrayList<>();
+		for(int i=0; i<memberVOs.size(); i++){
+			members.add(new MemberBean(memberVOs.get(i)));
+		}
+		model.addAttribute("message", "followingList");
+		model.addAttribute("members", members);
+		return "followList";
+	}
+	
 }
