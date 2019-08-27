@@ -94,8 +94,9 @@ public class MusicLikeServiceImpl implements MusicLikeService {
 		try{
 			List<String> idList;
 			
-			idList = this.memberLikesMusicMapper.searchMemberIds(memberId);
-			
+			idList = this.memberLikesMusicMapper.searchMusicIds(memberId);
+			System.out.println("-----------------"+idList.size());
+			System.out.println("-----------------"+memberId);
 			if(idList == null){
 				return new ArrayList<MusicVO>();
 			}
