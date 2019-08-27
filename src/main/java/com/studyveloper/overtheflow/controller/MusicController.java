@@ -41,7 +41,7 @@ public class MusicController {
 		MusicVO result = null;
 		
 		System.out.println(music);
-		//date 부분 musicserviceImpl에서 nullcheck 빼주고 등록시에 new Date해주어야 함
+
 		try {
 			result = this.musicService.createMusic(music.toVO());
 		} catch (Exception e) {
@@ -199,6 +199,6 @@ public class MusicController {
 		
 		model.addAttribute("musicList", musicList);
 		
-		return "musicList";
+		return "musiclist";
 	}
 }
