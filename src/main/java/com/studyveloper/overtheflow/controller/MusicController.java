@@ -189,7 +189,7 @@ public class MusicController {
 			e.printStackTrace();
 		}
 		
-		if(result == null) return "";
+		if(result == null) return "error";
 		
 		List<MusicBean> musicList = new ArrayList<MusicBean>();
 		
