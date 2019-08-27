@@ -11,10 +11,15 @@
 <script>
 	$(document).ready(function(){
 		$("#delete-btn").click(function(){
-			alert('!!!');
 			$('#data').attr('action','/music/delete');
 			$('#data').attr('method','post');
 			$('#data').submit();
+		});
+		
+		$("#likelist-btn").click(function(){
+			$('#searchInfo').attr('action','/music/like/list/1');
+			$('#searchInfo').attr('method','get');
+			$('#searchInfo').submit();
 		});
 	});
 </script>
@@ -47,9 +52,18 @@
 		<input type="text" name="memberNickname" value="${music.memberNickname}"/><br>	
 	</form>
 	
+	<br>
+	<h2>서치인포</h2>
+	
+	<form id="searchInfo" action="" method="get" accept-charset="utf-8">
+		<input type="text" name="perPageCount" placeholder="perPageCount"/> <br>
+		<input type="text" name="sortionOption" placeholder="sortionOption"/> <br>
+		<input type="text" name="ordering" placeholder="ordering"/> <br>
+	</form>
+	
 	<button onClick="location.href='/music/create'">음악 정보 추가</button>
 	<button onClick="location.href='/music/modify/${music.id}'">음악 정보 수정</button>
 	<button id="delete-btn" type="button">음악 정보 삭제</button>
-	<button>좋아요 목록 보기</button>
+	<button id="likelist-btn">좋아요 목록 보기</button>
 </body>
 </html>
