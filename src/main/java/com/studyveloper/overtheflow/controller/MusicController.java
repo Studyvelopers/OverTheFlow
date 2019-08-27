@@ -1,6 +1,6 @@
 package com.studyveloper.overtheflow.controller;
 
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
@@ -13,8 +13,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.studyveloper.overtheflow.bean.MusicBean;
 import com.studyveloper.overtheflow.service.MusicLikeService;
 import com.studyveloper.overtheflow.service.MusicService;
+import com.studyveloper.overtheflow.util.PageInfo;
 import com.studyveloper.overtheflow.util.SearchInfo;
 import com.studyveloper.overtheflow.vo.LikeVO;
 import com.studyveloper.overtheflow.vo.MusicVO;
@@ -34,21 +36,20 @@ public class MusicController {
 	}
 	
 	@RequestMapping(value="/create", method=RequestMethod.POST)
-	public String createMusic(HttpSession session, MusicVO music, Model model) {
+	public String createMusic(HttpSession session, MusicBean music, Model model) {
 		
 		MusicVO result = null;
 		
 		System.out.println(music);
 		//date 부분 musicserviceImpl에서 nullcheck 빼주고 등록시에 new Date해주어야 함
-		music.setRegisterDate(new Date());
 		try {
-			result = this.musicService.createMusic(music);
+			result = this.musicService.createMusic(music.toVO());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		model.addAttribute("music", result);		
+		model.addAttribute("music", new MusicBean(result));		
 		
 		return "musicdetail";
 	}
@@ -61,43 +62,43 @@ public class MusicController {
 		MusicVO music = null;
 		
 		try {
-			music = this.musicService.getMusic(musicNo, "default");
+			music = this.musicService.getMusic(musicNo, loginId);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
-		model.addAttribute("music", music);
+		model.addAttribute("music", new MusicBean(music));
 		
 		return "modifymusic";
 	}
 	
 	@RequestMapping(value="/modify", method=RequestMethod.POST)
 	public String modifyMusic(HttpSession session, 
-			MusicVO music, Model model) {
+			MusicBean music, Model model) {
 		String loginId = (String)session.getAttribute("loginId");
 		
 		MusicVO result = null;
 		
 		try {
-			result = this.musicService.modifyMusic("0", music);
+			result = this.musicService.modifyMusic(loginId, music.toVO());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
-		model.addAttribute("music", music);
+		model.addAttribute("music", result);
 		
 		return "musicdetail";
 	}
 	
 	@ResponseBody
 	@RequestMapping(value="/delete", method=RequestMethod.POST)
-	public boolean deleteMusic(HttpSession session, MusicVO music){
+	public boolean deleteMusic(HttpSession session, MusicBean music){
 		String loginId = (String)session.getAttribute("loginId");
 		
 		if(!loginId.equals(music.getMemberId())) return false;
 		
 		try{
-			if(this.musicService.deleteMusic(music.getId(), "0")) return true;
+			if(this.musicService.deleteMusic(music.getId(), loginId)) return true;
 		} catch(Exception e){
 			e.printStackTrace();
 		}
@@ -112,10 +113,11 @@ public class MusicController {
 		
 		boolean result = false;
 		
+		LikeVO likeVO = new LikeVO();
+		likeVO.setid(musicNo);
+		likeVO.setMemberId(loginId);
+		
 		if(isLike){
-			LikeVO likeVO = new LikeVO();
-			likeVO.setid(musicNo);
-			likeVO.setMemberId(loginId);
 			try {
 				if(this.musicLikeService.likeMusic(likeVO)) return true;
 			} catch (Exception e) {
@@ -125,10 +127,6 @@ public class MusicController {
 			
 			return false;
 		} 
-		
-		LikeVO likeVO = new LikeVO();
-		likeVO.setid(musicNo);
-		likeVO.setMemberId(loginId);
 		
 		try {
 			this.musicLikeService.cancelLikeMuisc(likeVO);
@@ -170,7 +168,7 @@ public class MusicController {
 		MusicVO result = null;
 		
 		try{
-			result = this.musicService.getMusic(musicNo, "1234");
+			result = this.musicService.getMusic(musicNo, loginId);
 		} catch(Exception e){
 			e.printStackTrace();
 		}
@@ -180,10 +178,27 @@ public class MusicController {
 		return "musicdetail";
 	}
 	
-	@RequestMapping(value="/list/{page}", method=RequestMethod.GET)
-	public String displayMusics(HttpSession session,
-			@PathVariable("page") int page, SearchInfo searchInfo) {
-		//얘 어떻게 분기처리 할거냐;
-		return null;
+	@RequestMapping(value="/list", method=RequestMethod.GET)
+	public String displayMusics(HttpSession session, PageInfo pageInfo, Model model) {
+		List<MusicVO> result = null;
+		
+		try {
+			result = this.musicService.getAllMusics(pageInfo);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		if(result == null) return "";
+		
+		List<MusicBean> musicList = new ArrayList<MusicBean>();
+		
+		for(MusicVO music : result){
+			musicList.add(new MusicBean(music));
+		}
+		
+		model.addAttribute("musicList", musicList);
+		
+		return "musicList";
 	}
 }
