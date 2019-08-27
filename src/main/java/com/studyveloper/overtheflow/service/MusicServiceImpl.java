@@ -1,8 +1,8 @@
 package com.studyveloper.overtheflow.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,8 +18,6 @@ import com.studyveloper.overtheflow.util.SearchInfo;
 import com.studyveloper.overtheflow.util.option.MusicUnit;
 import com.studyveloper.overtheflow.util.option.OptionIntent;
 import com.studyveloper.overtheflow.util.option.OptionIntent.Builder;
-import com.studyveloper.overtheflow.util.option.OptionUnit;
-import com.studyveloper.overtheflow.util.option.SearchOption;
 import com.studyveloper.overtheflow.vo.MusicVO;
 import com.studyveloper.overtheflow.vo.TagVO;
 
@@ -34,6 +32,8 @@ public class MusicServiceImpl implements MusicService{
 	
 	public MusicVO createMusic(MusicVO musicVO) throws Exception {
 		// TODO Auto-generated method stub
+		musicVO.setRegisterDate(new Date());
+		
 		if(this.isMusicNull(musicVO)) throw new Exception();
 		
 		TransactionStatus transactionStatus =
