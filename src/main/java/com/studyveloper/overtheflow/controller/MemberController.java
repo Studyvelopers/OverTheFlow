@@ -236,5 +236,15 @@ public class MemberController {
 		model.addAttribute("members", members);
 		return "followList";
 	}
-	
+	@RequestMapping(value="/follower/list")
+	public String displayFollowers(HttpSession session, Integer memberNO,SearchInfo searchInfo, Model model)throws Exception{
+		List<MemberVO> memberVOs = followService.getFollowers(searchInfo);
+		List<MemberBean> members = new ArrayList<>();
+		for(int i=0; i<memberVOs.size(); i++){
+			members.add(new MemberBean(memberVOs.get(i)));
+		}
+		model.addAttribute("message", "followerList");
+		model.addAttribute("members", members);
+		return "followList";
+	}
 }
