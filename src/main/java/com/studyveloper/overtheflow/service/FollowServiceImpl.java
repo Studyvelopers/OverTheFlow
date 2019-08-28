@@ -35,7 +35,7 @@ public class FollowServiceImpl implements FollowService {
 		builder.setOffset(offSet);
 		builder.setSize(searchInfo.getPerPageCount());
 		builder.appendInSearchOption(MemberUnit.ID, memberIds.toArray(), true);
-		builder.appendSortingOption(MemberUnit.valueOf(searchInfo.getOrderRule()), searchInfo.getSort());
+		builder.appendSortingOption(MemberUnit.valueOf(searchInfo.getSortionOption()), searchInfo.getOrdering());
 		
 		if(memberIds != null || memberIds.size() > 0){
 			List<MemberVO> members = memberMapper.searchMembers(optionIntent);
@@ -53,7 +53,7 @@ public class FollowServiceImpl implements FollowService {
 		builder.setOffset(offSet);
 		builder.setSize(searchInfo.getPerPageCount());
 		builder.appendInSearchOption(MemberUnit.ID, memberIds.toArray(), true);
-		builder.appendSortingOption(MemberUnit.valueOf(searchInfo.getOrderRule()), searchInfo.getSort());
+		builder.appendSortingOption(MemberUnit.valueOf(searchInfo.getSortionOption()), searchInfo.getOrdering());
 		
 		if(memberIds != null || memberIds.size() > 0){
 			List<MemberVO> members = memberMapper.searchMembers(optionIntent);
