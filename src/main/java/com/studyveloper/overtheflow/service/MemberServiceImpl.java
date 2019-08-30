@@ -161,7 +161,7 @@ public class MemberServiceImpl implements MemberService {
 			builder.setSize(size);
 			
 			//정렬
-			builder.appendSortingOption(MemberUnit.valueOf(pageInfo.getOrderRule()), pageInfo.getSort());
+			builder.appendSortingOption(MemberUnit.valueOf(pageInfo.getSortionOption()), pageInfo.getOrdering());
 			
 			List<MemberVO> members = memberMapper.searchMembers(optionIntent);
 			if(members.size() == 0){
@@ -202,7 +202,7 @@ public class MemberServiceImpl implements MemberService {
 		}
 		
 		//정렬
-		builder.appendSortingOption(MemberUnit.valueOf(searchInfo.getOrderRule()), searchInfo.getSort());
+		builder.appendSortingOption(MemberUnit.valueOf(searchInfo.getSortionOption()), searchInfo.getOrdering());
 		
 		//페이징
 		int offset = (searchInfo.getCurrentPageNumber()-1) * searchInfo.getPerPageCount();
@@ -240,7 +240,7 @@ public class MemberServiceImpl implements MemberService {
 		}
 		
 		//정렬
-		builder.appendSortingOption(MemberUnit.valueOf(searchInfo.getOrderRule()), searchInfo.getSort());
+		builder.appendSortingOption(MemberUnit.valueOf(searchInfo.getSortionOption()), searchInfo.getOrdering());
 		
 		//페이징
 		int offset = (searchInfo.getCurrentPageNumber()-1) * searchInfo.getPerPageCount();
