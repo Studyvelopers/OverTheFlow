@@ -145,4 +145,35 @@ public class MusicMapperTest {
 		
 		this.musicMapper.addMusic(musicVO);
 	}
+	
+	//따로 음수처리에대한 예외처리 사항이 존재하지 않는다
+	//익셉션 케이스3. 음수값을 허용하지 않는 변수에 음수값이 들어갈 경우
+	@Test
+	public void musidAddUnmatchedValueTest(){
+		MusicVO musicVO = new MusicVO();
+		
+		musicVO.setCategoryId("0");
+		musicVO.setDescription("뮤직 테스트 케이스1");
+		musicVO.setDownloadable(true);
+		musicVO.setId("TESTID10");
+		musicVO.setMemberId("0");
+		musicVO.setMemberNickname("nickname0");
+		musicVO.setPlayCount(-100);
+		musicVO.setPlaytime(-100);
+		musicVO.setRegisterDate(new Date());
+		
+		List<String> tags = new ArrayList<String>();
+		tags.add("태그1");tags.add("태그2");tags.add("태그3");
+		
+		musicVO.setTags(tags);
+		musicVO.setTitle("테스트케이스1");
+		musicVO.setVisibility(true);
+		
+		try {
+			this.musicMapper.addMusic(musicVO);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 }
