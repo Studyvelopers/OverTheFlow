@@ -97,7 +97,7 @@ public class MusicMapperTest {
 		assertThat(result, is(1));
 	}
 	
-	//익셉션 케이스1. 중복 키값이 들어갈 경우
+	//익셉션 케이스1-1. 중복 키값이 들어갈 경우
 	@Test(expected=DuplicateKeyException.class)
 	public void musicAddDuplicateKeyTest() throws Exception {
 		MusicVO musicVO = new MusicVO();
@@ -124,7 +124,7 @@ public class MusicMapperTest {
 	
 
 	//DuplicateKeyException이 DataIntegrityViolationException을 상속받음
-	//익셉션 케이스2. 필요한 데이터들이 다 제공되지 않았을 경우
+	//익셉션 케이스1-2. 필요한 데이터들이 다 제공되지 않았을 경우
 	@Test(expected=DataIntegrityViolationException.class)
 	public void musicAddUnsatisfiedDataTest() throws Exception{
 		MusicVO musicVO = new MusicVO();
@@ -151,7 +151,7 @@ public class MusicMapperTest {
 	}
 	
 	//따로 음수처리에대한 예외처리 사항이 존재하지 않는다
-	//익셉션 케이스3. 음수값을 허용하지 않는 변수에 음수값이 들어갈 경우
+	//익셉션 케이스1-3. 음수값을 허용하지 않는 변수에 음수값이 들어갈 경우
 	@Test
 	public void musidAddUnmatchedValueTest(){
 		MusicVO musicVO = new MusicVO();
@@ -251,8 +251,8 @@ public class MusicMapperTest {
 	public void searchMusicTest() {
 		OptionIntent.Builder builder = new OptionIntent.Builder();
 		
-		OptionIntent optionIntent = 
-				builder.appendEqualSearchOption(MusicUnit.ID, "TESTID0", true)
+		OptionIntent optionIntent = builder
+				.appendEqualSearchOption(MusicUnit.ID, "TESTID0", true)
 				.build();
 		
 		List<MusicVO> result = null;
