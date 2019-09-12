@@ -288,6 +288,31 @@ public class MusicMapperTest {
 		assertThat(result , nullValue());
 	}
 	
+	//케이스3-1. 존재하지 않는 음악정보를 삭제할 경우
+	@Test
+	public void deleteMusicNonexistentDataTest() {
+		int deleteResult = 1;
+		try {
+			deleteResult = this.musicMapper.deleteMusic("TESTID110");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		assertThat(deleteResult, is(0));
+		
+		MusicVO result = new MusicVO();
+		
+		try {
+			result = this.musicMapper.searchMusic("TESTID110");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		assertThat(result , nullValue());
+	}
+	
 	//케이스4. 정상적으로 음악정보를 조회할 경우
 	@Test
 	public void searchMusicTest() {
