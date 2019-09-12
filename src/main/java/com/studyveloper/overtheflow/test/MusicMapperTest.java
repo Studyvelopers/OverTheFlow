@@ -244,7 +244,6 @@ public class MusicMapperTest {
 		
 		musicVO.setRegisterDate(now);
 		
-		
 		MusicVO result = null;
 		
 		try {
@@ -292,6 +291,7 @@ public class MusicMapperTest {
 	@Test
 	public void deleteMusicNonexistentDataTest() {
 		int deleteResult = 1;
+		
 		try {
 			deleteResult = this.musicMapper.deleteMusic("TESTID110");
 		} catch (Exception e) {
