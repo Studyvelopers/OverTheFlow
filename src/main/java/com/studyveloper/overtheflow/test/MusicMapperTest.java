@@ -19,6 +19,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.studyveloper.overtheflow.mapper.MusicMapper;
+import com.studyveloper.overtheflow.util.option.MusicUnit;
 import com.studyveloper.overtheflow.util.option.OptionIntent;
 import com.studyveloper.overtheflow.vo.MusicVO;
 
@@ -243,5 +244,26 @@ public class MusicMapperTest {
 		}
 		
 		assertThat(result , nullValue());
+	}
+	
+	//케이스4. 정상적으로 음악정보를 조회할 경우
+	@Test
+	public void searchMusicTest() {
+		OptionIntent.Builder builder = new OptionIntent.Builder();
+		
+		OptionIntent optionIntent = 
+				builder.appendEqualSearchOption(MusicUnit.ID, "TESTID0", true)
+				.build();
+		
+		List<MusicVO> result = null;
+		
+		try {
+			result = this.musicMapper.searchMusics(optionIntent);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		assertThat(result.size(), is(1));
 	}
 }
