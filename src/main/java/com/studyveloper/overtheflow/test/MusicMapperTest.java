@@ -28,6 +28,8 @@ public class MusicMapperTest {
 	@Autowired
 	private MusicMapper musicMapper;
 	
+	//CannotGetJdbcConnectionException => db에 접속 불가할때 발생하는 익셉션
+	
 	@Before
 	public void setUp() throws Exception {
 		OptionIntent.Builder builder = new OptionIntent.Builder();
@@ -175,5 +177,48 @@ public class MusicMapperTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	//현재 registerDate 수정 불가능
+	//케이스2. 정상적으로 음악 정보가 수정되는 경우
+	@Test
+	public void modifyMusicTest() {
+		MusicVO musicVO = new MusicVO();
+		musicVO.setCategoryId("0");
+		musicVO.setTitle("뮤직 테스트 케이스1 수정 제목");
+		musicVO.setDescription("뮤직 테스트 케이스1 수정");
+		musicVO.setDownloadable(true);
+		musicVO.setId("TESTID0");
+		musicVO.setMemberId("0");
+		musicVO.setMemberNickname("nickname0");
+		musicVO.setPlayCount(10000);
+		musicVO.setPlaytime(100000);
+		musicVO.setVisibility(true);
+		
+		Date now = new Date();
+		
+		musicVO.setRegisterDate(now);
+		
+		
+		MusicVO result = null;
+		
+		try {
+			this.musicMapper.modifyMusic(musicVO);
+			result = this.musicMapper.searchMusic(musicVO.getId());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		System.out.println(now);
+		
+		assertThat(result.getCategoryId(), is(musicVO.getCategoryId()));
+		assertThat(result.getDescription(), is(musicVO.getDescription()));
+		assertThat(result.getDownloadable(), is(musicVO.getDownloadable()));
+		assertThat(result.getMemberId(), is(musicVO.getMemberId()));
+		assertThat(result.getMemberNickname(), is(musicVO.getMemberNickname()));
+		assertThat(result.getPlayCount(), is(musicVO.getPlayCount()));
+		assertThat(result.getPlaytime(), is(musicVO.getPlaytime()));
+		//assertThat(result.getRegisterDate(), is(now));
 	}
 }
