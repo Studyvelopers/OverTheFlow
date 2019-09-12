@@ -224,6 +224,48 @@ public class MusicMapperTest {
 		//assertThat(result.getRegisterDate(), is(now));
 	}
 	
+	//현재 매퍼에서는 회원 아이디의 체크나 닉네임 체크등이 이루어지지 않음 => 서비스 로직 단계에서 체크해야 할것으로 보임
+	//익셉션 케이스 2-1. 등록자가 아닌 회원이 수정을 요청할 경우
+	@Test
+	public void modifyMusicDifferentMemberTest(){
+		MusicVO musicVO = new MusicVO();
+		musicVO.setCategoryId("0");
+		musicVO.setTitle("뮤직 테스트 케이스1 수정 제목");
+		musicVO.setDescription("뮤직 테스트 케이스1 수정");
+		musicVO.setDownloadable(true);
+		musicVO.setId("TESTID0");
+		musicVO.setMemberId("1");
+		musicVO.setMemberNickname("nickname1");
+		musicVO.setPlayCount(10000);
+		musicVO.setPlaytime(100000);
+		musicVO.setVisibility(true);
+		
+		Date now = new Date();
+		
+		musicVO.setRegisterDate(now);
+		
+		
+		MusicVO result = null;
+		
+		try {
+			this.musicMapper.modifyMusic(musicVO);
+			result = this.musicMapper.searchMusic(musicVO.getId());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		System.out.println(now);
+		
+		assertThat(result.getCategoryId(), is(musicVO.getCategoryId()));
+		assertThat(result.getDescription(), is(musicVO.getDescription()));
+		assertThat(result.getDownloadable(), is(musicVO.getDownloadable()));
+		assertThat(result.getMemberId(), is(musicVO.getMemberId()));
+		assertThat(result.getMemberNickname(), is(musicVO.getMemberNickname()));
+		assertThat(result.getPlayCount(), is(musicVO.getPlayCount()));
+		assertThat(result.getPlaytime(), is(musicVO.getPlaytime()));
+	}
+	
 	//케이스3. 정상적으로 음악정보를 삭제할 경우
 	@Test
 	public void deleteMusicTest() {
