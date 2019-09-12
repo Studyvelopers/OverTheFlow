@@ -2,6 +2,7 @@ package com.studyveloper.overtheflow.test;
 
 import static org.junit.Assert.assertThat;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -220,5 +221,27 @@ public class MusicMapperTest {
 		assertThat(result.getPlayCount(), is(musicVO.getPlayCount()));
 		assertThat(result.getPlaytime(), is(musicVO.getPlaytime()));
 		//assertThat(result.getRegisterDate(), is(now));
+	}
+	
+	//케이스3. 정상적으로 음악정보를 삭제할 경우
+	@Test
+	public void deleteMusicTest() {
+		try {
+			this.musicMapper.deleteMusic("TESTID0");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		MusicVO result = new MusicVO();
+		
+		try {
+			result = this.musicMapper.searchMusic("TESTID0");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		assertThat(result , nullValue());
 	}
 }
