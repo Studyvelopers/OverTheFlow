@@ -1,6 +1,7 @@
 package com.studyveloper.overtheflow;
 
-import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,7 +13,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.studyveloper.overtheflow.bean.MemberBean;
 import com.studyveloper.overtheflow.service.MemberService;
-import com.studyveloper.overtheflow.vo.MemberVO;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration( locations = {"file:src/main/webapp/WEB-INF/spring/root-context.xml"})
@@ -110,7 +110,7 @@ public class MemberTest {
 	 * case - 9. 소개글의 유효성에 맞지 않는 경우 '소개글은 1000자 이내로 작성해야 합니다.' 메세지를 제공한다.
 	 * case - 10. 이미 생성된 식별키를 생성한 경우 식별키를 재생성 한다.
 	*/
-	@Test
+	/*@Test
 	public void registTest()throws Exception{
 		MemberBean memberBean = new MemberBean();
 		memberBean.setEmail("naber9065@naver.com");
@@ -144,7 +144,55 @@ public class MemberTest {
 				logger.info("회원가입 실패!");
 			}
 		}
-	}
+	}*/
 	
+	/*
+	 * 회원 정보 수정 케이스
+	 * 1. 회원은 정보 수정을 요청한다.
+	 * 2. 시스템은 회원의 로그인 상태를 확인한다.
+	 * 3. 로그인한 회원이라면 수정할 정보입력을 요청한다.(비밀번호, 닉네임, 소개글)
+	 * 4. 사용자는 수정할 정보를 입력한다.
+	 * 5. 시스템은 닉네임 중복검사를 한다.
+	 * 6. 시스템은 비밀번호(8~16자 이내 영문, 숫자, 특수문자만 사용), 닉네임(2~10자 한글,영문,숫자,특문(-,_)만 사용), 소개글(1000자이내) 유효성을 검사한다.
+	 * 7. 유효성 검사가 정상적으로 끝났다면 수정을 완료한다.
+	 * 8. 수정이 완료된 후 메인페이지로 이동한다.
+	 * 
+	 * 실패 케이스
+	 * case - 1.로그인한 회원이 아닌경우 '로그인을 먼저 해주세요.' 메세지를 제공한다.
+	 * case - 2.닉네임이 중복된 경우 '사용중인 닉네임입니다.' 메세지를 제공한다.
+	 * case - 3.비밀번호 유효성에 맞지 않는경우 '비밀번호는 8~16자 이내의 영문, 숫자, 특수문자를 이용해야 합니다.' 메세지를 제공한다.
+	 * case - 4. 닉네임의 유효성에 맞지 않는 경우 '닉네임은 2~10자 이내의 한글, 영문, 숫자, 특수문자(-,_)를 이용해야 합니다.' 메세지를 제공한다.
+	 * case - 5. 소개글의 유효성에 맞지 않는 경우 '소개글은 1000자 이내로 작성해야 합니다.' 메세지를 제공한다.
+	 * case - 6. 기존 비밀번호가 일치하지 않는 경우 '비밀번호가 일치하지 않습니다.' 메세지를 제공한다.
+	*/
+	@Test
+	public void modifyTest()throws Exception{
+		Map<String,String> session = new HashMap<String,String>();
+		session.put("loginId","f1c1278e8068b15023dac10b8cdb78e75fee231d");
+		String memberId = session.get("loginId");
+		
+		MemberBean memberBean = new MemberBean();
+		memberBean.setId(memberId);
+		memberBean.setEmail("naber9065@naver.com");
+		memberBean.setIntroduction("");
+		memberBean.setNickname("가자");
+		memberBean.setPassword("popo11111");
+		memberBean.setTypeId("1");
+		memberBean.setfollowerCount(0);
+		memberBean.setfollowingCount(0);
+		String oldPassword = "popo11112";
+		
+		if(memberId==null || memberId.trim().equals("")){
+			logger.info("로그인을 먼저 해주세요.");
+		}else if(!memberBean.getPassword().matches("^[a-zA-Z0-9!@#$%^*&()]{8,16}$")){
+			logger.info("비밀번호는 8~16자 이내의 영문, 숫자, 특수문자를 이용해야 합니다.");
+		}else if(!memberBean.getNickname().matches("^[a-zA-Z0-9가-힣-_]{2,10}$")){
+			logger.info("닉네임은 2~10자 이내의 영문, 한글, 숫자, 특수문자(-,_)를 이용해야 합니다.");
+		}else if(memberBean.getIntroduction().length() > 1000){
+			logger.info("소개글은 1000자 이내로 작성해야합니다.");
+		}else{
+			memberService.modifyMember(memberBean.toVO(), oldPassword);
+		}
+	}
 	
 }
