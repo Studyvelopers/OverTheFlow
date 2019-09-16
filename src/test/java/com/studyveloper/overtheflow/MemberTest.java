@@ -41,7 +41,7 @@ public class MemberTest {
 	 * 
 	 * case - 3. 이미 로그인한 회원의 경우 '이미 로그인한 회원입니다.' 메세지를 제공한다.
 	*/	
-	@Test
+	/*@Test
 	public void loginTest()throws Exception {
 		Map<String, String> session = new HashMap<String, String>();
 		String password;
@@ -66,6 +66,26 @@ public class MemberTest {
 		}else{
 			session.put("loginId", members.get(0).getId());
 			logger.info("로그인 성공!");
+		}
+	}*/
+	
+	/*
+	 * 로그아웃 테스트
+	 * 1. 사용자는 로그아웃을 요청한다.
+	 * 2. 시스템은 로그인 되어 있는 회원의 요청인지 확인한다.
+	 * 3. 로그인된 회원이라면 로그아웃 시킨다.
+	 * 
+	 * 실패 케이스
+	 * case - 1. 로그인 안된 회원의 경우 '로그인한 회원만 로그아웃할 수 있습니다.' 메세지를 제공한다.
+	*/
+	@Test
+	public void logoutTest()throws Exception{
+		Map<String, String> session = new HashMap<String, String>();
+		session.put("loginId", "");
+		if(session.get("loginId") != null){
+			logger.info("로그아웃 성공!");
+		}else{
+			logger.info("로그인한 회원만 로그아웃할 수 있습니다.");
 		}
 	}
 	
