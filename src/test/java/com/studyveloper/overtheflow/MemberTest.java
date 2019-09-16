@@ -220,5 +220,42 @@ public class MemberTest {
 		}
 	}
 	
-	
+	/*
+	 * 회원 탈퇴 테스트
+	 * 1. 사용자는 회원탈퇴를 요청한다.
+	 * 2. 시스템은 사용자가 로그인 상태인지 검사한다.
+	 * 3. 시스템은 사용자에게 비밀번호 입력을 요청한다.
+	 * 4. 사용자는 비밀번호를 입력한다.
+	 * 5. 시스템은 사용자를 탈퇴시키고 정보를 삭제한다.
+	 * 6. 탈퇴 완료 후 메인페이지로 이동한다.
+	 * 
+	 * 실패 케이스
+	 * case - 1.로그인한 회원이 아닌경우 '로그인을 먼저 해주세요.' 메세지를 제공한다.
+	 * case - 2.비밀번호를 입력하지 않은경우 '비밀번호를 입력해 주세요.' 메세지를 제공한다.
+	 * case - 3.비밀번호가 정확하지 않는경우 '비밀번호가 일치하지 않습니다.' 메세지를 제공한다.(메인으로 갈지 재입력받을지)
+	*/
+	@Test
+	public void unregistTest()throws Exception{
+		Map<String, String> session = new HashMap<String,String>();
+		session.put("loginId", "49d07abfc1397cc6952cd3e429d99ded66de285f");
+		String memberId = session.get("loginId");
+		String password = "popo1111";
+		if(memberId == null || memberId.trim().equals("")){
+			logger.info("로그인을 먼저 해주세요.");
+		}else if(password == null || password.trim().equals("") ){
+			logger.info("비밀번호를 입력해 주세요");
+		}else{
+			MemberVO memberVO = memberService.getMember(memberId);
+			if(!memberVO.getPassword().equals(password)){
+				logger.info("비밀번호가 일치하지 않습니다.");
+			}else{
+				boolean result = memberService.unRegister(memberId, password);
+				if(result){
+					logger.info("탈퇴 성공!");
+				}else{
+					logger.info("탈퇴 실패!");
+				}
+			}
+		}
+	}
 }
