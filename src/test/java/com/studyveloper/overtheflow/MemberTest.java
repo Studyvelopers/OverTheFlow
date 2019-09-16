@@ -13,6 +13,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.studyveloper.overtheflow.bean.MemberBean;
 import com.studyveloper.overtheflow.service.MemberService;
+import com.studyveloper.overtheflow.vo.MemberVO;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration( locations = {"file:src/main/webapp/WEB-INF/spring/root-context.xml"})
@@ -194,5 +195,30 @@ public class MemberTest {
 			memberService.modifyMember(memberBean.toVO(), oldPassword);
 		}
 	}
+	
+	/*
+	 * 회원 정보 조회 테스트
+	 * 1. 회원이 자신의 정보 조회를 요청한다.
+	 * 2. 시스템은 회원이 로그인상태인지 검사한다.
+	 * 3. 시스템은 회원의 정보를 제공한다.(이메일, 닉네임, 소개글, 가입날짜)
+	 * 
+	 * 실패 케이스
+	 * case - 1.로그인한 회원이 아닌경우 '로그인을 먼저 해주세요.' 메세지를 제공한다.
+	*/
+	@Test
+	public void memberinfoTest()throws Exception{
+		Map<String, String> session = new HashMap<String,String>();
+		session.put("loginId", "49d07abfc1397cc6952cd3e429d99ded66de285f");
+		String memberId = session.get("loginId");
+		if(memberId == null || memberId.trim().equals("")){
+			logger.info("로그인을 먼저 해주세요.");
+		}else{
+			MemberVO memberVO = memberService.getMember(memberId);
+			MemberBean member= new MemberBean(memberVO);
+			logger.info("정보 조회 성공!");
+			logger.info(member.toString());
+		}
+	}
+	
 	
 }
