@@ -1,6 +1,8 @@
 package com.studyveloper.overtheflow;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
@@ -8,11 +10,15 @@ import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.studyveloper.overtheflow.bean.MemberBean;
+import com.studyveloper.overtheflow.service.FollowService;
 import com.studyveloper.overtheflow.service.MemberService;
+import com.studyveloper.overtheflow.util.SearchInfo;
 import com.studyveloper.overtheflow.vo.MemberVO;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -23,7 +29,11 @@ public class MemberTest {
 	private static final Logger logger = LoggerFactory.getLogger(MemberTest.class);
 	@Autowired
 	MemberService memberService;
+	@Autowired
+	FollowService followService;
 	
+	private MockHttpServletRequest request;
+	private MockHttpSession session;
 	
 	/*	
 	 * 로그인 테스트
@@ -205,7 +215,7 @@ public class MemberTest {
 	 * 실패 케이스
 	 * case - 1.로그인한 회원이 아닌경우 '로그인을 먼저 해주세요.' 메세지를 제공한다.
 	*/
-	@Test
+	/*@Test
 	public void memberinfoTest()throws Exception{
 		Map<String, String> session = new HashMap<String,String>();
 		session.put("loginId", "49d07abfc1397cc6952cd3e429d99ded66de285f");
@@ -218,7 +228,7 @@ public class MemberTest {
 			logger.info("정보 조회 성공!");
 			logger.info(member.toString());
 		}
-	}
+	}*/
 	
 	/*
 	 * 회원 탈퇴 테스트
@@ -234,7 +244,7 @@ public class MemberTest {
 	 * case - 2.비밀번호를 입력하지 않은경우 '비밀번호를 입력해 주세요.' 메세지를 제공한다.
 	 * case - 3.비밀번호가 정확하지 않는경우 '비밀번호가 일치하지 않습니다.' 메세지를 제공한다.(메인으로 갈지 재입력받을지)
 	*/
-	@Test
+	/*@Test
 	public void unregistTest()throws Exception{
 		Map<String, String> session = new HashMap<String,String>();
 		session.put("loginId", "49d07abfc1397cc6952cd3e429d99ded66de285f");
@@ -256,6 +266,73 @@ public class MemberTest {
 					logger.info("탈퇴 실패!");
 				}
 			}
+		}
+	}*/
+	
+	/*
+	 * 회원 검색 테스트
+	 * 1. 사용자는 회원 검색을 요청한다.
+	 * 2. 시스템은 검색할 키워드 입력을 요청한다.
+	 * 3. 사용자는 검색할 키워드와 검색 정보를 입력한다.(키워드, 현재페이지(null이면 1), 페이지당 정보의 개수(null이면 10), 검색 기준(닉네임, 이메일)(null이면 이메일), 정렬 기준(null이면 이메일), 정렬 옵션(null이면 false) , 이중 검색 옵션?(null이면 AND))
+	 * 4. 시스템은 검색결과를 사용자에게 제공한다.
+	 * 
+	 * 실패케이스
+	 * case - 1.키워드를 입력하지 않은경우 '키워드를 입력해 주세요.' 메세지를 제공한다.
+	*/
+	@Test
+	public void searchMemberTest()throws Exception{
+		SearchInfo searchInfo = new SearchInfo();
+		List<MemberVO> list = new ArrayList<MemberVO>();
+		
+		searchInfo.setKeyword("1");
+//		searchInfo.setConjunction("AND");
+//		searchInfo.setCurrentPageNumber(1);
+//		searchInfo.setOrdering(false);
+//		searchInfo.setPerPageCount(1);
+//		searchInfo.setSearchOption("LIKE");
+//		searchInfo.setSortionOption("EMAIL");
+		String searchRule = "EMAIL";
+		
+		if(searchInfo.getKeyword() == null || searchInfo.getKeyword().trim().equals("")){
+			logger.info("키워드를 입력해 주세요.");
+		}
+		if(searchInfo.getConjunction() == null || searchInfo.getConjunction().trim().equals("")){
+			searchInfo.setConjunction("AND");
+			logger.info("conjunction 기본값 AND로 설정");
+		}
+		if(searchInfo.getCurrentPageNumber() == null || searchInfo.getCurrentPageNumber() == 0){
+			searchInfo.setCurrentPageNumber(1);
+			logger.info("currentPageNumber 기본값 1로 설정");
+		}
+		if(searchInfo.getOrdering() == null){
+			searchInfo.setOrdering(false);
+			logger.info("ordering 기본값 false로 설정");
+		}
+		if(searchInfo.getPerPageCount() == null || searchInfo.getPerPageCount() == 0){
+			searchInfo.setPerPageCount(10);
+			logger.info("perPageCount 기본값 10으로 설정");
+		}
+		if(searchInfo.getSearchOption() == null || searchInfo.getSearchOption().trim().equals("")){
+			searchInfo.setSearchOption("LIKE");
+			logger.info("searchOption 기본값 LIKE로 설정");
+		}
+		if(searchInfo.getSortionOption() == null || searchInfo.getSortionOption().trim().equals("")){
+			searchInfo.setSortionOption("EMAIL");
+			logger.info("sortingOption 기본값 EMAIL로 설정");
+		}
+		
+		if(searchRule.equals("NICKNAME")){
+			
+			list = memberService.getMembersByNickName(searchInfo);
+			logger.info(list.size() + "명 검색 성공."); 
+		}else if(searchRule.equals("EMAIL")){
+		
+			list = memberService.getMembersByEmail(searchInfo);
+			logger.info(list.size() + "명 검색 성공.");
+		}
+		List<MemberBean> members = new ArrayList<MemberBean>();
+		for(int i=0; i<list.size(); i++){
+			members.add(new MemberBean(list.get(i)));
 		}
 	}
 }
