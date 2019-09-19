@@ -363,10 +363,43 @@ public class MemberTest {
 			logger.info("자기 자신은 팔로우할 수 없습니다.");
 		}else if(memberService.getMember(followId) == null){
 			logger.info("존재하지 않는 회원입니다.");
-		}else if(!followService.follow(followVO)){
-			
 		}else{
 			followService.follow(followVO);
 		}
 	}*/
+	
+	/*
+	 * 팔로우 취소 테스트 
+	 * 1.회원은 팔로우 취소를 요청한다.
+	 * 2.시스템은 팔로우 취소하려는 회원의 식별키 입력을 요청한다.
+	 * 3.회원은 팔로우 취소하려는 회원의 식별키를 입력한다.
+	 * 4.시스템은 팔로우를 취소한다.
+	 * 
+	 * 실패 케이스
+	 * case - 1.로그인한 회원이 아닌경우 '로그인을 먼저 해주세요.' 메세지를 제공한다.
+	 * case - 2.존재하지 않는 회원의 식별키를 입력한 경우 '존재하지 않는 회원입니다.' 메세지를 제공한다.
+	 * case - 3.팔로우하지 않고 있는 회원의 식별키를 입력한 경우 '이미 팔로우중 입니다.' 메세지를 제공한다.
+	 * case - 4.자신을 팔로우 취소하려는 경우 '자기자신은 팔로우 취소할 수 없습니다.' 메세지를 제공한다.
+	*/
+	@Test
+	public void unFollowTest()throws Exception{
+		Map<String, String> session = new HashMap<String, String>();
+		session.put("loginId", "1");
+		String loginId = session.get("loginId");
+		String followId = "2";
+		
+		FollowVO followVO = new FollowVO();
+		followVO.setFollowingId(followId);
+		followVO.setFollowerId(loginId);
+		if(loginId == null || loginId.trim().equals("")){
+			logger.info("로그인을 먼저 해주세요.");
+		}else if(loginId.equals(followId)){
+			logger.info("자기 자신은 팔로우 취소할 수 없습니다.");
+		}else if(memberService.getMember(followId) == null){
+			logger.info("존재하지 않는 회원입니다.");
+		}else{
+			followService.unFollow(followVO);
+			logger.info("팔로우 취소 성공했습니다.");
+		}
+	}
 }
