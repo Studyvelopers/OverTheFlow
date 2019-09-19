@@ -413,7 +413,7 @@ public class MemberTest {
 	 * 실패 케이스
 	 * case - 1.존재하지 않는 회원의 식별키를 입력한 경우 '존재하지 않는 회원입니다.' 메세지를 제공한다.	
 	*/
-	@Test
+	/*@Test
 	public void searchFollower()throws Exception{
 		Map<String, String> session = new HashMap<String, String>();
 		session.put("loginId", "1");
@@ -482,5 +482,86 @@ public class MemberTest {
 		for(int i=0; i<members.size(); i++){
 			logger.info(members.get(i).toString());
 		}
-	}
+	}*/
+	
+	/*
+	 * 팔로우 조회 테스트
+	 * 1.회원은 팔로우한 회원 조회를 요청한다.
+	 * 2.시스템은 조회하려는 회원의 식별키 입력을 요청한다.
+	 * 3.회원은 팔로우를 조회하기 위한 식별키를 입력한다.
+	 * 4.시스템은 팔로우 목록을 제공한다.
+	 * 
+	 * 실패 케이스
+	 * case - 1.존재하지 않는 회원의 식별키를 입력한 경우 '존재하지 않는 회원입니다.' 메세지를 제공한다.	
+	*/
+	/*@Test
+	public void searchFollow()throws Exception{
+		Map<String, String> session = new HashMap<String, String>();
+		session.put("loginId", "16");
+		String loginId = session.get("loginId");
+		
+		SearchInfo searchInfo = new SearchInfo();
+		searchInfo.setKeyword(loginId);
+//		searchInfo.setConjunction("AND");
+//		searchInfo.setCurrentPageNumber(1);
+//		searchInfo.setOrdering(false);
+//		searchInfo.setPerPageCount(1);
+//		searchInfo.setSearchOption("LIKE");
+//		searchInfo.setSortionOption("EMAIL");
+		String searchRule = "EMAIL";
+		
+		if(searchInfo.getKeyword() == null || searchInfo.getKeyword().trim().equals("")){
+			logger.info("키워드를 입력해 주세요.");
+		}
+		if(searchInfo.getConjunction() == null || searchInfo.getConjunction().trim().equals("")){
+			searchInfo.setConjunction("AND");
+			logger.info("conjunction 기본값 AND로 설정");
+		}
+		if(searchInfo.getCurrentPageNumber() == null || searchInfo.getCurrentPageNumber() == 0){
+			searchInfo.setCurrentPageNumber(1);
+			logger.info("currentPageNumber 기본값 1로 설정");
+		}
+		if(searchInfo.getOrdering() == null){
+			searchInfo.setOrdering(false);
+			logger.info("ordering 기본값 false로 설정");
+		}
+		if(searchInfo.getPerPageCount() == null || searchInfo.getPerPageCount() == 0){
+			searchInfo.setPerPageCount(10);
+			logger.info("perPageCount 기본값 10으로 설정");
+		}
+		if(searchInfo.getSearchOption() == null || searchInfo.getSearchOption().trim().equals("")){
+			searchInfo.setSearchOption("LIKE");
+			logger.info("searchOption 기본값 LIKE로 설정");
+		}
+		if(searchInfo.getSortionOption() == null || searchInfo.getSortionOption().trim().equals("")){
+			searchInfo.setSortionOption("EMAIL");
+			logger.info("sortingOption 기본값 EMAIL로 설정");
+		}
+		
+		List<MemberVO> loginFollowVOs = followService.getFollows(searchInfo);
+		Map<String, MemberVO> map = new HashMap<String, MemberVO>();
+		for(int i=0; i<loginFollowVOs.size(); i++){
+			map.put(loginFollowVOs.get(i).getId(), loginFollowVOs.get(i));
+		}
+
+		searchInfo.setKeyword("1");
+		List<MemberVO> followVOs = followService.getFollows(searchInfo);
+		List<MemberBean> members = new ArrayList<MemberBean>();
+		MemberBean memberBean = null;
+		
+		for(int i=0; i<followVOs.size(); i++){
+			memberBean = new MemberBean(followVOs.get(i));
+			if(map.containsKey(followVOs.get(i).getId())){
+				logger.info(followVOs.get(i).getId()+"팔로우 함.");
+				memberBean.setFollow(true);
+			}else{
+				logger.info(followVOs.get(i).getId()+"팔로우 안함.");
+				memberBean.setFollow(false);
+			}
+			members.add(memberBean);
+		}
+		for(int i=0; i<members.size(); i++){
+			logger.info(members.get(i).toString());
+		}
+	}*/
 }
