@@ -130,23 +130,91 @@ public class MemberBean {
 		MemberVO memberVO = new MemberVO(id, email, password, nickname, introduction, registerDate, typeId, followingCount, followerCount);
 		return memberVO;
 	}
-
+	
 	@Override
 	public int hashCode() {
-		// TODO Auto-generated method stub
-		return super.hashCode();
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((email == null) ? 0 : email.hashCode());
+		result = prime * result + ((followerCount == null) ? 0 : followerCount.hashCode());
+		result = prime * result + ((followingCount == null) ? 0 : followingCount.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((introduction == null) ? 0 : introduction.hashCode());
+		result = prime * result + (isFollow ? 1231 : 1237);
+		result = prime * result + ((nickname == null) ? 0 : nickname.hashCode());
+		result = prime * result + ((password == null) ? 0 : password.hashCode());
+		result = prime * result + ((registerDate == null) ? 0 : registerDate.hashCode());
+		result = prime * result + ((typeId == null) ? 0 : typeId.hashCode());
+		return result;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		// TODO Auto-generated method stub
-		return super.equals(obj);
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		MemberBean other = (MemberBean) obj;
+		if (email == null) {
+			if (other.email != null)
+				return false;
+		} else if (!email.equals(other.email))
+			return false;
+		if (followerCount == null) {
+			if (other.followerCount != null)
+				return false;
+		} else if (!followerCount.equals(other.followerCount))
+			return false;
+		if (followingCount == null) {
+			if (other.followingCount != null)
+				return false;
+		} else if (!followingCount.equals(other.followingCount))
+			return false;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		if (introduction == null) {
+			if (other.introduction != null)
+				return false;
+		} else if (!introduction.equals(other.introduction))
+			return false;
+		if (isFollow != other.isFollow)
+			return false;
+		if (nickname == null) {
+			if (other.nickname != null)
+				return false;
+		} else if (!nickname.equals(other.nickname))
+			return false;
+		if (password == null) {
+			if (other.password != null)
+				return false;
+		} else if (!password.equals(other.password))
+			return false;
+		if (registerDate == null) {
+			if (other.registerDate != null)
+				return false;
+		} else if (!registerDate.equals(other.registerDate))
+			return false;
+		if (typeId == null) {
+			if (other.typeId != null)
+				return false;
+		} else if (!typeId.equals(other.typeId))
+			return false;
+		return true;
 	}
 
 	@Override
 	public String toString() {
-		// TODO Auto-generated method stub
-		return super.toString();
+		return "MemberBean [id=" + id + ", email=" + email + ", password=" + password + ", nickname=" + nickname
+				+ ", introduction=" + introduction + ", registerDate=" + registerDate + ", typeId=" + typeId
+				+ ", followingCount=" + followingCount + ", followerCount=" + followerCount + ", isFollow=" + isFollow
+				+ "]";
 	}
+	
+	
 	
 }
