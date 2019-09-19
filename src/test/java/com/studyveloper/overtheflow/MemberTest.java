@@ -10,6 +10,7 @@ import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.context.ContextConfiguration;
@@ -19,21 +20,17 @@ import com.studyveloper.overtheflow.bean.MemberBean;
 import com.studyveloper.overtheflow.service.FollowService;
 import com.studyveloper.overtheflow.service.MemberService;
 import com.studyveloper.overtheflow.util.SearchInfo;
+import com.studyveloper.overtheflow.vo.FollowVO;
 import com.studyveloper.overtheflow.vo.MemberVO;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration( locations = {"file:src/main/webapp/WEB-INF/spring/root-context.xml"})
 public class MemberTest {
-
-	
 	private static final Logger logger = LoggerFactory.getLogger(MemberTest.class);
 	@Autowired
 	MemberService memberService;
 	@Autowired
 	FollowService followService;
-	
-	private MockHttpServletRequest request;
-	private MockHttpSession session;
 	
 	/*	
 	 * 로그인 테스트
@@ -176,7 +173,7 @@ public class MemberTest {
 	 * case - 5. 소개글의 유효성에 맞지 않는 경우 '소개글은 1000자 이내로 작성해야 합니다.' 메세지를 제공한다.
 	 * case - 6. 기존 비밀번호가 일치하지 않는 경우 '비밀번호가 일치하지 않습니다.' 메세지를 제공한다.
 	*/
-	@Test
+	/*@Test
 	public void modifyTest()throws Exception{
 		Map<String,String> session = new HashMap<String,String>();
 		session.put("loginId","f1c1278e8068b15023dac10b8cdb78e75fee231d");
@@ -204,7 +201,7 @@ public class MemberTest {
 		}else{
 			memberService.modifyMember(memberBean.toVO(), oldPassword);
 		}
-	}
+	}*/
 	
 	/*
 	 * 회원 정보 조회 테스트
@@ -279,7 +276,7 @@ public class MemberTest {
 	 * 실패케이스
 	 * case - 1.키워드를 입력하지 않은경우 '키워드를 입력해 주세요.' 메세지를 제공한다.
 	*/
-	@Test
+	/*@Test
 	public void searchMemberTest()throws Exception{
 		SearchInfo searchInfo = new SearchInfo();
 		List<MemberVO> list = new ArrayList<MemberVO>();
@@ -334,5 +331,42 @@ public class MemberTest {
 		for(int i=0; i<list.size(); i++){
 			members.add(new MemberBean(list.get(i)));
 		}
-	}
+	}*/
+	
+	/*
+	 * 팔로우 요청 테스트
+	 * 1.회원은 다른 회원 팔로우를 요청한다.
+	 * 2.시스템은 회원의 로그인 여부를 확인한다.
+	 * 3.시스템은 회원에게 팔로우하려는 회원의 식별키 입력을 요청한다.
+	 * 4.회원은 팔로우 하려는 회원의 식별키를 입력한다.
+	 * 5.시스템은 팔로우를 완료한다.
+	 * 
+	 * 실패 케이스
+	 * case - 1.로그인한 회원이 아닌경우 '로그인을 먼저 해주세요.' 메세지를 제공한다. 
+	 * case - 2.존재하지 않는 회원의 식별키를 입력한 경우 '존재하지 않는 회원입니다.' 메세지를 제공한다.
+	 * case - 3.이미 팔로우하고 있는 회원의 식별키를 입력한 경우 '이미 팔로우중 입니다.' 메세지를 제공한다.
+	 * case - 4.자신을 팔로우 하려는 경우 '자기자신은 팔로우할 수 없습니다.' 메세지를 제공한다.
+	*/
+	/*@Test
+	public void followTest()throws Exception{
+		Map<String, String> session = new HashMap<String, String>();
+//		session.put("loginId", "1");
+		String loginId = session.get("loginId");
+		String followId = "-372961739";
+		
+		FollowVO followVO = new FollowVO();
+		followVO.setFollowingId(followId);
+		followVO.setFollowerId(loginId);
+		if(loginId == null){
+			logger.info("로그인을 먼저 해주세요.");
+		}else if(loginId.equals(followId)){
+			logger.info("자기 자신은 팔로우할 수 없습니다.");
+		}else if(memberService.getMember(followId) == null){
+			logger.info("존재하지 않는 회원입니다.");
+		}else if(!followService.follow(followVO)){
+			
+		}else{
+			followService.follow(followVO);
+		}
+	}*/
 }
