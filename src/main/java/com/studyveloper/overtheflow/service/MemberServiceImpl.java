@@ -1,21 +1,19 @@
 package com.studyveloper.overtheflow.service;
 
 import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.studyveloper.overtheflow.exception.MemberException;
 import com.studyveloper.overtheflow.mapper.MemberMapper;
 import com.studyveloper.overtheflow.util.IdentifierGenerator;
 import com.studyveloper.overtheflow.util.PageInfo;
 import com.studyveloper.overtheflow.util.SearchInfo;
 import com.studyveloper.overtheflow.util.option.MemberUnit;
 import com.studyveloper.overtheflow.util.option.OptionIntent;
-import com.studyveloper.overtheflow.util.option.OptionUnit;
-import com.studyveloper.overtheflow.util.option.SearchOption;
 import com.studyveloper.overtheflow.vo.MemberVO;
 
 @Service
@@ -31,21 +29,37 @@ public class MemberServiceImpl implements MemberService {
 		boolean idCheck = false;
 		if (memberVO == null) {
 			logger.error("회원가입 실패! - 회원가입을 위한 MemberVO가 NULL입니다.");
-			return null;
+			throw new MemberException("회원가입 실패! - 회원가입을 위한 MemberVO가 NULL입니다.",MemberException.ErrorCode.NULLPARAMETER);
 		} else if (memberVO.getEmail() == null || memberVO.getEmail().trim().equals("")) {
 			logger.error("회원가입 실패! - 회원가입을 위한 email이 NULL입니다.");
-			return null;
+			throw new MemberException("회원가입 실패! - 회원가입을 위한 email이 NULL입니다.", MemberException.ErrorCode.NULLPARAMETER);
 		} else if (memberVO.getPassword() == null || memberVO.getPassword().trim().equals("")) {
 			logger.error("회원가입 실패! - 회원가입을 위한 password가 NULL입니다.");
-			return null;
+			throw new MemberException("회원가입 실패! - 회원가입을 위한 password가 NULL입니다.", MemberException.ErrorCode.NULLPARAMETER);
 		} else if (memberVO.getNickname() == null || memberVO.getNickname().trim().equals("")) {
 			logger.error("회원가입 실패! - 회원가입을 위한 nickname이 NULL입니다.");
-			return null;
-		} // Exception 재정의 후 Exception 처리할 것. 일단 임의로 null return
+			throw new MemberException("회원가입 실패! - 회원가입을 위한 nickname이 NULL입니다.", MemberException.ErrorCode.NULLPARAMETER);
+		}
 		else {
+			SearchInfo searchInfo = new SearchInfo();
+			searchInfo.setConjunction("AND");
+			searchInfo.setCurrentPageNumber(1);
+			searchInfo.setOrdering(false);
+			searchInfo.setPerPageCount(1);
+			searchInfo.setSearchOption("EQUAL");
+			searchInfo.setSortionOption("EMAIL");
+			searchInfo.setKeyword(memberVO.getEmail());
+			List<MemberVO> list = this.getMembersByEmail(searchInfo);
+			if(list.size() >0){
+				throw new MemberException("email이 중복되었습니다.", MemberException.ErrorCode.EXISTS);
+			}
+			searchInfo.setKeyword(memberVO.getNickname());
+			list = this.getMembersByNickName(searchInfo);
+			if(list.size() >0){
+				throw new MemberException("nickname이 중복되었습니다.", MemberException.ErrorCode.EXISTS);
+			}
+			
 			String id = IdentifierGenerator.generateId("" + memberVO.getEmail());
-			id = "8a738f7521318301d8bdb8040758f78d63ad42d6";
-
 			while (!idCheck) {
 				if (memberMapper.searchMember(id) != null) {
 					// 식별키가 중복된 경우 식별키를 재생성 하기 위한 조건문
@@ -72,21 +86,22 @@ public class MemberServiceImpl implements MemberService {
 		boolean result = false;
 		if(memberId == null || memberId.trim().equals("")){
 			logger.error("회원 탈퇴 실패! - 회원 식별키가 NULL입니다.");
-			return result;
+			throw new MemberException("회원 탈퇴 실패! - 회원 식별키가 NULL입니다.", MemberException.ErrorCode.NULLPARAMETER);
 		}else if(password == null || password.trim().equals("")){
 			logger.error("회원 탈퇴 실패! - 비밀번호가 NULL입니다.");
-			return result;
+			throw new MemberException("회원 탈퇴 실패! - 비밀번호가 NULL입니다.", MemberException.ErrorCode.NULLPARAMETER);
 		}
 		MemberVO memberVO = memberMapper.searchMember(memberId);
 		if (memberVO == null) {
 			logger.error("회원 탈퇴 실패! - 회원 식별키와 일치하는 회원이 없습니다.");
+			throw new MemberException("회원 탈퇴 실패! - 회원 식별키와 일치하는 회원이 없습니다.", MemberException.ErrorCode.NOT_EXISTS);
 		} else {
 			if (memberVO.getPassword().equals(password)) {
 				memberMapper.deleteMember(memberId);
 				result = true;
 			} else {
 				logger.error("회원 탈퇴 실패! - 패스워드가 일치하지 않습니다.");
-
+				throw new MemberException("회원 탈퇴 실패! - 패스워드가 일치하지 않습니다.", MemberException.ErrorCode.NOT_EQAUL_PASSWORD);
 			}
 		}
 
@@ -97,23 +112,24 @@ public class MemberServiceImpl implements MemberService {
 	public MemberVO modifyMember(MemberVO memberVO, String oldPassword) throws Exception {
 		if (memberVO == null) {
 			logger.error("회원정보 수정 실패! - 회원정보를 수정하기위한 MemberVO가 NULL입니다.");
-			return null;
+			throw new MemberException("회원정보 수정 실패! - 회원정보를 수정하기위한 MemberVO가 NULL입니다.", MemberException.ErrorCode.NULLPARAMETER);
 		} else if (memberVO.getEmail() == null || memberVO.getEmail().trim().equals("")) {
 			logger.error("회원정보 수정 실패! - 회원 정보를 수정하기 위한 email이 NULL입니다.");
-			return null;
+			throw new MemberException("회원정보 수정 실패! - 회원 정보를 수정하기 위한 email이 NULL입니다.", MemberException.ErrorCode.NULLPARAMETER);
 		} else if (memberVO.getPassword() == null || memberVO.getPassword().trim().equals("")) {
 			logger.error("회원정보 수정 실패! - 회원 정보를 수정하기 위한 password가 NULL입니다.");
-			return null;
+			throw new MemberException("",MemberException.ErrorCode.NULLPARAMETER);
 		} else if (memberVO.getNickname() == null || memberVO.getNickname().trim().equals("")) {
 			logger.error("회원정보 수정 실패! - 회원 정보를 수정하기 위한 nickname이 NULL입니다.");
-			return null;
+			throw new MemberException("회원정보 수정 실패! - 회원 정보를 수정하기 위한 nickname이 NULL입니다.",MemberException.ErrorCode.NULLPARAMETER);
 		}else if(oldPassword == null || oldPassword.trim().equals("")){
 			logger.error("회원정보 수정 실패! - 회원 정보를 수정하기 위한 oldPassword가 NULL입니다.");
-			return null;
+			throw new MemberException("회원정보 수정 실패! - 회원 정보를 수정하기 위한 oldPassword가 NULL입니다.",MemberException.ErrorCode.NULLPARAMETER);
 		}
 		MemberVO memberVO2 = memberMapper.searchMember(memberVO.getId());
 		if (memberVO2 == null) {
 			logger.error("회원정보 수정 실패! - 회원 식별키와 일치하는 회원정보가 없습니다.");
+			throw new MemberException("회원정보 수정 실패! - 회원 식별키와 일치하는 회원정보가 없습니다.", MemberException.ErrorCode.NOT_EXISTS);
 		} else {
 			if (memberVO2.getPassword().equals(oldPassword)) {
 				memberMapper.modifyMember(memberVO);
@@ -121,16 +137,16 @@ public class MemberServiceImpl implements MemberService {
 				return memberVO;
 			} else {
 				logger.error("회원정보 수정 실패! - 비밀번호가 일치하지 않습니다.");
+				throw new MemberException("회원정보 수정 실패! - 비밀번호가 일치하지 않습니다.", MemberException.ErrorCode.NOT_EQAUL_PASSWORD);
 			}
 		}
-		return null;
 	}
 
 	
 	public MemberVO getMember(String memberId)throws Exception {
 		if(memberId == null || memberId.trim().equals("")){
 			logger.error("회원 검색 실패! - 회원 검색을 위한 memberId가 NULL입니다.");
-			return null;
+			throw new MemberException("회원 검색 실패! - 회원 검색을 위한 memberId가 NULL입니다.", MemberException.ErrorCode.NULLPARAMETER);
 		}
 		
 		MemberVO memberVO = memberMapper.searchMember(memberId);
@@ -139,7 +155,7 @@ public class MemberServiceImpl implements MemberService {
 			logger.info("회원 검색 성공! - " + memberVO.toString());
 		}else{
 			logger.error("회원 검색 실패! - memberId와 일치하는 회원의 정보가 없습니다.");
-			return null;
+			throw new MemberException("회원 검색 실패! - memberId와 일치하는 회원의 정보가 없습니다.", MemberException.ErrorCode.NOT_EXISTS);
 		}
 		
 		return memberVO;
@@ -148,7 +164,7 @@ public class MemberServiceImpl implements MemberService {
 	
 	public List<MemberVO> getAllMembers(PageInfo pageInfo)throws Exception {
 		if(pageInfo == null){
-			
+			throw new MemberException("PageInfo가 NULL입니다.", MemberException.ErrorCode.NULLPARAMETER);
 		}else{
 			OptionIntent.Builder builder = new OptionIntent.Builder();
 			OptionIntent optionIntent= builder.build();
@@ -180,7 +196,9 @@ public class MemberServiceImpl implements MemberService {
 	
 	public List<MemberVO> getMembersByNickName(SearchInfo searchInfo) throws Exception {
 		if(searchInfo == null){
-			return null;
+			throw new MemberException("SearchInfo가 NULL입니다.", MemberException.ErrorCode.NULLPARAMETER);
+		}else if(searchInfo.getKeyword() == null){
+			throw new MemberException("keyword가 NULL입니다.", MemberException.ErrorCode.NULLPARAMETER);
 		}
 		String keyword = searchInfo.getKeyword();
 		String searchOption = searchInfo.getSearchOption();
@@ -194,11 +212,10 @@ public class MemberServiceImpl implements MemberService {
 		
 		//검색
 		if(searchOption.equals("IN")){
-			//닉네임 검색인데 LIKE면 될거같은데?
 		}else if(searchOption.equals("LIKE")){
 			builder.appendLikeSearchOption(MemberUnit.NICKNAME, keyword, isAnd);
 		}else{
-			
+			builder.appendEqualSearchOption(MemberUnit.NICKNAME, keyword, isAnd);
 		}
 		
 		//정렬
@@ -220,7 +237,9 @@ public class MemberServiceImpl implements MemberService {
 	
 	public List<MemberVO> getMembersByEmail(SearchInfo searchInfo) throws Exception {
 		if(searchInfo == null){
-			return null;
+			throw new MemberException("SearchInfo가 NULL입니다.", MemberException.ErrorCode.NULLPARAMETER);
+		}else if(searchInfo.getKeyword() == null){
+			throw new MemberException("keyword가 NULL입니다.", MemberException.ErrorCode.NULLPARAMETER);
 		}
 		String keyword = searchInfo.getKeyword();
 		String searchOption = searchInfo.getSearchOption();
@@ -256,6 +275,9 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	public List<MemberVO> getMembers(List<String> memberIds) throws Exception {
+		if(memberIds == null){
+			throw new MemberException("memberIds가 NULL입니다.", MemberException.ErrorCode.NULLPARAMETER);
+		}
 		OptionIntent.Builder builder = new OptionIntent.Builder();
 		builder.appendInSearchOption(MemberUnit.ID, memberIds.toArray(), true);
 		List<MemberVO> members = memberMapper.searchMembers(builder.build());

@@ -37,4 +37,12 @@ public interface FollowMapper {
 	 * @throws Exception 미정
 	 */
 	public List<String> searchFollowerIds(String followingId) throws Exception;
+	
+	/**
+	 * 팔로잉Id와 팔로워Id를 통해서 팔로우 관계를 확인합니다.
+	 * @param followingId 팔로잉 대상의 아이디입니다, followerId 팔로워를 한 대상의 아이디입니다.
+	 * @return FollowVO 검색된 팔로우 관계를 반환합니다.
+	 * @throws Exception 미정
+	 */
+	public FollowVO getFollow(FollowVO followVO) throws Exception;
 }

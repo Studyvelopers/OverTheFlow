@@ -43,4 +43,13 @@
 		WHERE
 			follow_id = #{followingId}
 	</select>
+	
+	<select id="getFollow" parameterType="FollowVO" resultType="FollowVO">
+		SELECT
+			member_id as 'followerId', follow_id as 'followingId'
+		FROM
+			follow
+		WHERE
+			member_id = #{followerId} AND follow_id = #{followingId}
+	</select>
 </mapper>
