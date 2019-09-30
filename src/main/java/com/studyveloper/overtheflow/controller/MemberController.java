@@ -2,6 +2,7 @@ package com.studyveloper.overtheflow.controller;
 
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,8 +27,6 @@ import com.studyveloper.overtheflow.service.PlaylistLikeService;
 import com.studyveloper.overtheflow.util.SearchInfo;
 import com.studyveloper.overtheflow.vo.FollowVO;
 import com.studyveloper.overtheflow.vo.MemberVO;
-import com.studyveloper.overtheflow.vo.MusicVO;
-import com.studyveloper.overtheflow.vo.PlaylistVO;
 
 @Controller
 @RequestMapping(value="/member")
@@ -143,11 +142,14 @@ public class MemberController {
 		}
 		MemberVO memberVO = memberBean.toVO();
 		try{
+			memberVO.setRegisterDate(new Date());
+			memberVO.setTypeId("1");
 			memberVO = memberService.register(memberVO);
 		}catch(MemberException e){
 			logger.error(e.getMessage());
+			return "error";
 		}
-		return "register";
+		return "home";
 	}
 	
 	@RequestMapping(value="/unregister", method=RequestMethod.GET)
