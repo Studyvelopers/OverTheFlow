@@ -2,6 +2,7 @@ package com.studyveloper.overtheflow.controller;
 
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -14,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.Base64Utils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -21,6 +23,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.studyveloper.overtheflow.bean.MemberBean;
 import com.studyveloper.overtheflow.exception.MemberException;
 import com.studyveloper.overtheflow.service.FollowService;
+import com.studyveloper.overtheflow.service.ImageService;
+import com.studyveloper.overtheflow.service.ImageService.ImageType;
 import com.studyveloper.overtheflow.service.MemberService;
 import com.studyveloper.overtheflow.service.MusicLikeService;
 import com.studyveloper.overtheflow.service.PlaylistLikeService;
@@ -43,6 +47,24 @@ public class MemberController {
 	@Autowired
 	PlaylistLikeService playlistLikeService;
 	
+	@Autowired
+	ImageService imageService;
+	
+	@RequestMapping(value = "/display/img", method = RequestMethod.GET)
+	public String displayImg(Model model) {
+		try {
+			byte[] image = Base64Utils.encode( imageService.getImage("1.jpeg", ImageType.PROFILE, "1"));
+			String encodeImage = new String(image);
+			
+			model.addAttribute("image", encodeImage);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return "display-img";
+	}
+
+	
+	
 	@RequestMapping(value="/home", method=RequestMethod.GET)
 	public String home() {
 		logger.info("메인 페이지로 이동");
@@ -57,7 +79,7 @@ public class MemberController {
 	
 	
 	@RequestMapping(value="/login", method=RequestMethod.POST)
-	public String login(HttpSession session, MemberBean memberBean) throws Exception{
+	public String login(HttpSession session, MemberBean memberBean, Model model) throws Exception{
 		logger.info("로그인 요청");
 		SearchInfo searchInfo = new SearchInfo(memberBean.getEmail(), "EQUAL", "AND");
 		searchInfo.setOrdering(false);
@@ -71,12 +93,15 @@ public class MemberController {
 			
 			if(session.getAttribute("loginId") != null){
 				logger.error("이미 로그인되어 있습니다.");
+				model.addAttribute("message", "이미 로그인되어 있습니다.");
 			}else if(member.size() == 0){
 				logger.error("로그인 실패");
 				logger.error("입력한 이메일과 일치하는 회원이 없습니다.");
+				model.addAttribute("message", "입력한 이메일과 일치하는 회원이 없습니다.");
 			}else if(!member.get(0).getPassword().equals(memberBean.getPassword())){
 				logger.error("로그인 실패");
 				logger.error("비밀번호가 일치하지 않습니다.");
+				model.addAttribute("message", "비밀번호가 일치하지 않습니다.");
 			}
 			else{
 				session.setAttribute("loginId", member.get(0).getId());
@@ -101,7 +126,8 @@ public class MemberController {
 				for(int i=0; i<playlists.size(); i++){
 					likePlaylistList.put(playlists.get(i).getId(), playlists.get(i));
 				}
-				session.setAttribute("likePlaylistList", likePlaylistList);*/
+				session.setAttribute("likePlaylistList", likePlaylistList);
+				*/
 				
 				logger.info(session.getAttribute("loginId")+" - 로그인 성공");
 			}
@@ -122,10 +148,13 @@ public class MemberController {
 		if(session.getAttribute("loginId") == null){
 			logger.info("로그인을 해야합니다.");
 		}else{
-			session.removeAttribute("loginId");
 			logger.info("로그아웃 성공!");
+			session.removeAttribute("loginId");
+			session.removeAttribute("followingList");
+			//좋아요한 음악과 플레이리스트도 제거해야함.
+			session.invalidate();
 		}
-		return "login";
+		return "home";
 	}
 	
 	@RequestMapping(value="/register", method=RequestMethod.GET)
@@ -153,7 +182,12 @@ public class MemberController {
 	}
 	
 	@RequestMapping(value="/unregister", method=RequestMethod.GET)
-	public String displayUnregister(){
+	public String displayUnregister(HttpSession session, Model model){
+		if(session.getAttribute("loginId") == null){
+			logger.info("로그인을 하지 않은 회원의 요청입니다.");
+			model.addAttribute("message", "로그인을 먼저 하셔야합니다.");
+			return "home";
+		}
 		logger.info("회원탈퇴 화면으로 이동.");
 		return "unregister";
 	}
@@ -164,18 +198,18 @@ public class MemberController {
 		String memberId = (String) session.getAttribute("loginId");
 		if(memberId == null){
 			model.addAttribute("message", "로그인을 먼저 하셔야합니다.");
-			return "error";
 		}
 		logger.info("탈퇴 요청 아이디 = "+memberId);
 		try{
-			boolean result = memberService.unRegister(memberId, password);
-			if(result){
-				logger.info("회원탈퇴 성공");
-			}else{
-				logger.info("회원 탈퇴 실패.");
-				return "error";
-			}
+			memberService.unRegister(memberId, password);
+			model.addAttribute("message", "회원탈퇴 성공");
+			logger.info("회원탈퇴 성공");
+			session.removeAttribute("loginId");
+			session.removeAttribute("followingList");
+			//좋아요한 음악과 플레이리스트도 제거해야함.
+			session.invalidate();
 		}catch(MemberException e){
+			model.addAttribute("message", "회원탈퇴 실패");
 			logger.error(e.getMessage());
 		}
 		
