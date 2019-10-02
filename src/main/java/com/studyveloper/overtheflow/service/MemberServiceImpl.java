@@ -30,15 +30,29 @@ public class MemberServiceImpl implements MemberService {
 		if (memberVO == null) {
 			logger.error("회원가입 실패! - 회원가입을 위한 MemberVO가 NULL입니다.");
 			throw new MemberException("회원가입 실패! - 회원가입을 위한 MemberVO가 NULL입니다.",MemberException.ErrorCode.NULLPARAMETER);
-		} else if (memberVO.getEmail() == null || memberVO.getEmail().trim().equals("")) {
+		}else if (memberVO.getEmail() == null || memberVO.getEmail().trim().equals("")) {
 			logger.error("회원가입 실패! - 회원가입을 위한 email이 NULL입니다.");
 			throw new MemberException("회원가입 실패! - 회원가입을 위한 email이 NULL입니다.", MemberException.ErrorCode.NULLPARAMETER);
-		} else if (memberVO.getPassword() == null || memberVO.getPassword().trim().equals("")) {
+		}else if(!memberVO.getEmail().matches("^[a-zA-Z0-9]+@[a-z]+\\.[a-z]*$")){
+			logger.info("이메일 아이디의 형식을 지켜서 입력해주세요.");
+			throw new MemberException("회원가입 실패! - 이메일 아이디의 형식을 지켜서 입력해주세요.", MemberException.ErrorCode.NOT_AVAILABLE); 
+		}
+		else if (memberVO.getPassword() == null || memberVO.getPassword().trim().equals("")) {
 			logger.error("회원가입 실패! - 회원가입을 위한 password가 NULL입니다.");
 			throw new MemberException("회원가입 실패! - 회원가입을 위한 password가 NULL입니다.", MemberException.ErrorCode.NULLPARAMETER);
-		} else if (memberVO.getNickname() == null || memberVO.getNickname().trim().equals("")) {
+		}else if(!memberVO.getPassword().matches("^[a-zA-Z0-9!@#$%^*&()]{8,16}$")){
+			logger.info("비밀번호는 8~16자 이내의 영문, 숫자, 특수문자를 이용해야 합니다.");
+			throw new MemberException("회원가입 실패! - 비밀번호는 8~16자 이내의 영문, 숫자, 특수문자를 이용해야 합니다.", MemberException.ErrorCode.NOT_AVAILABLE);
+		}
+		else if (memberVO.getNickname() == null || memberVO.getNickname().trim().equals("")) {
 			logger.error("회원가입 실패! - 회원가입을 위한 nickname이 NULL입니다.");
 			throw new MemberException("회원가입 실패! - 회원가입을 위한 nickname이 NULL입니다.", MemberException.ErrorCode.NULLPARAMETER);
+		}else if(!memberVO.getNickname().matches("^[a-zA-Z0-9가-힣-_]{2,10}$")){
+			logger.info("닉네임은 2~10자 이내의 영문, 한글, 숫자, 특수문자(-,_)를 이용해야 합니다.");
+			throw new MemberException("회원가입 실패! - 닉네임은 2~10자 이내의 영문, 한글, 숫자, 특수문자(-,_)를 이용해야 합니다.", MemberException.ErrorCode.NOT_AVAILABLE);
+		}else if(memberVO.getIntroduction().length() > 1000){
+			logger.info("소개글은 1000자 이내로 작성해야합니다.");
+			throw new MemberException("회원가입 실패! - 소개글은 1000자 이내로 작성해야합니다.", MemberException.ErrorCode.NOT_AVAILABLE);
 		}
 		else {
 			SearchInfo searchInfo = new SearchInfo();
@@ -54,6 +68,7 @@ public class MemberServiceImpl implements MemberService {
 				throw new MemberException("email이 중복되었습니다.", MemberException.ErrorCode.EXISTS);
 			}
 			searchInfo.setKeyword(memberVO.getNickname());
+			searchInfo.setSearchOption("EQUAL");
 			list = this.getMembersByNickName(searchInfo);
 			if(list.size() >0){
 				throw new MemberException("nickname이 중복되었습니다.", MemberException.ErrorCode.EXISTS);
@@ -113,9 +128,6 @@ public class MemberServiceImpl implements MemberService {
 		if (memberVO == null) {
 			logger.error("회원정보 수정 실패! - 회원정보를 수정하기위한 MemberVO가 NULL입니다.");
 			throw new MemberException("회원정보 수정 실패! - 회원정보를 수정하기위한 MemberVO가 NULL입니다.", MemberException.ErrorCode.NULLPARAMETER);
-		} else if (memberVO.getEmail() == null || memberVO.getEmail().trim().equals("")) {
-			logger.error("회원정보 수정 실패! - 회원 정보를 수정하기 위한 email이 NULL입니다.");
-			throw new MemberException("회원정보 수정 실패! - 회원 정보를 수정하기 위한 email이 NULL입니다.", MemberException.ErrorCode.NULLPARAMETER);
 		} else if (memberVO.getPassword() == null || memberVO.getPassword().trim().equals("")) {
 			logger.error("회원정보 수정 실패! - 회원 정보를 수정하기 위한 password가 NULL입니다.");
 			throw new MemberException("",MemberException.ErrorCode.NULLPARAMETER);
@@ -125,6 +137,19 @@ public class MemberServiceImpl implements MemberService {
 		}else if(oldPassword == null || oldPassword.trim().equals("")){
 			logger.error("회원정보 수정 실패! - 회원 정보를 수정하기 위한 oldPassword가 NULL입니다.");
 			throw new MemberException("회원정보 수정 실패! - 회원 정보를 수정하기 위한 oldPassword가 NULL입니다.",MemberException.ErrorCode.NULLPARAMETER);
+		}
+		SearchInfo searchInfo = new SearchInfo();
+		searchInfo.setConjunction("AND");
+		searchInfo.setCurrentPageNumber(1);
+		searchInfo.setOrdering(false);
+		searchInfo.setPerPageCount(1);
+		searchInfo.setSearchOption("EQUAL");
+		searchInfo.setSortionOption("EMAIL");
+		searchInfo.setKeyword(memberVO.getNickname());
+		
+		List<MemberVO> list = getMembersByNickName(searchInfo);
+		if(!list.get(0).getId().equals(memberVO.getId())){
+			throw new MemberException("회원정보 수정 실패! - 닉네임이 중복되었습니다.", MemberException.ErrorCode.EXISTS);
 		}
 		MemberVO memberVO2 = memberMapper.searchMember(memberVO.getId());
 		if (memberVO2 == null) {
@@ -238,7 +263,7 @@ public class MemberServiceImpl implements MemberService {
 	public List<MemberVO> getMembersByEmail(SearchInfo searchInfo) throws Exception {
 		if(searchInfo == null){
 			throw new MemberException("SearchInfo가 NULL입니다.", MemberException.ErrorCode.NULLPARAMETER);
-		}else if(searchInfo.getKeyword() == null){
+		}else if(searchInfo.getKeyword() == null || searchInfo.getKeyword().trim().equals("")){
 			throw new MemberException("keyword가 NULL입니다.", MemberException.ErrorCode.NULLPARAMETER);
 		}
 		String keyword = searchInfo.getKeyword();
@@ -275,13 +300,18 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	public List<MemberVO> getMembers(List<String> memberIds) throws Exception {
+		List<MemberVO> members = null;
 		if(memberIds == null){
 			throw new MemberException("memberIds가 NULL입니다.", MemberException.ErrorCode.NULLPARAMETER);
+		}else if(memberIds.size() == 0){
+			logger.info("검색할 회원이 0명입니다.");
+		}else{
+			OptionIntent.Builder builder = new OptionIntent.Builder();
+			builder.appendInSearchOption(MemberUnit.ID, memberIds.toArray(), true);
+			members = memberMapper.searchMembers(builder.build());
 		}
-		OptionIntent.Builder builder = new OptionIntent.Builder();
-		builder.appendInSearchOption(MemberUnit.ID, memberIds.toArray(), true);
-		List<MemberVO> members = memberMapper.searchMembers(builder.build());
 		return members;
+		
 	}
 
 }

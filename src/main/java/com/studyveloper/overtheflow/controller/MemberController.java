@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.studyveloper.overtheflow.bean.MemberBean;
 import com.studyveloper.overtheflow.exception.MemberException;
+import com.studyveloper.overtheflow.exception.MemberException.ErrorCode;
 import com.studyveloper.overtheflow.service.FollowService;
 import com.studyveloper.overtheflow.service.ImageService;
 import com.studyveloper.overtheflow.service.ImageService.ImageType;
@@ -237,24 +238,36 @@ public class MemberController {
 	}
 	
 	@RequestMapping(value="/modify", method=RequestMethod.POST)
-	public String modify(HttpSession session, MemberBean memberBean, String oldPassword) throws Exception{
+	public String modify(HttpSession session, MemberBean memberBean, String oldPassword, Model model) throws Exception{
 		logger.info("회원정보 수정 페이지로 요청");
 		String id = (String)session.getAttribute("loginId");
 		if(id == null){
 			logger.info("로그인을 안했습니다.");
 			return "error";
 		}else{
-			
-			MemberVO memberVO = memberBean.toVO();
-			memberVO.setId(id);
-			memberVO = memberService.modifyMember(memberVO, oldPassword);
-			if(memberVO == null){
-				logger.info("회원정보 수정 실패");
-				return "error";
-			}else{
-				logger.info("회원정보 수정 성공");
+			try{
+				MemberVO memberVO = memberBean.toVO();
+				memberVO.setId(id);
+				memberVO = memberService.modifyMember(memberVO, oldPassword);
+				if(memberVO == null){
+					logger.info("회원정보 수정 실패");
+					return "error";
+				}else{
+					logger.info("회원정보 수정 성공");
+				}
+			}catch(MemberException e){
+				e.printStackTrace();
+				if(e.getErrorCode() == MemberException.ErrorCode.NOT_EQAUL_PASSWORD ){
+					model.addAttribute("message", "비밀번호가 일치하지 않습니다.");
+				}else if(e.getErrorCode() == MemberException.ErrorCode.NULLPARAMETER){
+					model.addAttribute("message", "비밀번호와 닉네임은 필수입력 정보입니다.");
+				}else if(e.getErrorCode() == MemberException.ErrorCode.EXISTS){
+					model.addAttribute("message", "닉네임이 중복되었습니다.");
+				}
+				return "home";
 			}
-			return "modify";
+			
+			return "redirect:/member/detail";
 		}
 	}
 	
