@@ -1,14 +1,16 @@
 package com.studyveloper.overtheflow.controller;
 
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,7 @@ import org.springframework.util.Base64Utils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.studyveloper.overtheflow.bean.MemberBean;
 import com.studyveloper.overtheflow.exception.MemberException;
@@ -326,20 +329,14 @@ public class MemberController {
 				memberVOs = memberService.getMembersByEmail(searchInfo);
 			}
 			MemberBean memberBean = null;
-			if(session.getAttribute("loginId") == null){
-				logger.info("널");
-			}
+			
 
 			HashMap<String, MemberVO> followingList = new HashMap<String, MemberVO>();
 			followingList = (HashMap<String, MemberVO>)session.getAttribute("followingList");
-			Iterator<String> iterator = followingList.keySet().iterator();
-			while(iterator.hasNext()){
-				logger.info("key - " + iterator.next());
-			}
 			
 			for(int i=0; i<memberVOs.size(); i++){
 				memberBean = new MemberBean(memberVOs.get(i));
-				if(followingList != null && followingList.get(""+memberBean.getId()) != null){
+				if(followingList != null && followingList.containsKey(memberBean.getId())){
 					memberBean.setFollow(true);
 				}
 				logger.info(memberBean.toString());
@@ -353,31 +350,47 @@ public class MemberController {
 		return "members";
 	}
 
-	@RequestMapping(value = "/follow")
-	public String toggleFollow(HttpSession session, String memberId, boolean isFollowed, Model model) throws Exception {
+	
+	@RequestMapping(value = "/follow", method=RequestMethod.POST)
+	public @ResponseBody String toggleFollow(HttpSession session, String memberId, boolean isFollowed) throws Exception {
 		FollowVO followVO = new FollowVO();
 		followVO.setFollowerId((String) session.getAttribute("loginId"));
 		followVO.setFollowingId(memberId);
 		boolean result = false;
-		if (isFollowed) {
-			result = followService.unFollow(followVO);
-			if (result) {
-				((Map<String, MemberVO>) session.getAttribute("followingList")).remove(memberId);
-				model.addAttribute("message", "unfollow성공");
+		logger.info((String) session.getAttribute("loginId")+"/"+memberId+"/"+isFollowed);
+		String message = null;
+		try{
+			if (isFollowed) {
+				result = followService.unFollow(followVO);
+				if (result) {
+					((Map<String, MemberVO>) session.getAttribute("followingList")).remove(memberId);
+					message = "unfollow success";
+				} else {
+					message = "unfollow fail";
+				}
 			} else {
-				model.addAttribute("message", "unfollow실패");
+				result = followService.follow(followVO);
+				if (result) {
+					MemberVO memberVO = memberService.getMember(memberId);
+					((Map<String, MemberVO>)session.getAttribute("followingList")).put(memberId, memberVO);
+					message = "follow success";
+				} else {
+					message = "follow fail";
+				}
 			}
-		} else {
-			result = followService.follow(followVO);
-			if (result) {
-				MemberVO memberVO = memberService.getMember(memberId);
-				((Map<String, MemberVO>)session.getAttribute("followingList")).put(memberId, memberVO);
-				model.addAttribute("message", "follow성공");
-			} else {
-				model.addAttribute("message", "follow실패");
+		}catch(MemberException e){
+			e.printStackTrace();
+			if(isFollowed){
+				message = "unfollow fail";
+			}else{
+				message = "follow fail";
 			}
 		}
-		return "follow";
+		
+		JSONObject json = new JSONObject();
+		json.put("message", message);
+		return json.toJSONString();
+		
 	}
 
 	@RequestMapping(value = "/following/list")
