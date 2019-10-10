@@ -15,13 +15,15 @@ public class MemberBean {
 	Integer followingCount;
 	Integer followerCount;
 	boolean isFollow;
+	String image;
 	public MemberBean() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 	
+	
 	public MemberBean(String id, String email, String password, String nickname, String introduction, Date registerDate,
-			String typeId, Integer followingCount, Integer followerCount, boolean isFollow) {
+			String typeId, Integer followingCount, Integer followerCount, boolean isFollow, String image) {
 		super();
 		this.id = id;
 		this.email = email;
@@ -33,8 +35,8 @@ public class MemberBean {
 		this.followingCount = followingCount;
 		this.followerCount = followerCount;
 		this.isFollow = isFollow;
+		this.image = image;
 	}
-
 
 	public MemberBean(MemberVO memberVO){
 		this.id = memberVO.getId();
@@ -125,12 +127,24 @@ public class MemberBean {
 	public void setFollow(boolean isFollow) {
 		this.isFollow = isFollow;
 	}
+	
+
+	public String getImage() {
+		return image;
+	}
+
+
+	public void setImage(String image) {
+		this.image = image;
+	}
+
 
 	public MemberVO toVO(){
 		MemberVO memberVO = new MemberVO(id, email, password, nickname, introduction, registerDate, typeId, followingCount, followerCount);
 		return memberVO;
 	}
-	
+
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -139,6 +153,7 @@ public class MemberBean {
 		result = prime * result + ((followerCount == null) ? 0 : followerCount.hashCode());
 		result = prime * result + ((followingCount == null) ? 0 : followingCount.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((image == null) ? 0 : image.hashCode());
 		result = prime * result + ((introduction == null) ? 0 : introduction.hashCode());
 		result = prime * result + (isFollow ? 1231 : 1237);
 		result = prime * result + ((nickname == null) ? 0 : nickname.hashCode());
@@ -147,6 +162,7 @@ public class MemberBean {
 		result = prime * result + ((typeId == null) ? 0 : typeId.hashCode());
 		return result;
 	}
+
 
 	@Override
 	public boolean equals(Object obj) {
@@ -176,6 +192,11 @@ public class MemberBean {
 			if (other.id != null)
 				return false;
 		} else if (!id.equals(other.id))
+			return false;
+		if (image == null) {
+			if (other.image != null)
+				return false;
+		} else if (!image.equals(other.image))
 			return false;
 		if (introduction == null) {
 			if (other.introduction != null)
@@ -207,13 +228,16 @@ public class MemberBean {
 		return true;
 	}
 
+
 	@Override
 	public String toString() {
 		return "MemberBean [id=" + id + ", email=" + email + ", password=" + password + ", nickname=" + nickname
 				+ ", introduction=" + introduction + ", registerDate=" + registerDate + ", typeId=" + typeId
 				+ ", followingCount=" + followingCount + ", followerCount=" + followerCount + ", isFollow=" + isFollow
-				+ "]";
+				+ ", image=" + image + "]";
 	}
+	
+	
 	
 	
 	

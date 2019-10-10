@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.studyveloper.overtheflow.bean.MemberBean;
+import com.studyveloper.overtheflow.exception.ImageException;
 import com.studyveloper.overtheflow.exception.MemberException;
 import com.studyveloper.overtheflow.service.FollowService;
 import com.studyveloper.overtheflow.service.ImageService;
@@ -51,19 +52,6 @@ public class MemberController {
 
 	@Autowired
 	ImageService imageService;
-
-	@RequestMapping(value = "/display/img", method = RequestMethod.GET)
-	public String displayImg(Model model) {
-		try {
-			byte[] image = Base64Utils.encode(imageService.getImage("1.jpeg", ImageType.PROFILE, "1"));
-			String encodeImage = new String(image);
-
-			model.addAttribute("image", encodeImage);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return "display-img";
-	}
 
 	@RequestMapping(value = "/search", method = RequestMethod.GET)
 	public String displaySearch() {
@@ -291,7 +279,12 @@ public class MemberController {
 			try {
 				MemberVO memberVO = memberService.getMember(loginId);
 				MemberBean memberBean = new MemberBean(memberVO);
+				byte[] image = Base64Utils.encode(imageService.getImage(memberBean.getId(), ImageType.PROFILE, memberBean.getId()));
+				memberBean.setImage(new String(image));
+				
+				byte[] backgroundImage = Base64Utils.encode(imageService.getImage(memberBean.getId(), ImageType.PROFILE_BACKGROUND, memberBean.getId()));
 				model.addAttribute("memberBean", memberBean);
+				model.addAttribute("backgroundImage", new String(backgroundImage));
 			} catch (MemberException e) {
 				e.printStackTrace();
 				if (e.getErrorCode() == MemberException.ErrorCode.NOT_EXISTS) {
@@ -334,16 +327,21 @@ public class MemberController {
 			HashMap<String, MemberVO> followingList = new HashMap<String, MemberVO>();
 			followingList = (HashMap<String, MemberVO>)session.getAttribute("followingList");
 			
+			
+			
 			for(int i=0; i<memberVOs.size(); i++){
 				memberBean = new MemberBean(memberVOs.get(i));
 				if(followingList != null && followingList.containsKey(memberBean.getId())){
 					memberBean.setFollow(true);
 				}
-				logger.info(memberBean.toString());
-
+				byte[] image = Base64Utils.encode(imageService.getImage(memberBean.getId(), ImageType.PROFILE, memberBean.getId()));
+				memberBean.setImage(new String(image));
 				members.add(memberBean);
+				
+				logger.info(memberBean.toString());
 			}
 			model.addAttribute("members", members);
+		
 		}catch(MemberException e){
 			e.printStackTrace();
 		}
@@ -390,31 +388,59 @@ public class MemberController {
 		JSONObject json = new JSONObject();
 		json.put("message", message);
 		return json.toJSONString();
-		
 	}
 
 	@RequestMapping(value = "/following/list")
 	public String displayFollowings(HttpSession session, SearchInfo searchInfo, Model model) throws Exception {
-		List<MemberVO> memberVOs = followService.getFollows(searchInfo);
-		List<MemberBean> members = new ArrayList<MemberBean>();
-		for (int i = 0; i < memberVOs.size(); i++) {
-			members.add(new MemberBean(memberVOs.get(i)));
+		try{
+			List<MemberVO> memberVOs = followService.getFollows(searchInfo);
+			List<MemberBean> members = new ArrayList<MemberBean>();
+			
+			HashMap<String, MemberVO> followingList = new HashMap<String, MemberVO>();
+			followingList = (HashMap<String, MemberVO>)session.getAttribute("followingList");
+			MemberBean memberBean = null;
+			for (int i = 0; i < memberVOs.size(); i++) {
+				memberBean = new MemberBean(memberVOs.get(i));
+				byte[] image = Base64Utils.encode(imageService.getImage(memberBean.getId(), ImageType.PROFILE, memberBean.getId()));
+				memberBean.setImage(new String(image));
+				if(followingList != null && followingList.containsKey(memberBean.getId())){
+					memberBean.setFollow(true);
+				}
+				members.add(memberBean);
+			}
+			model.addAttribute("members", members);
+		}catch(MemberException e){
+			e.printStackTrace();
 		}
-		model.addAttribute("message", "followingList");
-		model.addAttribute("members", members);
+		
 		return "followList";
 	}
 
 	@RequestMapping(value = "/follower/list")
 	public String displayFollowers(HttpSession session, Integer memberNO, SearchInfo searchInfo, Model model)
 			throws Exception {
-		List<MemberVO> memberVOs = followService.getFollowers(searchInfo);
-		List<MemberBean> members = new ArrayList<MemberBean>();
-		for (int i = 0; i < memberVOs.size(); i++) {
-			members.add(new MemberBean(memberVOs.get(i)));
+		try{
+			List<MemberVO> memberVOs = followService.getFollowers(searchInfo);
+			List<MemberBean> members = new ArrayList<MemberBean>();
+			
+			HashMap<String, MemberVO> followingList = new HashMap<String, MemberVO>();
+			followingList = (HashMap<String, MemberVO>)session.getAttribute("followingList");
+			MemberBean memberBean = null;
+			for (int i = 0; i < memberVOs.size(); i++) {
+				memberBean = new MemberBean(memberVOs.get(i));
+				byte[] image = Base64Utils.encode(imageService.getImage(memberBean.getId(), ImageType.PROFILE, memberBean.getId()));
+				memberBean.setImage(new String(image));
+				if(followingList != null && followingList.containsKey(memberBean.getId())){
+					memberBean.setFollow(true);
+				}
+				members.add(new MemberBean(memberVOs.get(i)));
+			}
+			model.addAttribute("message", "followerList");
+			model.addAttribute("members", members);
+		}catch(MemberException e){
+			e.printStackTrace();
 		}
-		model.addAttribute("message", "followerList");
-		model.addAttribute("members", members);
+		
 		return "followList";
 	}
 }
